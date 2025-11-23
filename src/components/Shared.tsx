@@ -280,12 +280,12 @@ export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.5, duration: 1 }}
-                    className="relative z-10 px-8 flex justify-end md:justify-center"
+                    className="relative z-10 px-8"
                 >
                     <motion.img
                         src={`${import.meta.env.BASE_URL}thanks.svg`}
                         alt="Thanks"
-                        className="w-48 md:w-64 opacity-80 filter brightness-0 invert opacity-90"
+                        className="w-48 md:w-64 opacity-80 filter brightness-0 invert opacity-90 mr-6 md:mr-auto ml-auto md:ml-auto"
                     />
 
                     <motion.div

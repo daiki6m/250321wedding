@@ -271,9 +271,9 @@ const Home = () => {
                     />
                 </div>
 
-                <div className="z-20 flex flex-row-reverse items-center justify-center gap-4 md:gap-20 w-full max-w-4xl mx-auto flex-grow">
+                <div className="z-20 flex flex-row-reverse items-center justify-center gap-8 md:gap-20 w-full max-w-4xl mx-auto flex-grow">
                     {/* Groom Name */}
-                    <div className="min-h-[300px] border-l border-white/20 pl-2 md:pl-6 py-4 relative">
+                    <div className="min-h-[300px] border-l border-white/20 pl-4 md:pl-6 py-4 relative">
                         <motion.div
                             initial={{ scaleY: 0 }}
                             animate={{
@@ -316,7 +316,7 @@ const Home = () => {
                     </div>
 
                     {/* Bride Name */}
-                    <div className="min-h-[300px] mt-16 border-l border-white/20 pl-2 md:pl-6 py-4 relative">
+                    <div className="min-h-[300px] mt-16 border-l border-white/20 pl-6 md:pl-6 py-4 relative">
                         <motion.div
                             initial={{ scaleY: 0 }}
                             animate={{
@@ -508,6 +508,12 @@ const Home = () => {
                                 muted
                                 playsInline
                                 className="h-full w-full object-cover rounded-sm filter grayscale contrast-125 brightness-90"
+                                style={{
+                                    maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
+                                    WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
+                                    maskComposite: 'intersect',
+                                    WebkitMaskComposite: 'source-in'
+                                }}
                             />
                         </div>
                     </div>
@@ -613,7 +619,8 @@ const Home = () => {
                                 <img
                                     src={`${import.meta.env.BASE_URL}Daiki.png`}
                                     alt="Daiki"
-                                    className="w-full h-full object-cover relative z-10 filter grayscale contrast-125 brightness-90"
+                                    className="w-full h-full object-cover relative z-10"
+                                    style={{ maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
                                 />
 
                                 {/* Soccer Ball Icon */}
@@ -626,7 +633,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-4 left-8 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-16 left-10 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
                                     Daiki
                                 </motion.div>
@@ -636,7 +643,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-4 right-1 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-16 right-4 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
                                     23
                                 </motion.div>
@@ -724,7 +731,8 @@ const Home = () => {
                                 <img
                                     src={`${import.meta.env.BASE_URL}Maki.png`}
                                     alt="Maki"
-                                    className="w-full h-full object-cover relative z-10 filter grayscale contrast-125 brightness-90"
+                                    className="w-full h-full object-cover relative z-10"
+                                    style={{ maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
                                 />
 
                                 {/* Soccer Ball Icon */}
@@ -737,7 +745,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-4 left-8 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-16 left-10 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
                                     Maki
                                 </motion.div>
@@ -747,7 +755,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-4 right-1 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-16 right-4 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
                                     31
                                 </motion.div>
@@ -869,7 +877,7 @@ const Home = () => {
                                     src={`${import.meta.env.BASE_URL}Nemo.png`}
                                     alt="Toy Poodle"
                                     className="w-full h-full object-contain relative z-10 filter grayscale contrast-110"
-                                    style={{ objectPosition: '55% center', transform: 'scale(0.85)' }}
+                                    style={{ objectPosition: '55% center', transform: 'scale(0.85)', maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
                                 />
                             </motion.div>
                             <div className="text-center">
@@ -992,6 +1000,7 @@ const Home = () => {
                                     src={`${import.meta.env.BASE_URL}Shumo.png`}
                                     alt="Miniature Schnauzer"
                                     className="w-full h-full object-contain relative z-10 filter grayscale contrast-110 scale-75"
+                                    style={{ maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
                                 />
                             </motion.div>
                             <div className="text-center">
