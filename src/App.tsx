@@ -20,7 +20,7 @@ export default function App() {
     }
 
     return (
-        <Router>
+        <Router basename={import.meta.env.BASE_URL}>
             <div className="bg-[#0a0a0a] min-h-screen relative overflow-hidden font-shippori text-gray-200 selection:text-white">
                 <style>{`::selection { background: ${COLORS.ORANGE}; color: white; }`}</style>
                 <style>{`
