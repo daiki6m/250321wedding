@@ -282,10 +282,10 @@ export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
                     transition={{ delay: 1.5, duration: 1 }}
                     className="relative z-10 px-8"
                 >
-                    <img
-                        src="/thanks.svg"
-                        alt="出会ってくれてありがとう"
-                        className="w-full max-w-md h-auto filter brightness-0 invert opacity-90"
+                    <motion.img
+                        src={`${import.meta.env.BASE_URL}thanks.svg`}
+                        alt="Thanks"
+                        className="w-48 md:w-64 opacity-80 filter brightness-0 invert opacity-90"
                     />
 
                     <motion.div

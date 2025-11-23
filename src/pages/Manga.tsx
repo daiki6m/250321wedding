@@ -43,7 +43,7 @@ const Manga = () => {
                             <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage("/漫画/title.png")}>
                                 <motion.img
                                     whileHover={{ scale: 1.02 }}
-                                    src="/漫画/title.png"
+                                    src={`${import.meta.env.BASE_URL}漫画/title.png`}
                                     alt="Manga Title"
                                     className="w-full h-auto rounded-sm shadow-2xl"
                                 />
@@ -53,7 +53,7 @@ const Manga = () => {
                             <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage("/漫画/1page.png")}>
                                 <motion.img
                                     whileHover={{ scale: 1.02 }}
-                                    src="/漫画/1page.png"
+                                    src={`${import.meta.env.BASE_URL}漫画/1page.png`}
                                     alt="Manga Page 1"
                                     className="w-full h-auto rounded-sm shadow-2xl"
                                 />
@@ -63,7 +63,7 @@ const Manga = () => {
                             <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage("/漫画/2page.png")}>
                                 <motion.img
                                     whileHover={{ scale: 1.02 }}
-                                    src="/漫画/2page.png"
+                                    src={`${import.meta.env.BASE_URL}漫画/2page.png`}
                                     alt="Manga Page 2"
                                     className="w-full h-auto rounded-sm shadow-2xl"
                                 />
@@ -73,7 +73,7 @@ const Manga = () => {
                             <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage("/漫画/3page.png")}>
                                 <motion.img
                                     whileHover={{ scale: 1.02 }}
-                                    src="/漫画/3page.png"
+                                    src={`${import.meta.env.BASE_URL}漫画/3page.png`}
                                     alt="Manga Page 3"
                                     className="w-full h-auto rounded-sm shadow-2xl"
                                 />

@@ -233,7 +233,7 @@ const Home = () => {
                 {/* Nemoline SVG Animation (Left) */}
                 <div className="absolute inset-y-0 left-[-10%] md:left-[10%] pointer-events-none z-5 flex items-center justify-center">
                     <motion.img
-                        src="/Nemoline.svg"
+                        src={`${import.meta.env.BASE_URL}Nemoline.svg`}
                         alt="Nemoline"
                         className="w-48 h-48 md:w-64 md:h-64 opacity-0"
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -254,7 +254,7 @@ const Home = () => {
                 {/* Shumoline SVG Animation (Right) */}
                 <div className="absolute inset-y-0 right-[-10%] md:right-[10%] pointer-events-none z-5 flex items-center justify-center">
                     <motion.img
-                        src="/Shumoline.svg"
+                        src={`${import.meta.env.BASE_URL}Shumoline.svg`}
                         alt="Shumoline"
                         className="w-48 h-48 md:w-64 md:h-64 opacity-0"
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -502,7 +502,7 @@ const Home = () => {
                         </div>
                         <div className="md:w-1/2 h-full min-h-[300px]">
                             <video
-                                src="/topmovie.mp4"
+                                src={`${import.meta.env.BASE_URL}topmovie.mp4`}
                                 autoPlay
                                 loop
                                 muted
@@ -611,7 +611,7 @@ const Home = () => {
                                 </div>
 
                                 <img
-                                    src="/Daiki.png"
+                                    src={`${import.meta.env.BASE_URL}Daiki.png`}
                                     alt="Daiki"
                                     className="w-full h-full object-cover relative z-10 filter grayscale contrast-125 brightness-90"
                                 />
@@ -722,7 +722,7 @@ const Home = () => {
                                 </div>
 
                                 <img
-                                    src="/Maki.png"
+                                    src={`${import.meta.env.BASE_URL}Maki.png`}
                                     alt="Maki"
                                     className="w-full h-full object-cover relative z-10 filter grayscale contrast-125 brightness-90"
                                 />
@@ -866,7 +866,7 @@ const Home = () => {
                                     })}
                                 </div>
                                 <img
-                                    src="/Nemo.png"
+                                    src={`${import.meta.env.BASE_URL}Nemo.png`}
                                     alt="Toy Poodle"
                                     className="w-full h-full object-contain relative z-10 filter grayscale contrast-110"
                                     style={{ objectPosition: '55% center', transform: 'scale(0.85)' }}
@@ -989,7 +989,7 @@ const Home = () => {
                                     })}
                                 </div>
                                 <img
-                                    src="/Shumo.png"
+                                    src={`${import.meta.env.BASE_URL}Shumo.png`}
                                     alt="Miniature Schnauzer"
                                     className="w-full h-full object-contain relative z-10 filter grayscale contrast-110 scale-75"
                                 />
