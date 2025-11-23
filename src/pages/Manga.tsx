@@ -40,7 +40,7 @@ const Manga = () => {
 
                         <div className="space-y-8 mt-12">
                             {/* Title */}
-                            <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage("/漫画/title.png")}>
+                            <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}漫画/title.png`)}>
                                 <motion.img
                                     whileHover={{ scale: 1.02 }}
                                     src={`${import.meta.env.BASE_URL}漫画/title.png`}
@@ -50,7 +50,7 @@ const Manga = () => {
                             </div>
 
                             {/* Page 1 */}
-                            <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage("/漫画/1page.png")}>
+                            <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}漫画/1page.png`)}>
                                 <motion.img
                                     whileHover={{ scale: 1.02 }}
                                     src={`${import.meta.env.BASE_URL}漫画/1page.png`}
@@ -60,7 +60,7 @@ const Manga = () => {
                             </div>
 
                             {/* Page 2 */}
-                            <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage("/漫画/2page.png")}>
+                            <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}漫画/2page.png`)}>
                                 <motion.img
                                     whileHover={{ scale: 1.02 }}
                                     src={`${import.meta.env.BASE_URL}漫画/2page.png`}
@@ -70,7 +70,7 @@ const Manga = () => {
                             </div>
 
                             {/* Page 3 */}
-                            <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage("/漫画/3page.png")}>
+                            <div className="w-full cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}漫画/3page.png`)}>
                                 <motion.img
                                     whileHover={{ scale: 1.02 }}
                                     src={`${import.meta.env.BASE_URL}漫画/3page.png`}

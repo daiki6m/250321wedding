@@ -39,7 +39,7 @@ export default function HotelParking() {
                     </h2>
 
                     {/* Main Route Map */}
-                    <div className="bg-white/5 p-3 rounded-xl border border-white/10 cursor-zoom-in max-w-3xl mx-auto" onClick={() => setSelectedImage('/駐車場/ルート全体図.webp')}>
+                    <div className="bg-white/5 p-3 rounded-xl border border-white/10 cursor-zoom-in max-w-3xl mx-auto" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/ルート全体図.webp`)}>
                         <img src={`${import.meta.env.BASE_URL}駐車場/ルート全体図.webp`} alt="ルート全体図" className="w-full h-auto rounded-lg" />
                     </div>
 
@@ -47,25 +47,25 @@ export default function HotelParking() {
                     <div className="space-y-4 pt-4">
                         <div className="grid md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <div className="cursor-zoom-in" onClick={() => setSelectedImage('/駐車場/A1.webp')}>
+                                <div className="cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/A1.webp`)}>
                                     <img src={`${import.meta.env.BASE_URL}駐車場/A1.webp`} alt="A-1" className="w-full h-auto rounded-lg shadow-xl border border-white/10" />
                                 </div>
                                 <p className="text-xs text-gray-300">八千代町交差点ガソリンスタンドを左折</p>
                             </div>
                             <div className="space-y-2">
-                                <div className="cursor-zoom-in" onClick={() => setSelectedImage('/駐車場/A2.webp')}>
+                                <div className="cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/A2.webp`)}>
                                     <img src={`${import.meta.env.BASE_URL}駐車場/A2.webp`} alt="A-2" className="w-full h-auto rounded-lg shadow-xl border border-white/10" />
                                 </div>
                                 <p className="text-xs text-gray-300">日本自動車連盟（JAF）長崎支店のある交差点を右折</p>
                             </div>
                             <div className="space-y-2">
-                                <div className="cursor-zoom-in" onClick={() => setSelectedImage('/駐車場/B1.webp')}>
+                                <div className="cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/B1.webp`)}>
                                     <img src={`${import.meta.env.BASE_URL}駐車場/B1.webp`} alt="B-1" className="w-full h-auto rounded-lg shadow-xl border border-white/10" />
                                 </div>
                                 <p className="text-xs text-gray-300">長崎県警察署のある交差点を左折</p>
                             </div>
                             <div className="space-y-2">
-                                <div className="cursor-zoom-in" onClick={() => setSelectedImage('/駐車場/B2.webp')}>
+                                <div className="cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/B2.webp`)}>
                                     <img src={`${import.meta.env.BASE_URL}駐車場/B2.webp`} alt="B-2" className="w-full h-auto rounded-lg shadow-xl border border-white/10" />
                                 </div>
                                 <p className="text-xs text-gray-300">日本自動車連盟(JAF)長崎支部のある交差点を左折</p>
@@ -81,26 +81,26 @@ export default function HotelParking() {
                     </h2>
 
                     {/* Parking Map */}
-                    <div className="bg-white/5 p-3 rounded-xl border border-white/10 cursor-zoom-in max-w-3xl mx-auto" onClick={() => setSelectedImage('/駐車場/駐車場マップ.webp')}>
+                    <div className="bg-white/5 p-3 rounded-xl border border-white/10 cursor-zoom-in max-w-3xl mx-auto" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/駐車場マップ.webp`)}>
                         <img src={`${import.meta.env.BASE_URL}駐車場/駐車場マップ.webp`} alt="駐車場マップ" className="w-full h-auto rounded-lg" />
                     </div>
 
                     {/* Steps 1-3 */}
                     <div className="grid md:grid-cols-3 gap-4 pt-4">
                         <div className="space-y-2">
-                            <div className="cursor-zoom-in" onClick={() => setSelectedImage('/駐車場/1.webp')}>
+                            <div className="cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/1.webp`)}>
                                 <img src={`${import.meta.env.BASE_URL}駐車場/1.webp`} alt="ステップ1" className="w-full h-auto rounded-lg shadow-xl border border-white/10" />
                             </div>
                             <p className="text-xs text-gray-300">スタジアムシティホテル長崎が左手に見えるまで直進し、分岐を左</p>
                         </div>
                         <div className="space-y-2">
-                            <div className="cursor-zoom-in" onClick={() => setSelectedImage('/駐車場/2.webp')}>
+                            <div className="cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/2.webp`)}>
                                 <img src={`${import.meta.env.BASE_URL}駐車場/2.webp`} alt="ステップ2" className="w-full h-auto rounded-lg shadow-xl border border-white/10" />
                             </div>
                             <p className="text-xs text-gray-300">高架下を左折</p>
                         </div>
                         <div className="space-y-2">
-                            <div className="cursor-zoom-in" onClick={() => setSelectedImage('/駐車場/3.webp')}>
+                            <div className="cursor-zoom-in" onClick={() => setSelectedImage(`${import.meta.env.BASE_URL}駐車場/3.webp`)}>
                                 <img src={`${import.meta.env.BASE_URL}駐車場/3.webp`} alt="ステップ3" className="w-full h-auto rounded-lg shadow-xl border border-white/10" />
                             </div>
                             <p className="text-xs text-gray-300">右手に駐車場がございます</p>
