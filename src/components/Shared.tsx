@@ -280,7 +280,7 @@ export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.5, duration: 1 }}
-                    className="relative z-10 px-8"
+                    className="relative z-10 px-8 flex justify-end md:justify-center"
                 >
                     <motion.img
                         src={`${import.meta.env.BASE_URL}thanks.svg`}

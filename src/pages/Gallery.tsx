@@ -11,49 +11,49 @@ const HISTORY_DATA = [
         year: "2024.01",
         title: "MEETING",
         description: "長崎 時津のスターバックスで知り合う",
-        image: "/gallery/01.jpg"
+        image: `${import.meta.env.BASE_URL}gallery/01.jpg`
     },
     {
         year: "2024.02",
         title: "START",
         description: "お互いに惹かれ合いお付き合いスタート",
-        image: "/gallery/02.jpg"
+        image: `${import.meta.env.BASE_URL}gallery/02.jpg`
     },
     {
         year: "2024.09",
         title: "LONG DISTANCE",
         description: "大樹転職 大阪へ\n大阪と長崎の遠距離恋愛がスタート",
-        image: "/gallery/03.JPG"
+        image: `${import.meta.env.BASE_URL}gallery/03.JPG`
     },
     {
         year: "2024.12",
         title: "PROPOSAL",
         description: "スタジアムシティホテル長崎にてプロポーズ",
-        image: "/gallery/04.jpg"
+        image: `${import.meta.env.BASE_URL}gallery/04.jpg`
     },
     {
         year: "2025.02",
         title: "FAMILY MEETING",
         description: "スタジアムシティホテル長崎にて両家顔合わせ",
-        image: "/gallery/05.JPG"
+        image: `${import.meta.env.BASE_URL}gallery/05.JPG`
     },
     {
         year: "2025.03.03",
         title: "MARRIAGE",
         description: "入籍",
-        image: "/gallery/06.JPG"
+        image: `${import.meta.env.BASE_URL}gallery/06.JPG`
     },
     {
         year: "2025.05",
         title: "NEW LIFE",
         description: "福岡にて新生活を始める",
-        image: "/gallery/07.jpeg"
+        image: `${import.meta.env.BASE_URL}gallery/07.jpeg`
     },
     {
         year: "2025.08",
         title: "WELCOME SHUMO",
         description: "シュモをお迎え\n家族4人で生活中!",
-        image: "/gallery/08.png"
+        image: `${import.meta.env.BASE_URL}gallery/08.png`
     }
 ];
 
