@@ -1,0 +1,24 @@
+
+> wedding-website@0.0.0 dev
+> vite --host 127.0.0.1 --port 4173 --clearScreen false
+
+
+  VITE v5.4.21  ready in 158 ms
+
+  ➜  Local:   http://127.0.0.1:4173/
+11:49:21 PM [vite] hmr update /src/pages/Gallery.tsx, /src/index.css
+12:12:36 AM [vite] page reload index.html
+12:12:36 AM [vite] page reload wedding/index.html
+12:12:36 AM [vite] hmr update /src/App.tsx, /src/index.css
+12:12:36 AM [vite] hmr update /src/components/Shared.tsx, /src/index.css
+12:12:36 AM [vite] hmr update /src/index.css
+12:12:36 AM [vite] page reload src/main.tsx
+12:12:36 AM [vite] hmr update /src/pages/Gallery.tsx
+12:12:36 AM [vite] hmr update /src/pages/Home.tsx
+12:12:36 AM [vite] hmr update /src/pages/Manga.tsx
+12:12:36 AM [vite] page reload src/vite-env.d.ts
+12:12:36 AM [vite] page reload tailwind.config.js
+12:12:36 AM [vite] changed tsconfig file detected: /Users/daiki/Desktop/Myapp/Wedding/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+12:12:36 AM [vite] changed tsconfig file detected: /Users/daiki/Desktop/Myapp/Wedding/wedding/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+12:12:36 AM [vite] vite.config.ts changed, restarting server...
+12:12:36 AM [vite] server restarted.
