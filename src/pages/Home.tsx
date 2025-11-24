@@ -430,7 +430,7 @@ const Home = () => {
                         transition={{ delay: 5.0, duration: 1 }}
                         className="mb-12"
                     >
-                        <CountdownTimer targetDate="2026-03-21T11:30:00" />
+                        <CountdownTimer targetDate="2026-03-21T15:00:00" />
                     </motion.div>
 
                     <motion.div
@@ -452,7 +452,7 @@ const Home = () => {
                         <iframe
                             width="100%"
                             height="100%"
-                            src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=Adz8W3q4sK-d-2_-"
+                            src="https://www.youtube.com/embed/B4PIlqcbo9k"
                             title="YouTube video player"
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
