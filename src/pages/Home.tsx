@@ -273,7 +273,7 @@ const Home = () => {
 
                 <div className="z-20 flex flex-row-reverse items-center justify-center gap-16 md:gap-20 w-full max-w-4xl mx-auto flex-grow">
                     {/* Groom Name */}
-                    <div className="min-h-[300px] border-l border-white/20 pl-2 md:pl-6 py-4 relative">
+                    <div className="min-h-[300px] border-l border-white/20 pl-1 md:pl-6 py-4 relative">
                         <motion.div
                             initial={{ scaleY: 0 }}
                             animate={{
@@ -316,7 +316,7 @@ const Home = () => {
                     </div>
 
                     {/* Bride Name */}
-                    <div className="min-h-[300px] mt-16 border-l border-white/20 pl-2 md:pl-6 py-4 relative">
+                    <div className="min-h-[300px] mt-16 border-l border-white/20 pl-1 md:pl-6 py-4 relative">
                         <motion.div
                             initial={{ scaleY: 0 }}
                             animate={{
