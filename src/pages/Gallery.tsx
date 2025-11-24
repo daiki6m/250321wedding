@@ -23,7 +23,7 @@ const HISTORY_DATA = [
         year: "2024.09",
         title: "LONG DISTANCE",
         description: "大樹転職 大阪へ\n大阪と長崎の遠距離恋愛がスタート",
-        image: `${import.meta.env.BASE_URL}gallery/03.JPG`
+        image: `${import.meta.env.BASE_URL}gallery/03.jpg`
     },
     {
         year: "2024.12",
@@ -35,19 +35,19 @@ const HISTORY_DATA = [
         year: "2025.02",
         title: "FAMILY MEETING",
         description: "スタジアムシティホテル長崎にて両家顔合わせ",
-        image: `${import.meta.env.BASE_URL}gallery/05.JPG`
+        image: `${import.meta.env.BASE_URL}gallery/05.jpg`
     },
     {
         year: "2025.03.03",
         title: "MARRIAGE",
         description: "入籍",
-        image: `${import.meta.env.BASE_URL}gallery/06.JPG`
+        image: `${import.meta.env.BASE_URL}gallery/06.jpg`
     },
     {
         year: "2025.05",
         title: "NEW LIFE",
         description: "福岡にて新生活を始める",
-        image: `${import.meta.env.BASE_URL}gallery/07.jpeg`
+        image: `${import.meta.env.BASE_URL}gallery/07.jpg`
     },
     {
         year: "2025.08",
