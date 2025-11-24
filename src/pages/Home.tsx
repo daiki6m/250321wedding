@@ -271,7 +271,7 @@ const Home = () => {
                     />
                 </div>
 
-                <div className="z-20 flex flex-row-reverse items-center justify-center gap-8 md:gap-20 w-full max-w-4xl mx-auto flex-grow">
+                <div className="z-20 flex flex-row-reverse items-center justify-center gap-16 md:gap-20 w-full max-w-4xl mx-auto flex-grow">
                     {/* Groom Name */}
                     <div className="min-h-[300px] border-l border-white/20 pl-4 md:pl-6 py-4 relative">
                         <motion.div
