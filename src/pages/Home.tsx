@@ -633,7 +633,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-16 left-10 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-12 right-4 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
                                     Daiki
                                 </motion.div>
@@ -643,9 +643,9 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-16 right-4 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-12 left-14 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
-                                    23
+                                    6
                                 </motion.div>
                             </motion.div>
                             <h3 className="text-2xl font-zen mb-1 text-white">宝本 大樹</h3>
@@ -745,7 +745,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-16 left-10 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-12 left-12 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
                                     Maki
                                 </motion.div>
@@ -755,9 +755,9 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-16 right-4 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-12 right-6 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
-                                    31
+                                    3
                                 </motion.div>
                             </motion.div>
                             <h3 className="text-2xl font-zen mb-1 text-white">長谷川 真希</h3>
