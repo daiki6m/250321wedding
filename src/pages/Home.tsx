@@ -643,7 +643,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-12 left-14 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-12 left-10 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
                                     6
                                 </motion.div>
@@ -745,7 +745,7 @@ const Home = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute top-12 left-12 text-3xl font-bold font-zen z-20 text-gray-400"
+                                    className="absolute top-12 left-10 text-3xl font-bold font-zen z-20 text-gray-400"
                                 >
                                     Maki
                                 </motion.div>
@@ -999,8 +999,8 @@ const Home = () => {
                                 <img
                                     src={`${import.meta.env.BASE_URL}Shumo.png`}
                                     alt="Miniature Schnauzer"
-                                    className="w-full h-full object-contain relative z-10 filter grayscale contrast-110 scale-75"
-                                    style={{ maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
+                                    className="w-full h-full object-contain relative z-10 filter grayscale contrast-110"
+                                    style={{ objectPosition: '45% center', transform: 'scale(0.85)', maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
                                 />
                             </motion.div>
                             <div className="text-center">
@@ -1013,30 +1013,55 @@ const Home = () => {
                                         duration: 2,
                                         repeat: Infinity,
                                         ease: "easeInOut",
-                                        delay: 0.5
+                                        delay: 1
                                     }}
                                     className="inline-block"
                                 >
                                     <PawPrint className="w-6 h-6 mx-auto mb-3 opacity-80" style={{ color: COLORS.BLUE }} />
                                 </motion.div>
                                 <h4 className="text-xl font-bold font-zen mb-2 text-white">シュモ (Shumo)</h4>
-                                <p className="text-sm mb-4 opacity-80" style={{ color: COLORS.BLUE }}>Mシュナウザー / 男の子
-                                    <br />2025.03.12 / 佐賀県出身</p>
+                                <p className="text-sm mb-4 opacity-80" style={{ color: COLORS.BLUE }}>ミニチュアシュナウザー / 男の子
+                                    <br />2024.11.19 / 福岡出身</p>
                                 <p className="text-sm text-gray-400 leading-relaxed font-shippori">
-                                    人が大好きで、気づけばそばに<br />
-                                    ぴったり寄り添ってくる甘えんぼな弟。<br />
-                                    撫でられるとすぐに目を細めて、<br />
-                                    とろけるような表情を見せてくれます。<br />
-                                    無邪気で素直な仕草がかわいらしく、<br />
-                                    家族の毎日に小さな癒やしと<br />
-                                    笑いを届けてくれる存在です。<br />
-                                    その愛らしさで、<br />
-                                    自然とまわりをほっとさせる<br />
-                                    わが家の大切な末っ子です。
+                                    好奇心旺盛で遊び盛り、<br />
+                                    わが家の元気印。<br />
+                                    おもちゃを見つけると<br />
+                                    目を輝かせて駆け寄ってくる、<br />
+                                    やんちゃで愛らしい性格です。<br />
+                                    甘えん坊な一面もあって、<br />
+                                    撫でてほしいときは<br />
+                                    じっと見つめてアピールしてきます。<br />
+                                    その一生懸命な姿に、<br />
+                                    毎日たくさんの元気をもらっている、<br />
+                                    かけがえのない家族です。
                                 </p>
                             </div>
                         </motion.div>
                     </div>
+
+                    {/* Dog Soccer Link */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                        className="mt-12 text-center"
+                    >
+                        <Link to="/dog-soccer">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="group relative px-8 py-4 bg-[#1a1a1a] rounded-full border border-white/10 overflow-hidden"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#F39800]/20 to-[#2E7BF4]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div className="relative flex items-center gap-3">
+                                    <SoccerBall className="w-5 h-5" color={COLORS.WHITE} />
+                                    <span className="font-zen font-bold text-white tracking-wider">PLAY DOG SOCCER</span>
+                                    <SoccerBall className="w-5 h-5" color={COLORS.WHITE} />
+                                </div>
+                            </motion.button>
+                        </Link>
+                    </motion.div>
                 </div>
             </section >
 

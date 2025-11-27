@@ -6,6 +6,7 @@ import Gallery from './pages/Gallery';
 import Manga from './pages/Manga';
 import HotelParking from './pages/HotelParking';
 import FloorMap from './pages/FloorMap';
+import DogSoccer from './pages/DogSoccer';
 
 export default function App() {
     const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +44,7 @@ export default function App() {
                     <Route path="/manga" element={<Manga />} />
                     <Route path="/hotel-parking" element={<HotelParking />} />
                     <Route path="/floormap" element={<FloorMap />} />
+                    <Route path="/dog-soccer" element={<DogSoccer />} />
                 </Routes>
             </div>
         </Router>
