@@ -1040,26 +1040,81 @@ const Home = () => {
                     </div>
 
                     {/* Dog Soccer Link */}
+                    {/* Dog Soccer Game Card */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="mt-12 text-center"
+                        className="mt-16 w-full max-w-2xl mx-auto"
                     >
-                        <Link to="/dog-soccer">
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="group relative px-8 py-4 bg-[#1a1a1a] rounded-full border border-white/10 overflow-hidden"
+                        <Link to="/dog-soccer" className="block group">
+                            <motion.div
+                                whileHover={{ scale: 1.02, rotate: 1 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="relative bg-gradient-to-br from-[#2e7d32] to-[#1b5e20] rounded-2xl p-1 border-4 border-[#F39800] shadow-2xl overflow-hidden"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#F39800]/20 to-[#2E7BF4]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                <div className="relative flex items-center gap-3">
-                                    <SoccerBall className="w-5 h-5" color={COLORS.WHITE} />
-                                    <span className="font-zen font-bold text-white tracking-wider">PLAY DOG SOCCER</span>
-                                    <SoccerBall className="w-5 h-5" color={COLORS.WHITE} />
+                                {/* Pitch Lines Decoration */}
+                                <div className="absolute inset-0 opacity-20 pointer-events-none">
+                                    <div className="absolute top-1/2 left-0 w-full h-px bg-white"></div>
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border-2 border-white rounded-full"></div>
                                 </div>
-                            </motion.button>
+
+                                <div className="bg-[#0a0a0a]/20 backdrop-blur-sm rounded-xl p-6 md:p-8 relative z-10 flex flex-col items-center">
+                                    {/* Badge */}
+                                    <div className="absolute top-0 right-0 bg-[#F39800] text-black font-bold px-4 py-1 rounded-bl-xl font-zen text-sm tracking-widest">
+                                        NEW GAME
+                                    </div>
+
+                                    {/* Title */}
+                                    <h3 className="text-3xl md:text-4xl font-black font-zen text-white italic tracking-wider mb-2 drop-shadow-lg text-center">
+                                        DOG SOCCER <span className="text-[#F39800]">STRIKER</span>
+                                    </h3>
+                                    <p className="text-white/80 text-sm md:text-base mb-8 font-shippori tracking-widest">
+                                        ネモ vs シュモ！ 夢のドッグサッカー対決
+                                    </p>
+
+                                    {/* Visuals */}
+                                    <div className="flex items-end justify-center gap-4 md:gap-12 mb-8 w-full">
+                                        {/* Nemo */}
+                                        <div className="relative w-24 h-24 md:w-32 md:h-32">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-full blur-xl"></div>
+                                            <img
+                                                src={`${import.meta.env.BASE_URL}Nemo.png`}
+                                                alt="Nemo"
+                                                className="w-full h-full object-contain drop-shadow-2xl transform scale-x-[-1] group-hover:-translate-x-2 transition-transform duration-500"
+                                            />
+                                        </div>
+
+                                        {/* VS Ball */}
+                                        <div className="relative -mb-2">
+                                            <motion.div
+                                                animate={{ rotate: 360 }}
+                                                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                                            >
+                                                <SoccerBall className="w-12 h-12 md:w-16 md:h-16 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
+                                            </motion.div>
+                                        </div>
+
+                                        {/* Shumo */}
+                                        <div className="relative w-24 h-24 md:w-32 md:h-32">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-full blur-xl"></div>
+                                            <img
+                                                src={`${import.meta.env.BASE_URL}Shumo.png`}
+                                                alt="Shumo"
+                                                className="w-full h-full object-contain drop-shadow-2xl group-hover:translate-x-2 transition-transform duration-500"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* CTA Button */}
+                                    <div className="bg-white text-[#1b5e20] px-8 py-3 rounded-full font-bold font-zen tracking-widest flex items-center gap-2 group-hover:bg-[#F39800] group-hover:text-white transition-colors duration-300 shadow-lg">
+                                        <SoccerBall className="w-5 h-5" />
+                                        PLAY NOW
+                                        <SoccerBall className="w-5 h-5" />
+                                    </div>
+                                </div>
+                            </motion.div>
                         </Link>
                     </motion.div>
                 </div>
