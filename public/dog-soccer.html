@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dog Soccer Striker (PC/Mobile)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #2e7d32;
+            font-family: 'Arial Black', sans-serif;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: default;
+            /* 初期状態 */
+        }
+
+        /* ゲーム中はカーソルを消すクラス */
+        .no-cursor {
+            cursor: none !important;
+        }
+
+        /* UIレイヤー */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* スコアボード */
+        .scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 8px 30px;
+            border-radius: 0 0 15px 15px;
+            border: 2px solid #666;
+            border-top: none;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            gap: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .score-box {
+            text-align: center;
+        }
+
+        .label {
+            font-size: 0.7rem;
+            color: #aaa;
+            display: block;
+            margin-bottom: 2px;
+            letter-spacing: 1px;
+        }
+
+        .val {
+            font-size: 2.2rem;
+            color: #ffeb3b;
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.98);
+            border: 6px solid #1b5e20;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            pointer-events: auto;
+            max-width: 90%;
+            width: 400px;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            margin: 0 0 15px 0;
+            color: #1b5e20;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        p {
+            color: #444;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        button {
+            background: linear-gradient(to bottom, #fdd835, #fbc02d);
+            color: #222;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.4rem;
+            border-radius: 50px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #f57f17;
+            text-transform: uppercase;
+            transition: transform 0.1s, box-shadow 0.1s;
+            width: 100%;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #f57f17;
+        }
+
+        button:hover {
+            filter: brightness(1.1);
+        }
+
+        .control-hint {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #666;
+            background: #eee;
+            padding: 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .key {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 2px 6px;
+            margin: 0 2px;
+            font-family: monospace;
+            font-weight: bold;
+            box-shadow: 0 2px 0 #ddd;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ゴール演出 */
+        #goal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+        }
+
+        .show-goal {
+            opacity: 1 !important;
+        }
+
+        .goal-text {
+            font-size: 5rem;
+            color: #fff;
+            font-weight: 900;
+            text-shadow: 0 0 30px #e65100, 5px 5px 0 #bf360c;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .points-text {
+            font-size: 7rem;
+            color: #ffeb3b;
+            font-weight: 900;
+            text-shadow: 5px 5px 0 #f57f17;
+            animation: pulse 0.4s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+        /* ★★★ 追加・修正：セリフ吹き出し ★★★ */
+        .speech-bubble {
+            position: absolute;
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 15px;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.4rem;
+            pointer-events: none;
+            white-space: nowrap;
+            /* ゴール演出(z-index:20)より手前に表示 */
+            z-index: 30;
+            opacity: 0;
+            transform: translate(-50%, 0) scale(0.8);
+            transition: opacity 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+            font-family: "Hiragino Maru Gothic Pro", "Yu Gothic", sans-serif;
+        }
+
+        .show-bubble {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1);
+        }
+
+        /* CPU用（しっぽ上） */
+        .bubble-cpu {
+            transform-origin: center top;
+        }
+
+        .bubble-cpu::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 12px 12px;
+            border-style: solid;
+            border-color: transparent transparent #333 transparent;
+        }
+
+        .bubble-cpu::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 9px 9px;
+            border-style: solid;
+            border-color: transparent transparent #fff transparent;
+            z-index: 1;
+        }
+
+        /* プレイヤー用（しっぽ下） */
+        .bubble-player {
+            transform-origin: center bottom;
+        }
+
+        .bubble-player::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 12px 12px 0;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .bubble-player::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 9px 9px 0;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="scoreboard">
+        <div class="score-box">
+            <span class="label">CPU</span>
+            <span id="scoreCPU" class="val">0</span>
+        </div>
+        <div style="font-size: 2rem; color:#777; align-self:center; margin-top:-5px;">-</div>
+        <div class="score-box">
+            <span class="label">YOU</span>
+            <span id="scorePlayer" class="val">0</span>
+        </div>
+    </div>
+
+    <div id="goal-overlay">
+        <div class="goal-text" id="goalTitle">GOAL!</div>
+        <div class="points-text" id="goalPoints">+1</div>
+    </div>
+
+    <!-- ★★★ 追加：吹き出し用コンテナ ★★★ -->
+    <div id="cpuSpeech" class="speech-bubble bubble-cpu hidden"></div>
+    <div id="playerSpeech" class="speech-bubble bubble-player hidden"></div>
+
+    <div id="ui-layer">
+        <div id="menu-screen" class="panel">
+            <h1>Dog Soccer<br>Striker</h1>
+            <p>
+                中央のゴールで <span style="color:#e65100; font-weight:bold; font-size:1.2em;">2点</span><br>
+                それ以外は <span style="color:#555; font-weight:bold;">1点</span><br>
+                先に <b>10点</b> 取った方の勝ち！
+            </p>
+            <button id="startBtn">KICK OFF!</button>
+
+            <div class="control-hint">
+                操作: マウス または <span class="key">←</span><span class="key">→</span><span class="key">↑</span><span
+                    class="key">↓</span>
+            </div>
+        </div>
+
+        <div id="game-over-screen" class="panel hidden">
+            <h1 id="result-title">YOU WIN!</h1>
+            <p>FINAL SCORE<br>
+                <span style="font-size: 2.5rem; font-weight:bold; color:#333;">
+                    <span id="resPlayer">0</span> - <span id="resCPU">0</span>
+                </span>
+            </p>
+            <button id="retryBtn">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const menuScreen = document.getElementById('menu-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const goalOverlay = document.getElementById('goal-overlay');
+        const goalTitle = document.getElementById('goalTitle');
+        const goalPoints = document.getElementById('goalPoints');
+        const cpuSpeechBubble = document.getElementById('cpuSpeech');
+        const playerSpeechBubble = document.getElementById('playerSpeech');
+
+        const scorePlayerEl = document.getElementById('scorePlayer');
+        const scoreCPUEl = document.getElementById('scoreCPU');
+        const resPlayerEl = document.getElementById('resPlayer');
+        const resCPUEl = document.getElementById('resCPU');
+
+        // --- 画像アセット設定 ---
+        const DOG1_SRC = "Nemo.png";   // あなたの操作する犬 (HOME/YOU)
+        const DOG2_SRC = "Shumo.png";  // 相手の犬 (AWAY/CPU)
+
+        const BALL_SRC = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='28' fill='white' stroke='black' stroke-width='2'/%3E%3Cpath d='M30 2 L38 18 L56 18 L42 30 L48 48 L30 38 L12 48 L18 30 L4 18 L22 18 Z' fill='black'/%3E%3C/svg%3E";
+
+        const imgDog1 = new Image(); imgDog1.src = DOG1_SRC;
+        const imgDog2 = new Image(); imgDog2.src = DOG2_SRC;
+        const imgBall = new Image(); imgBall.src = BALL_SRC;
+
+        const fallbackSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ccc' stroke='black' stroke-width='2'/%3E%3Ctext x='50' y='55' font-size='14' text-anchor='middle' fill='black'%3ENo Image%3C/text%3E%3C/svg%3E";
+        imgDog1.onerror = () => { imgDog1.src = fallbackSrc; console.warn("Nemo.png not found"); };
+        imgDog2.onerror = () => { imgDog2.src = fallbackSrc; console.warn("Shumo.png not found"); };
+
+
+        // ゲーム設定
+        const TARGET_SCORE = 10;
+        const GOAL_WIDTH = 140;
+
+        let gameState = 'menu';
+
+        const ball = { x: 0, y: 0, vx: 0, vy: 0, r: 20, angle: 0 };
+        const player = { x: 0, y: 0, r: 50, score: 0 };
+        const cpu = { x: 0, y: 0, r: 50, score: 0 };
+
+        let confettis = [];
+
+        // ★★★ 追加：セリフ集 ★★★
+        // CPUが失点した時（プレイヤーが得点）
+        const cpuSadPhrases = [
+            "あーっ！", "やめてー！", "うそーん", "まじか...", "守れない！",
+            "次は止める！", "くやし〜", "うわぁぁん😭", "なんでー！？", "強い..."
+        ];
+        // CPUが得点した時（プレイヤーが失点）
+        const cpuHappyPhrases = [
+            "よっしゃ！", "イエーイ！", "もらった！", "ゴール！", "見たか！"
+        ];
+
+        // プレイヤーが得点した時（喜び）
+        const playerHappyPhrases = [
+            "やったー！", "ナイス！", "イエーイ！", "決まった！", "楽勝！",
+            "最高！", "完璧！", "見た！？", "天才！", "わーい！"
+        ];
+        // プレイヤーが失点した時（悔しさ）
+        const playerSadPhrases = [
+            "あーっ！", "くそー！", "しまった！", "やられた...", "あぶない！",
+            "うそでしょ", "次は決める", "ドンマイ", "うわーん"
+        ];
+
+        // キーボード入力管理
+        const keys = {
+            ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
+            w: false, a: false, s: false, d: false,
+            W: false, A: false, S: false, D: false
+        };
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            if (gameState === 'menu') resetPositions();
+        }
+        window.addEventListener('resize', resize);
+
+        function resetPositions() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.vx = 0;
+            ball.vy = 0;
+            ball.angle = 0;
+
+            player.x = canvas.width / 2;
+            player.y = canvas.height - 150;
+
+            cpu.x = canvas.width / 2;
+            cpu.y = 150;
+        }
+
+        function startGame() {
+            player.score = 0;
+            cpu.score = 0;
+            updateScoreBoard();
+            resize();
+            resetPositions();
+
+            gameState = 'playing';
+            menuScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            canvas.classList.add('no-cursor');
+
+            loop();
+        }
+
+        function updateScoreBoard() {
+            scorePlayerEl.innerText = player.score;
+            scoreCPUEl.innerText = cpu.score;
+        }
+
+        // --- ゲームロジック ---
+        function update() {
+            if (gameState !== 'playing') return;
+
+            // 1. キーボード操作処理
+            const speed = 8;
+            if (keys.ArrowLeft || keys.a || keys.A) player.x -= speed;
+            if (keys.ArrowRight || keys.d || keys.D) player.x += speed;
+            if (keys.ArrowUp || keys.w || keys.W) player.y -= speed;
+            if (keys.ArrowDown || keys.s || keys.S) player.y += speed;
+
+            // 2. ボール物理
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+            ball.vx *= 0.98; // 摩擦
+            ball.vy *= 0.98;
+
+            const ballSpeed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            ball.angle += ballSpeed * 0.1;
+
+            // 壁反射
+            if (ball.x - ball.r < 0) { ball.x = ball.r; ball.vx *= -0.8; }
+            if (ball.x + ball.r > canvas.width) { ball.x = canvas.width - ball.r; ball.vx *= -0.8; }
+
+            // 得点判定
+            if (ball.y < -ball.r) checkGoalScore('player');
+            else if (ball.y > canvas.height + ball.r) checkGoalScore('cpu');
+
+            // 3. CPU AI
+            let aiSpeed = 3.5;
+            if (player.score > cpu.score) aiSpeed = 5.5; // 負けてると本気出す
+            else if (player.score === cpu.score) aiSpeed = 4.5;
+
+            const homeX = canvas.width / 2;
+            const homeY = 100;
+
+            if (ball.y < canvas.height * 0.6) {
+                const dx = ball.x - cpu.x;
+                const dy = (ball.y - 20) - cpu.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > 5) {
+                    cpu.x += (dx / dist) * aiSpeed;
+                    cpu.y += (dy / dist) * aiSpeed;
+                }
+            } else {
+                cpu.x += (homeX - cpu.x) * 0.08;
+                cpu.y += (homeY - cpu.y) * 0.08;
+            }
+
+            // 4. 衝突判定
+            checkCollision(player, ball);
+            checkCollision(cpu, ball);
+
+            // 5. 移動制限
+            const margin = 5;
+            player.y = Math.max(canvas.height / 2 + player.r, Math.min(canvas.height - margin, player.y));
+            player.x = Math.max(player.r, Math.min(canvas.width - player.r, player.x));
+
+            cpu.y = Math.max(margin, Math.min(canvas.height / 2 - cpu.r, cpu.y));
+            cpu.x = Math.max(cpu.r, Math.min(canvas.width - cpu.r, cpu.x));
+        }
+
+        function checkCollision(p, b) {
+            const dx = b.x - p.x;
+            const dy = b.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const minDist = p.r + b.r;
+
+            if (dist < minDist) {
+                const angle = Math.atan2(dy, dx);
+                const overlap = minDist - dist;
+
+                b.x += Math.cos(angle) * overlap;
+                b.y += Math.sin(angle) * overlap;
+
+                const kickPower = 15;
+                b.vx = Math.cos(angle) * kickPower;
+                b.vy = Math.sin(angle) * kickPower;
+
+                // カーブ
+                b.vx += (Math.random() - 0.5) * 3;
+            }
+        }
+
+        function checkGoalScore(scorer) {
+            const bx = ball.x;
+            const centerX = canvas.width / 2;
+            const halfGoal = GOAL_WIDTH / 2;
+            const isCenterGoal = (bx > centerX - halfGoal && bx < centerX + halfGoal);
+
+            let points = 1;
+            let msg = "GOAL!";
+
+            if (isCenterGoal) {
+                points = 2;
+                msg = "SUPER GOAL!!";
+                createConfetti();
+            }
+
+            if (scorer === 'player') {
+                player.score += points;
+                // 自分が得点：CPUは悔しがり、自分は喜ぶ
+                showSpeech(cpuSpeechBubble, cpuSadPhrases, cpu, 'cpu');
+                showSpeech(playerSpeechBubble, playerHappyPhrases, player, 'player');
+            }
+            else {
+                cpu.score += points;
+                // 自分が失点：自分は悔しがり、CPUは喜ぶ
+                showSpeech(playerSpeechBubble, playerSadPhrases, player, 'player');
+                showSpeech(cpuSpeechBubble, cpuHappyPhrases, cpu, 'cpu');
+            }
+
+            showGoalEffect(msg, points);
+            updateScoreBoard();
+            gameState = 'goal';
+            canvas.classList.remove('no-cursor');
+
+            setTimeout(() => {
+                if (player.score >= TARGET_SCORE || cpu.score >= TARGET_SCORE) {
+                    endGame();
+                } else {
+                    goalOverlay.classList.remove('show-goal');
+                    resetPositions();
+                    gameState = 'playing';
+                    canvas.classList.add('no-cursor');
+                    confettis = [];
+                }
+            }, 2000);
+        }
+
+        // ★★★ 追加・修正：汎用セリフ表示機能 ★★★
+        function showSpeech(element, phrases, charObj, type) {
+            // ランダムにセリフを選択
+            const text = phrases[Math.floor(Math.random() * phrases.length)];
+            element.innerText = text;
+
+            // 吹き出しの位置設定
+            element.style.left = charObj.x + 'px';
+
+            if (type === 'cpu') {
+                // CPUは下に吹き出しを出す
+                element.style.top = (charObj.y + 70) + 'px';
+            } else {
+                // プレイヤーは上に吹き出しを出す
+                element.style.top = (charObj.y - 70 - 40) + 'px'; // 40pxは吹き出しのおおよその高さ分
+            }
+
+            // 表示アニメーション
+            element.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                element.classList.add('show-bubble');
+            });
+
+            // 2秒後に消す
+            setTimeout(() => {
+                element.classList.remove('show-bubble');
+                setTimeout(() => {
+                    element.classList.add('hidden');
+                }, 200);
+            }, 2000);
+        }
+
+        function showGoalEffect(title, pts) {
+            goalTitle.innerText = title;
+            goalPoints.innerText = "+" + pts;
+            goalTitle.style.color = pts === 2 ? "#ffeb3b" : "#fff";
+            goalOverlay.classList.add('show-goal');
+        }
+
+        function endGame() {
+            goalOverlay.classList.remove('show-goal');
+            confettis = [];
+            gameState = 'gameover';
+            canvas.classList.remove('no-cursor');
+
+            const isWin = player.score > cpu.score;
+            document.getElementById('result-title').innerText = isWin ? "YOU WIN!" : "YOU LOSE...";
+            document.getElementById('result-title').style.color = isWin ? "#2e7d32" : "#d32f2f";
+
+            resPlayerEl.innerText = player.score;
+            resCPUEl.innerText = cpu.score;
+            gameOverScreen.classList.remove('hidden');
+        }
+
+        // --- エフェクト ---
+        function createConfetti() {
+            confettis = [];
+            for (let i = 0; i < 100; i++) {
+                confettis.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 25,
+                    vy: (Math.random() - 0.5) * 25,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    size: Math.random() * 12 + 5,
+                    life: 100
+                });
+            }
+        }
+
+        function updateConfetti() {
+            for (let i = confettis.length - 1; i >= 0; i--) {
+                const c = confettis[i];
+                c.x += c.vx;
+                c.y += c.vy;
+                c.vy += 0.6;
+                c.vx *= 0.94;
+                c.life--;
+                if (c.life <= 0) confettis.splice(i, 1);
+            }
+        }
+
+        function drawConfetti() {
+            confettis.forEach(c => {
+                ctx.fillStyle = c.color;
+                ctx.fillRect(c.x, c.y, c.size, c.size);
+            });
+        }
+
+        // --- 入力イベント ---
+        window.addEventListener('keydown', e => { keys[e.key] = true; });
+        window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+        function handleInput(x, y) {
+            if (gameState === 'playing') {
+                if (y > canvas.height / 2) {
+                    player.x = x;
+                    player.y = y;
+                } else {
+                    player.x = x;
+                    player.y = canvas.height / 2 + player.r;
+                }
+            }
+        }
+
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            handleInput(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            handleInput(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+
+        canvas.addEventListener('mousemove', e => {
+            handleInput(e.clientX, e.clientY);
+        });
+
+        document.getElementById('startBtn').onclick = startGame;
+        document.getElementById('retryBtn').onclick = () => {
+            gameOverScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+            gameState = 'menu';
+            resetPositions();
+            draw();
+        };
+
+        // --- 描画 ---
+        function drawPitch() {
+            // 芝生
+            const stripeH = 60;
+            for (let y = 0; y < canvas.height; y += stripeH) {
+                ctx.fillStyle = (y / stripeH) % 2 < 1 ? '#2e7d32' : '#388e3c';
+                ctx.fillRect(0, y, canvas.width, stripeH);
+            }
+
+            // ライン
+            ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.rect(10, 10, canvas.width - 20, canvas.height - 20);
+            ctx.moveTo(10, canvas.height / 2); ctx.lineTo(canvas.width - 10, canvas.height / 2);
+            ctx.moveTo(canvas.width / 2 + 60, canvas.height / 2); ctx.arc(canvas.width / 2, canvas.height / 2, 60, 0, Math.PI * 2);
+
+            const pW = 220, pH = 120;
+            ctx.rect(canvas.width / 2 - pW / 2, 10, pW, pH);
+            ctx.rect(canvas.width / 2 - pW / 2, canvas.height - 10 - pH, pW, pH);
+            ctx.stroke();
+
+            // 2点ゴールエリア
+            const gW = GOAL_WIDTH;
+            ctx.fillStyle = 'rgba(255, 235, 59, 0.25)';
+            ctx.fillRect(canvas.width / 2 - gW / 2, 0, gW, 10);
+            ctx.fillRect(canvas.width / 2 - gW / 2, canvas.height - 10, gW, 10);
+
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(canvas.width / 2 - gW / 2, 0, gW, 10);
+            ctx.strokeRect(canvas.width / 2 - gW / 2, canvas.height - 10, gW, 10);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText("SUPER GOAL", canvas.width / 2, 45);
+            ctx.fillText("SUPER GOAL", canvas.width / 2, canvas.height - 35);
+        }
+
+        function draw() {
+            drawPitch();
+
+            ctx.save();
+            ctx.translate(ball.x, ball.y);
+            ctx.rotate(ball.angle);
+            ctx.drawImage(imgBall, -ball.r, -ball.r, ball.r * 2, ball.r * 2);
+            ctx.restore();
+
+            // プレイヤー
+            ctx.save();
+            // 丸く切り抜く
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+            // 画像描画
+            ctx.drawImage(imgDog1, player.x - player.r, player.y - player.r, player.r * 2, player.r * 2);
+            ctx.restore();
+
+            // CPU (同じ向きに変更)
+            ctx.save();
+            ctx.translate(cpu.x, cpu.y);
+            // ctx.rotate(Math.PI); // ← この回転処理を削除しました
+            // 丸く切り抜く
+            ctx.beginPath();
+            ctx.arc(0, 0, cpu.r, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+            // 画像描画
+            ctx.drawImage(imgDog2, -cpu.r, -cpu.r, cpu.r * 2, cpu.r * 2);
+            ctx.restore();
+
+            if (gameState === 'goal') {
+                updateConfetti();
+                drawConfetti();
+            }
+        }
+
+        function loop() {
+            if (gameState !== 'menu') {
+                update();
+                draw();
+            }
+            requestAnimationFrame(loop);
+        }
+
+        resize();
+        resetPositions();
+        draw();
+
+    </script>
+</body>
+
+</html>
