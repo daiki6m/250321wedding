@@ -11,7 +11,7 @@ export const COLORS = {
     WHITE: "#ffffff"
 };
 
-export const INVITATION_URL = "https://www.piary.jp/web_invitation/LsRvZqUprWsYGaZunwIUlpug";
+export const INVITATION_URL = "https://www.piary.jp/web_invitation/rNQiimZR2rMp9UUZJOPgEvJ6";
 
 // --- Google Fonts Injection ---
 export const FontLink = () => (
