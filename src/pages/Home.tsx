@@ -1129,6 +1129,56 @@ const Home = () => {
                         ぜひご覧ください。
                     </p>
                     <div className="flex flex-col md:flex-row gap-6 justify-center">
+                        {/* 3D Gallery Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="w-full max-w-2xl mx-auto mb-12"
+                        >
+                            <Link to="/3d-gallery" className="block group">
+                                <motion.div
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="relative h-[300px] rounded-2xl overflow-hidden border border-white/20 shadow-2xl"
+                                >
+                                    {/* Background Image */}
+                                    <div className="absolute inset-0">
+                                        <img
+                                            src={`${import.meta.env.BASE_URL}gallery/04.jpg`}
+                                            alt="3D Gallery Background"
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500"></div>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
+                                        <motion.div
+                                            initial={{ y: 20, opacity: 0 }}
+                                            whileInView={{ y: 0, opacity: 1 }}
+                                            transition={{ delay: 0.2 }}
+                                        >
+                                            <h3 className="font-zen text-3xl md:text-4xl text-[#d4af37] mb-4 tracking-wider font-bold">
+                                                3D MEMORY TOUR
+                                            </h3>
+                                            <p className="font-shippori text-white/90 text-sm md:text-base mb-6 tracking-wide">
+                                                思い出の写真を3D空間で振り返る<br />
+                                                特別な体験をあなたに
+                                            </p>
+
+                                            <span className="inline-block px-8 py-3 border border-[#d4af37] text-[#d4af37] rounded-full font-zen tracking-widest group-hover:bg-[#d4af37] group-hover:text-white transition-all duration-300 text-sm">
+                                                START TOUR
+                                            </span>
+                                        </motion.div>
+                                    </div>
+                                </motion.div>
+                            </Link>
+                        </motion.div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row gap-6 justify-center">
                         <Link to="/gallery">
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
