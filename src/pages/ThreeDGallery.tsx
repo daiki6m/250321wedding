@@ -20,7 +20,7 @@ const ThreeDGallery = () => {
                     <motion.button
                         whileHover={{ scale: 1.05, x: -5 }}
                         whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white hover:bg-white/20 transition-colors shadow-lg"
+                        className="flex items-center gap-2 px-6 py-3 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white hover:bg-black/80 transition-colors shadow-lg"
                     >
                         <ArrowLeft className="w-5 h-5" />
                         <span className="font-zen tracking-widest text-sm">BACK TO GALLERY</span>
