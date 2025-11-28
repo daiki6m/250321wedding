@@ -88,12 +88,12 @@
             background: rgba(255, 255, 255, 0.98);
             border: 6px solid #1b5e20;
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
             pointer-events: auto;
             max-width: 90%;
-            width: 400px;
+            width: 420px;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -110,7 +110,7 @@
         }
 
         h1 {
-            margin: 0 0 15px 0;
+            margin: 0 0 10px 0;
             color: #1b5e20;
             font-size: 1.8rem;
             text-transform: uppercase;
@@ -119,37 +119,89 @@
 
         p {
             color: #444;
-            margin-bottom: 25px;
-            font-size: 1rem;
-            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
 
+        /* ボタン共通 */
         button {
-            background: linear-gradient(to bottom, #fdd835, #fbc02d);
-            color: #222;
             border: none;
-            padding: 18px 50px;
-            font-size: 1.4rem;
             border-radius: 50px;
             font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 6px 0 #f57f17;
             text-transform: uppercase;
             transition: transform 0.1s, box-shadow 0.1s;
-            width: 100%;
+            color: #fff;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
         }
 
         button:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #f57f17;
+            transform: translateY(3px);
         }
 
         button:hover {
             filter: brightness(1.1);
         }
 
+        /* 難易度ボタン */
+        .diff-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn-easy {
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            box-shadow: 0 4px 0 #33691E;
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        .btn-easy:active {
+            box-shadow: 0 2px 0 #33691E;
+        }
+
+        .btn-normal {
+            background: linear-gradient(to right, #FF9800, #FFC107);
+            box-shadow: 0 4px 0 #E65100;
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        .btn-normal:active {
+            box-shadow: 0 2px 0 #E65100;
+        }
+
+        .btn-hard {
+            background: linear-gradient(to right, #F44336, #FF5252);
+            box-shadow: 0 4px 0 #B71C1C;
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        .btn-hard:active {
+            box-shadow: 0 2px 0 #B71C1C;
+        }
+
+        /* リトライボタン */
+        #retryBtn {
+            background: linear-gradient(to bottom, #2196F3, #42A5F5);
+            box-shadow: 0 5px 0 #0D47A1;
+            padding: 18px 50px;
+            font-size: 1.4rem;
+            width: 100%;
+        }
+
+        #retryBtn:active {
+            box-shadow: 0 2px 0 #0D47A1;
+        }
+
+
         .control-hint {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 0.8rem;
             color: #666;
             background: #eee;
@@ -223,7 +275,7 @@
             }
         }
 
-        /* ★★★ 追加・修正：セリフ吹き出し ★★★ */
+        /* セリフ吹き出し */
         .speech-bubble {
             position: absolute;
             background: #fff;
@@ -235,7 +287,6 @@
             font-size: 1.4rem;
             pointer-events: none;
             white-space: nowrap;
-            /* ゴール演出(z-index:20)より手前に表示 */
             z-index: 30;
             opacity: 0;
             transform: translate(-50%, 0) scale(0.8);
@@ -328,7 +379,7 @@
         <div class="points-text" id="goalPoints">+1</div>
     </div>
 
-    <!-- ★★★ 追加：吹き出し用コンテナ ★★★ -->
+    <!-- 吹き出し用コンテナ -->
     <div id="cpuSpeech" class="speech-bubble bubble-cpu hidden"></div>
     <div id="playerSpeech" class="speech-bubble bubble-player hidden"></div>
 
@@ -336,11 +387,17 @@
         <div id="menu-screen" class="panel">
             <h1>Dog Soccer<br>Striker</h1>
             <p>
-                中央のゴールで <span style="color:#e65100; font-weight:bold; font-size:1.2em;">2点</span><br>
+                中央のゴールで <span style="color:#e65100; font-weight:bold; font-size:1.1em;">2点</span><br>
                 それ以外は <span style="color:#555; font-weight:bold;">1点</span><br>
                 先に <b>10点</b> 取った方の勝ち！
             </p>
-            <button id="startBtn">KICK OFF!</button>
+
+            <!-- 難易度選択ボタン -->
+            <div class="diff-buttons">
+                <button onclick="startGame('easy')" class="btn-easy">かんたん</button>
+                <button onclick="startGame('normal')" class="btn-normal">ふつう</button>
+                <button onclick="startGame('hard')" class="btn-hard">むずかしい</button>
+            </div>
 
             <div class="control-hint">
                 操作: マウス または <span class="key">←</span><span class="key">→</span><span class="key">↑</span><span
@@ -395,6 +452,7 @@
         const GOAL_WIDTH = 140;
 
         let gameState = 'menu';
+        let difficulty = 'normal'; // easy, normal, hard
 
         const ball = { x: 0, y: 0, vx: 0, vy: 0, r: 20, angle: 0 };
         const player = { x: 0, y: 0, r: 50, score: 0 };
@@ -402,7 +460,7 @@
 
         let confettis = [];
 
-        // ★★★ 追加：セリフ集 ★★★
+        // --- セリフ集 ---
         // CPUが失点した時（プレイヤーが得点）
         const cpuSadPhrases = [
             "あーっ！", "やめてー！", "うそーん", "まじか...", "守れない！",
@@ -421,7 +479,8 @@
         // プレイヤーが失点した時（悔しさ）
         const playerSadPhrases = [
             "あーっ！", "くそー！", "しまった！", "やられた...", "あぶない！",
-            "うそでしょ", "次は決める", "ドンマイ", "うわーん"
+            "うそでしょ", "次は決める", "ドンマイ", "うわーん",
+            "シュモのくせに生意気だー" // ★ 追加されたセリフ
         ];
 
         // キーボード入力管理
@@ -452,7 +511,9 @@
             cpu.y = 150;
         }
 
-        function startGame() {
+        // 引数で難易度を受け取る
+        function startGame(diff) {
+            difficulty = diff || 'normal';
             player.score = 0;
             cpu.score = 0;
             updateScoreBoard();
@@ -501,22 +562,40 @@
             else if (ball.y > canvas.height + ball.r) checkGoalScore('cpu');
 
             // 3. CPU AI
-            let aiSpeed = 3.5;
-            if (player.score > cpu.score) aiSpeed = 5.5; // 負けてると本気出す
-            else if (player.score === cpu.score) aiSpeed = 4.5;
+            // 難易度によるパラメータ調整
+            let aiSpeedBase = 4.0;
+            let reactionDist = 0; // 反応距離（大きいほど早く反応する）
+
+            if (difficulty === 'easy') {
+                aiSpeedBase = 2.5;
+                reactionDist = -50; // 近づかないと反応しない
+            } else if (difficulty === 'normal') {
+                aiSpeedBase = 4.0;
+                reactionDist = 0;
+            } else if (difficulty === 'hard') {
+                aiSpeedBase = 5.5;
+                reactionDist = 100; // 遠くても反応する
+            }
+
+            // 負けてると少し本気出す（ハンデ補正）
+            if (player.score > cpu.score) aiSpeedBase += 1.0;
 
             const homeX = canvas.width / 2;
             const homeY = 100;
 
-            if (ball.y < canvas.height * 0.6) {
+            // ボールが自分のコート(上半分 + reactionDist)にあるなら反応
+            if (ball.y < canvas.height * 0.6 + reactionDist) {
                 const dx = ball.x - cpu.x;
                 const dy = (ball.y - 20) - cpu.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
+
+                // easyの場合は少し反応を鈍くする（距離があっても動かない場合を作る）
                 if (dist > 5) {
-                    cpu.x += (dx / dist) * aiSpeed;
-                    cpu.y += (dy / dist) * aiSpeed;
+                    cpu.x += (dx / dist) * aiSpeedBase;
+                    cpu.y += (dy / dist) * aiSpeedBase;
                 }
             } else {
+                // 定位置に戻る
                 cpu.x += (homeX - cpu.x) * 0.08;
                 cpu.y += (homeY - cpu.y) * 0.08;
             }
@@ -602,7 +681,7 @@
             }, 2000);
         }
 
-        // ★★★ 追加・修正：汎用セリフ表示機能 ★★★
+        // --- セリフ表示機能 ---
         function showSpeech(element, phrases, charObj, type) {
             // ランダムにセリフを選択
             const text = phrases[Math.floor(Math.random() * phrases.length)];
@@ -616,7 +695,7 @@
                 element.style.top = (charObj.y + 70) + 'px';
             } else {
                 // プレイヤーは上に吹き出しを出す
-                element.style.top = (charObj.y - 70 - 40) + 'px'; // 40pxは吹き出しのおおよその高さ分
+                element.style.top = (charObj.y - 70 - 40) + 'px';
             }
 
             // 表示アニメーション
@@ -721,7 +800,7 @@
             handleInput(e.clientX, e.clientY);
         });
 
-        document.getElementById('startBtn').onclick = startGame;
+        // リトライボタン (難易度再選択のためにメニューへ戻る)
         document.getElementById('retryBtn').onclick = () => {
             gameOverScreen.classList.add('hidden');
             menuScreen.classList.remove('hidden');
@@ -793,7 +872,6 @@
             // CPU (同じ向きに変更)
             ctx.save();
             ctx.translate(cpu.x, cpu.y);
-            // ctx.rotate(Math.PI); // ← この回転処理を削除しました
             // 丸く切り抜く
             ctx.beginPath();
             ctx.arc(0, 0, cpu.r, 0, Math.PI * 2);
