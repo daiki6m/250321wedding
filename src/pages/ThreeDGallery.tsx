@@ -30,7 +30,7 @@ const ThreeDGallery = () => {
 
             {/* 3D Gallery Iframe */}
             <iframe
-                src={`${import.meta.env.BASE_URL}3Dgallery.html`}
+                src={`${import.meta.env.BASE_URL}3Dgallery.html?v=${Date.now()}`}
                 title="3D Gallery"
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
