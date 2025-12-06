@@ -1023,14 +1023,15 @@ const Home = () => {
                                 </motion.div>
                                 <h4 className="text-xl font-bold font-zen mb-2 text-white">シュモ (Shumo)</h4>
                                 <p className="text-sm mb-4 opacity-80" style={{ color: COLORS.BLUE }}>ミニチュアシュナウザー / 男の子
-                                    <br />2024.11.19 / 福岡出身</p>
+                                    <br />2025.3.12 / 福岡出身</p>
                                 <p className="text-sm text-gray-400 leading-relaxed font-shippori">
-                                    好奇心旺盛で遊び盛り、<br />
-                                    わが家の元気印。<br />
-                                    おもちゃを見つけると<br />
-                                    目を輝かせて駆け寄ってくる、<br />
-                                    やんちゃで愛らしい性格です。<br />
-                                    甘えん坊な一面もあって、<br />
+                                    一度見たら忘れられない・・・<br />
+                                    極上の”とろける顔”<br />
+                                    誰にでもトコトコとついて<br />
+                                    目を輝かせて駆け寄ってくる<br />
+                                    愛らしい性格です。<br />
+                                    最大の武器は、誰もを骨ぬきにするような、<br />
+                                    とろける顔での上目遣です。<br />
                                     撫でてほしいときは<br />
                                     じっと見つめてアピールしてきます。<br />
                                     その一生懸命な姿に、<br />
