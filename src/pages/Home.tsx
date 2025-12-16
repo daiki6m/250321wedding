@@ -899,7 +899,7 @@ const Home = () => {
                                 </motion.div>
                                 <h4 className="text-xl font-bold font-zen mb-2 text-white">ネモ (Nemo)</h4>
                                 <p className="text-sm mb-4 opacity-80" style={{ color: COLORS.ORANGE }}>トイプードル / 女の子
-                                    <br />2023.08.12 / 北海道出身</p>
+                                    <br />2023.08.12 / 北海道うまれ</p>
                                 <p className="text-sm text-gray-400 leading-relaxed font-shippori">
                                     明るく人懐っこい、<br />
                                     わが家の癒やし担当。<br />
@@ -1023,7 +1023,7 @@ const Home = () => {
                                 </motion.div>
                                 <h4 className="text-xl font-bold font-zen mb-2 text-white">シュモ (Shumo)</h4>
                                 <p className="text-sm mb-4 opacity-80" style={{ color: COLORS.BLUE }}>ミニチュアシュナウザー / 男の子
-                                    <br />2025.3.12 / 福岡出身</p>
+                                    <br />2025.3.12 / 佐賀うまれ</p>
                                 <p className="text-sm text-gray-400 leading-relaxed font-shippori">
                                     一度見たら忘れられない・・・<br />
                                     極上の”とろける顔”<br />
