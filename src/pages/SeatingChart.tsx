@@ -27,7 +27,7 @@ const SeatingChart = () => {
 
                 <h1 className="text-3xl font-bold mb-12 text-center flex items-center justify-center gap-4">
                     <Users className="text-[#F39800]" />
-                    <span>Seating Chart</span>
+                    <span>席次表</span>
                 </h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

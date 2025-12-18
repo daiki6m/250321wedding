@@ -12,7 +12,9 @@ import GuestPage from './pages/GuestPage';
 import SeatingChart from './pages/SeatingChart';
 
 export default function App() {
-    const [isLoading, setIsLoading] = useState(true);
+    // Skip loading screen if on seating or guest pages
+    const shouldShowLoading = !window.location.pathname.includes('/seating') && !window.location.pathname.includes('/guest');
+    const [isLoading, setIsLoading] = useState(shouldShowLoading);
 
     if (isLoading) {
         return (

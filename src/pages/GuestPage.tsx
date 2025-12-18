@@ -27,9 +27,9 @@ const GuestPage = () => {
             </div>
 
             <div className="relative z-10 max-w-2xl mx-auto p-8 pt-12">
-                <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-12 transition-colors">
+                <Link to="/seating" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-12 transition-colors">
                     <ArrowLeft size={20} />
-                    <span>トップへ戻る</span>
+                    <span>席次表に戻る</span>
                 </Link>
 
                 <motion.div
