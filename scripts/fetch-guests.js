@@ -142,7 +142,7 @@ async function fetchGuests() {
                             const filename = `${id}.${ext}`;
                             const filePath = path.join(imagesDir, filename);
                             fs.writeFileSync(filePath, Buffer.from(buffer));
-                            imageUrl = `/wedding/guest-images/${filename}`;
+                            imageUrl = `guest-images/${filename}`;
                         }
                     } catch (err) {
                         console.error(`❌ Failed to download image for ${name}:`, err.message);

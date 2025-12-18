@@ -59,9 +59,22 @@ const SeatingChart = () => {
                                     <li key={guest.id}>
                                         <Link
                                             to={`/guest?id=${guest.id}`}
-                                            className="block p-2 hover:bg-white/5 rounded transition-colors flex justify-between items-center group"
+                                            className="block p-2 hover:bg-white/5 rounded transition-colors flex items-center gap-3 group"
                                         >
-                                            <span>{guest.name}</span>
+                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex-shrink-0 border border-white/20">
+                                                {guest.image ? (
+                                                    <img
+                                                        src={import.meta.env.BASE_URL + guest.image}
+                                                        alt={guest.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                        <Users size={16} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <span className="flex-grow">{guest.name}</span>
                                             <span className="text-xs text-gray-500 group-hover:text-[#F39800] transition-colors">
                                                 View
                                             </span>

@@ -43,7 +43,7 @@ const GuestPage = () => {
                         {guest.image && (
                             <div className="mb-6">
                                 <img
-                                    src={guest.image}
+                                    src={import.meta.env.BASE_URL + guest.image}
                                     alt={guest.name}
                                     className="w-32 h-32 mx-auto rounded-full object-cover border-4 border-[#F39800]/20 shadow-lg"
                                 />
