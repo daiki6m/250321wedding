@@ -122,8 +122,8 @@ const Navigation = () => {
 };
 const Home = () => {
     const WEDDING_DATE = "2026-03-21T15:00:00";
-    // const isPostWedding = new Date() > new Date(WEDDING_DATE);
-    const isPostWedding = true; // For testing/demo purposes as requested
+    const isPostWedding = new Date() > new Date(WEDDING_DATE);
+    // const isPostWedding = true; // For testing/demo purposes as requested
     return (
         <>
             <Navigation />
