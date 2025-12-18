@@ -21,6 +21,9 @@ jobs:
           node-version: '20'
       - run: npm ci
       - run: npm run build
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
