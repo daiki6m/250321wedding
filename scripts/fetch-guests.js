@@ -22,14 +22,58 @@ async function fetchGuests() {
 
     const notion = new Client({ auth: NOTION_API_KEY });
 
+    // Helper to format UUID with dashes if missing
+    const formatUUID = (uuid) => {
+        if (uuid.includes("-")) return uuid;
+        return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20)}`;
+    };
+
+    const rawId = NOTION_DATABASE_ID;
+    const formattedId = formatUUID(rawId);
+
+    console.log(`🔍 Debugging ID: ${rawId} -> ${formattedId}`);
+
     try {
-        console.log("⏳ Fetching guests from Notion...");
-        const response = await notion.databases.query({
-            database_id: NOTION_DATABASE_ID,
+        // Step 1: Verify Database Access
+        console.log(`⏳ Verifying Database Access...`);
+        try {
+            const db = await notion.databases.retrieve({ database_id: formattedId });
+            console.log("✅ Database found:", db.title?.[0]?.plain_text || "Untitled");
+        } catch (e) {
+            console.error("❌ Database verification failed:", e.message);
+            // If database verification fails, we might try to check if it's a page, but usually we just want to fail or try query anyway.
+            // Let's check if it's a page just for info
+            try {
+                const page = await notion.pages.retrieve({ page_id: formattedId });
+                console.error("⚠️ The provided ID points to a PAGE, not a Database. Please create a Database inside this page or use a Database ID.");
+                process.exit(1);
+            } catch (pageError) {
+                // Ignore page error, original db error is more relevant
+            }
+            throw e; // Re-throw original error
+        }
+
+        // Step 2: Query Database
+        console.log("⏳ Fetching guests from Notion (using native fetch)...");
+
+        const response = await fetch(`https://api.notion.com/v1/databases/${formattedId}/query`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${NOTION_API_KEY}`,
+                "Notion-Version": "2022-06-28",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({}),
         });
 
-        const guests = response.results.map((page) => {
-            // Customize these property names based on your Notion Database columns
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Notion API Error: ${response.status} ${response.statusText} - ${errText}`);
+        }
+
+        const data = await response.json();
+
+        const guests = data.results.map((page) => {
             const props = page.properties;
             return {
                 id: page.id,
@@ -40,8 +84,6 @@ async function fetchGuests() {
         });
 
         const outputPath = path.join(__dirname, "../src/data/guests.json");
-
-        // Ensure directory exists
         const dir = path.dirname(outputPath);
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
@@ -51,7 +93,7 @@ async function fetchGuests() {
         console.log(`✅ Successfully fetched ${guests.length} guests and saved to src/data/guests.json`);
 
     } catch (error) {
-        console.error("❌ Error fetching from Notion:", error);
+        console.error("❌ Error fetching from Notion:", error.message);
         process.exit(1);
     }
 }
