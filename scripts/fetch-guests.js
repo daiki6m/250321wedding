@@ -10,8 +10,8 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const NOTION_API_KEY = process.env.NOTION_API_KEY;
-const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
+const NOTION_API_KEY = process.env.NOTION_API_KEY ? process.env.NOTION_API_KEY.trim() : "";
+const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID ? process.env.NOTION_DATABASE_ID.trim() : "";
 
 async function fetchGuests() {
     if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
@@ -150,7 +150,20 @@ async function fetchGuests() {
 
     } catch (error) {
         console.error("❌ Error fetching from Notion:", error.message);
-        process.exit(1);
+        console.warn("⚠️ Continuing build with existing or empty data to prevent deployment failure.");
+
+        // Ensure guests.json exists even if fetch failed
+        const outputPath = path.join(__dirname, "../src/data/guests.json");
+        if (!fs.existsSync(outputPath)) {
+            const dir = path.dirname(outputPath);
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+            }
+            fs.writeFileSync(outputPath, JSON.stringify([], null, 2));
+            console.log("⚠️ Created empty guests.json as fallback.");
+        }
+        // Do NOT exit with 1, allow build to continue
+        process.exit(0);
     }
 }
 
