@@ -14,6 +14,17 @@ const SeatingChart = () => {
         return acc;
     }, {} as Record<string, typeof guestsData>);
 
+    // Sort guests within each group by tableOrder
+    Object.keys(tables).forEach(group => {
+        tables[group].sort((a, b) => {
+            // @ts-ignore - tableOrder field exists
+            const orderA = parseInt(a.tableOrder || "0", 10);
+            // @ts-ignore
+            const orderB = parseInt(b.tableOrder || "0", 10);
+            return orderA - orderB;
+        });
+    });
+
     return (
         <div className="min-h-screen bg-[#050505] text-white font-zen relative overflow-hidden p-8 pt-12">
             <div className="absolute inset-0 pointer-events-none opacity-10">

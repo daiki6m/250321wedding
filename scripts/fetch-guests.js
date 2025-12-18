@@ -113,11 +113,18 @@ async function fetchGuests() {
 
             const name = getText(props['名前']) || "Unknown";
             const table = getText(props['テーブル番号']);
-            const group = getText(props['テーブル']); // New grouping column (A, B, C...)
+            const group = getText(props['テーブル']);
+            const tableOrder = getText(props['テーブル内No.']); // Fetch sort order
             const message = getText(props['メッセージ']);
             const title = getText(props['肩書き']);
             const birthMonth = getText(props['誕生月']);
             const relationship = getText(props['間柄']);
+            const participation = getText(props['参加']); // Fetch participation status
+
+            // Skip if not attending
+            if (participation !== '出席') {
+                continue;
+            }
 
             let imageUrl = null;
             const imageProp = props['イメージ'];
@@ -148,6 +155,7 @@ async function fetchGuests() {
                 name,
                 table,
                 group, // Add group to output
+                tableOrder, // Add to output
                 message,
                 title,
                 birthMonth,
