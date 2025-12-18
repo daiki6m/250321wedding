@@ -5,11 +5,12 @@ import guestsData from '../data/guests.json';
 // import { COLORS } from '../components/Shared';
 
 const SeatingChart = () => {
-    // Group guests by table
+    // Group guests by table group (A, B, C...)
     const tables = guestsData.reduce((acc, guest) => {
-        const table = guest.table || "Other";
-        if (!acc[table]) acc[table] = [];
-        acc[table].push(guest);
+        // @ts-ignore - group field exists in updated JSON
+        const group = guest.group || "Other";
+        if (!acc[group]) acc[group] = [];
+        acc[group].push(guest);
         return acc;
     }, {} as Record<string, typeof guestsData>);
 
@@ -31,16 +32,16 @@ const SeatingChart = () => {
                 </h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {Object.entries(tables).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true })).map(([tableName, guests]) => (
+                    {Object.entries(tables).sort(([a], [b]) => a.localeCompare(b)).map(([groupName, guests]) => (
                         <motion.div
-                            key={tableName}
+                            key={groupName}
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                             className="bg-white/5 border border-white/10 rounded-xl p-6"
                         >
                             <h2 className="text-xl font-bold mb-4 text-[#2E7BF4] border-b border-white/10 pb-2">
-                                Table {tableName}
+                                Table {groupName}
                             </h2>
                             <ul className="space-y-3">
                                 {guests.map(guest => (

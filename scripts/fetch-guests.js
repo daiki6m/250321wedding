@@ -113,6 +113,7 @@ async function fetchGuests() {
 
             const name = getText(props['名前']) || "Unknown";
             const table = getText(props['テーブル番号']);
+            const group = getText(props['テーブル']); // New grouping column (A, B, C...)
             const message = getText(props['メッセージ']);
             const title = getText(props['肩書き']);
             const birthMonth = getText(props['誕生月']);
@@ -146,6 +147,7 @@ async function fetchGuests() {
                 id,
                 name,
                 table,
+                group, // Add group to output
                 message,
                 title,
                 birthMonth,
