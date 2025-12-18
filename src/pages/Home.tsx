@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Calendar, ExternalLink, ArrowDown, PawPrint, Car, Building, Info, Menu, X } from 'lucide-react';
+import { MapPin, Calendar, ExternalLink, ArrowDown, PawPrint, Car, Building, Info, Menu, X, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { COLORS, SoccerBall, SectionHeading, CountdownTimer, INVITATION_URL } from '../components/Shared';
@@ -121,6 +121,9 @@ const Navigation = () => {
     );
 };
 const Home = () => {
+    const WEDDING_DATE = "2026-03-21T15:00:00";
+    // const isPostWedding = new Date() > new Date(WEDDING_DATE);
+    const isPostWedding = true; // For testing/demo purposes as requested
     return (
         <>
             <Navigation />
@@ -423,14 +426,26 @@ const Home = () => {
                         Nagasaki StadiumCityHotel
                     </motion.p>
 
-                    {/* Countdown Timer */}
+                    {/* Countdown Timer or Post-Wedding Menu */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 5.0, duration: 1 }}
                         className="mb-12"
                     >
-                        <CountdownTimer targetDate="2026-03-21T15:00:00" />
+                        {isPostWedding ? (
+                            <div className="flex flex-col items-center gap-6">
+                                <p className="font-zen text-xl md:text-2xl text-white tracking-widest animate-pulse">
+                                    Welcome to our Wedding
+                                </p>
+                                <Link to="/seating" className="px-8 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
+                                    <Users size={20} />
+                                    <span>Seating Chart</span>
+                                </Link>
+                            </div>
+                        ) : (
+                            <CountdownTimer targetDate={WEDDING_DATE} />
+                        )}
                     </motion.div>
 
                     <motion.div

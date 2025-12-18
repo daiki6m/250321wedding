@@ -14,9 +14,19 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #f7f7f9;
+            background-color: #ffffff;
+            /* White background base */
             font-family: 'Zen Mincho', serif;
             color: #333;
+        }
+
+        /* Canvas (3D Scene) */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            outline: none;
         }
 
         /* Loading Overlay */
@@ -76,6 +86,23 @@
             padding: 40px;
             box-sizing: border-box;
             z-index: 10;
+        }
+
+        /* Background Image */
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.nagasakistadiumcity.com/wp-content/themes/stadiumcity/images/top/front_top_sp.webp?20250422');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            /* Faintly displayed */
+            z-index: 0;
+            /* Behind canvas but on top of body bg */
+            pointer-events: none;
         }
 
         /* Back Button Style - Hidden in iframe */
@@ -139,13 +166,21 @@
         .controls {
             text-align: center;
             pointer-events: auto;
-            margin-bottom: 20px;
+            /* margin-bottom: 20px; Removed as we use absolute positioning */
             opacity: 0;
             animation: fadeIn 2s ease 1.5s forwards;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
+
+            /* Force to bottom */
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            z-index: 20;
+            /* Ensure above everything */
         }
 
         .btn-overview {
@@ -273,6 +308,8 @@
 
 <body>
 
+    <div class="bg-image"></div>
+
     <div id="loader">
         <div class="loader-content">
             <div class="spinner"></div>
@@ -286,424 +323,458 @@
             <a href="index.html" class="btn-back">← BACK TO HOME</a>
         </div>
 
-        <header>
+        <header style="top: 100px;">
             <div class="subtitle">Wedding Gallery</div>
             <h1>Daiki & Maki</h1>
         </header>
 
         <div class="controls">
-            <div class="scroll-hint">SCROLL or START TOUR</div>
-            <button id="overviewBtn" class="btn-overview">AUTO TOUR</button>
-
-            <div class="speed-control">
-                <label for="speedSlider" class="speed-label">Tour Speed</label>
-                <input type="range" id="speedSlider" min="1" max="10" value="3" step="1">
+            <button id="overviewBtn" class="btn-overview">STOP TOUR</button>
+            <div class="slider-container">
+                <span style="color:#bfa67a; font-size:0.8rem;">SLOW</span>
+                <input type="range" id="speedSlider" min="1" max="10" value="5" class="slider">
+                <span style="color:#bfa67a; font-size:0.8rem;">FAST</span>
             </div>
         </div>
-    </div>
 
-    <div class="progress-bar">
-        <div class="progress-fill" id="progress"></div>
-    </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
 
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <!-- Three.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <script>
-        // --- Configuration ---
-        const CONFIG = {
-            spiralRadius: 18,
-            verticalStep: 8.5,
-            angleStep: 0.6,
-            imageCount: 27, // Updated to match actual file count (00 to 26)
-            imageWidth: 9,
-            imageHeight: 6,
-            scrollSpeed: 0.002,
-            autoScrollSpeed: 0.005,  // Default VERY slow
-            damping: 0.08,
-            bgColor: 0xf7f7f9,
-            fogColor: 0xf7f7f9,
-            goldColor: 0xd4af37
-        };
+        <script>
+            // --- Configuration ---
+            const CONFIG = {
+                spiralRadius: 18,
+                verticalStep: 8.5,
+                angleStep: 0.6,
+                imageCount: 26, // Reduced count (removed 07)
+                imageWidth: 9,
+                imageHeight: 6,
+                scrollSpeed: 0.001,
+                autoScrollSpeed: 0.0009,  // Default Medium (Slider 5)
+                damping: 0.08,
+                bgColor: 0xf7f7f9,
+                fogColor: 0xf7f7f9,
+                goldColor: 0xd4af37
+            };
 
-        // --- Mock Data: Comments ---
-        const MEMORIES = [
-            { date: "2020.12.24", text: "初めてのデート\n横浜のクリスマス" },
-            { date: "2021.04.10", text: "桜並木での散歩\n春の風が心地よかった" },
-            { date: "2021.08.15", text: "夏の海\n二人で見た夕日" },
-            { date: "2021.12.25", text: "1周年の記念日\nお気に入りのレストラン" },
-            { date: "2022.02.14", text: "バレンタイン\n手作りチョコありがとう" },
-            { date: "2022.05.05", text: "GW旅行\n京都の街並み" },
-            { date: "2022.09.20", text: "友人の結婚式\n次は私たちの番だね" },
-            { date: "2023.01.01", text: "初詣\nおみくじは大吉！" },
-            { date: "2023.06.12", text: "プロポーズ\n一生の思い出" },
-            { date: "2023.08.01", text: "入籍しました\n新しい苗字" },
-            { date: "2023.10.15", text: "前撮り\n緊張したけど楽しかった" },
-            // ...以降はランダムに生成
-        ];
+            // --- Mock Data: Comments ---
+            // ここを編集して写真のコメントを変更してください
+            const MEMORIES = [
+                { text: "長崎 時津\nスターバックスで知り合う" }, // photo00.jpg
+                { text: "お互いに惹かれ合い\nお付き合いスタート" }, // photo01.jpg
+                { text: "スタジアムシティの見学会\nみんなでの集合写真" }, // photo02.jpg
+                { text: "大樹転職 大阪と長崎\n遠距離恋愛がスタート" }, // photo03.jpg
+                { text: "大阪に遊びにきてくれました" }, // photo04.jpg
+                { text: "京都の街並み\nいっぱい観光しました" }, // photo05.jpg
+                { text: "紅葉が綺麗だったね" }, // photo06.jpg
+                // photo07.jpg removed
+                { text: "この日は色々なところへ\nほんとに楽しかった" }, // photo08.jpg
+                { text: "いろんなところへ\n旅行へいきました" }, // photo09.jpg
+                { text: "転職しても極力長崎へ\n稲佐山で" }, // photo10.jpg
+                { text: "スタジアムシティ\nオトナなジャズライブ" }, // photo11.jpg
+                { text: "ハリーポッター\n色々なところへ行きました" }, // photo12.jpg
+                { text: "プロポーズ\nスタジアムシティホテルで" }, // photo13.jpg
+                { text: "スタジアムシティホテルで\n両家顔合わせ" }, // photo14.jpg
+                { text: "今でも\n思い出に残っています" }, // photo15.jpg
+                { text: "みーちゃん夫婦と\nデブ活w" }, // photo16.jpg
+                { text: "いろんなところへ\n美味しいものを食べに行ったね" }, // photo17.jpg
+                { text: "集まったらずっと麻雀\n楽しい時間です笑" }, // photo18.jpg
+                { text: "2025年3月3日\n入籍をしました" }, // photo19.jpg
+                { text: "5月から\n福岡での生活が始まりました" }, // photo20.jpg
+                { text: "ネモとも旅行を\nこれからも一緒です" }, // photo21.jpg
+                { text: "シュモをお迎えしました\nなんだかんだ仲良し" }, // photo22.jpg
+                { text: "2025年11月\n新婚旅行" }, // photo23.jpg
+                { text: "北海道は寒かったね\nでも素敵な思い出" }, // photo24.jpg
+                { text: "旅行先でも\nネモを思い出しました笑" }, // photo25.jpg
+                { text: "そして今に至ります\n次は結婚式!" }, // photo26.jpg
+            ];
 
-        // --- State ---
-        let scene, camera, renderer;
-        let spiralGroup, particlesGroup;
-        let photos = [];
-        let clock = new THREE.Clock();
+            // --- State ---
+            let scene, camera, renderer;
+            let spiralGroup, particlesGroup;
+            let photos = [];
+            let clock = new THREE.Clock();
 
-        // Scroll & Camera State
-        let scrollProgress = 0;
-        let targetProgress = 0;
-        let isAutoTour = false;
+            // Scroll & Camera State
+            let scrollProgress = 0;
+            let targetProgress = 0;
+            let isAutoTour = true; // Auto-play on load
 
-        // --- Initialization ---
-        function init() {
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(CONFIG.bgColor);
-            scene.fog = new THREE.FogExp2(CONFIG.fogColor, 0.010);
+            // Detect Mobile
+            const isMobile = window.innerWidth < 768;
 
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            // --- Initialization ---
+            function init() {
+                scene = new THREE.Scene();
+                // scene.background = new THREE.Color(CONFIG.bgColor); // Removed for transparent background
+                scene.fog = new THREE.FogExp2(CONFIG.fogColor, 0.010);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.1;
-            document.body.appendChild(renderer.domElement);
+                camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-            setupLights();
-            createStylishSpiral();
-            createAmbientParticles();
-            createFloor();
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                // Reduce pixel ratio on mobile for performance
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
 
-            window.addEventListener('resize', onResize);
-            document.addEventListener('wheel', onWheel, { passive: false });
-            document.addEventListener('touchstart', onTouchStart, { passive: false });
-            document.addEventListener('touchmove', onTouchMove, { passive: false });
-
-            document.getElementById('overviewBtn').addEventListener('click', toggleAutoTour);
-
-            // Slider Event Listener
-            const slider = document.getElementById('speedSlider');
-            slider.addEventListener('input', (e) => {
-                const val = parseInt(e.target.value);
-                // Map slider 1-10 to VERY slow range
-                CONFIG.autoScrollSpeed = 0.001 + (val - 1) * 0.002;
-            });
-
-            animate();
-
-            setTimeout(() => {
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => document.getElementById('loader').remove(), 1200);
-            }, 1000);
-        }
-
-        // --- Lighting ---
-        function setupLights() {
-            const ambient = new THREE.AmbientLight(0xffffff, 0.7);
-            scene.add(ambient);
-
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(50, 100, 50);
-            dirLight.castShadow = true;
-            dirLight.shadow.mapSize.width = 2048;
-            dirLight.shadow.mapSize.height = 2048;
-            dirLight.shadow.camera.near = 0.5;
-            dirLight.shadow.camera.far = 500;
-            const d = 60;
-            dirLight.shadow.camera.left = -d;
-            dirLight.shadow.camera.right = d;
-            dirLight.shadow.camera.top = d;
-            dirLight.shadow.camera.bottom = -d;
-            dirLight.shadow.bias = -0.0001;
-            scene.add(dirLight);
-
-            const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.3);
-            hemiLight.position.set(0, 50, 0);
-            scene.add(hemiLight);
-        }
-
-        function createFloor() {
-            const geometry = new THREE.PlaneGeometry(500, 500);
-            const material = new THREE.MeshStandardMaterial({
-                color: CONFIG.bgColor,
-                roughness: 0.8,
-                metalness: 0.1
-            });
-            const floor = new THREE.Mesh(geometry, material);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -5;
-            floor.receiveShadow = true;
-            scene.add(floor);
-        }
-
-        // --- Spiral Gallery ---
-        function createStylishSpiral() {
-            spiralGroup = new THREE.Group();
-            scene.add(spiralGroup);
-
-            const textureLoader = new THREE.TextureLoader();
-
-            // Frame Material
-            const frameMat = new THREE.MeshStandardMaterial({
-                color: CONFIG.goldColor,
-                roughness: 0.4,
-                metalness: 0.8
-            });
-
-            // Spiral Line (Path)
-            const points = [];
-            for (let i = 0; i <= CONFIG.imageCount * 1.5; i++) {
-                const angle = i * CONFIG.angleStep * 0.5; // More samples
-                const h = i * CONFIG.verticalStep * 0.5;
-                const r = CONFIG.spiralRadius - 2;
-                points.push(new THREE.Vector3(Math.cos(angle) * r, h, Math.sin(angle) * r));
-            }
-            // Create a smoother path visually using tube
-            const curvePoints = [];
-            for (let i = 0; i < CONFIG.imageCount + 5; i++) {
-                const angle = i * CONFIG.angleStep;
-                const h = i * CONFIG.verticalStep;
-                const r = CONFIG.spiralRadius - 2;
-                curvePoints.push(new THREE.Vector3(Math.cos(angle) * r, h, Math.sin(angle) * r));
-            }
-            const curve = new THREE.CatmullRomCurve3(curvePoints);
-            const tubeGeo = new THREE.TubeGeometry(curve, CONFIG.imageCount * 5, 0.08, 8, false);
-            const tubeMat = new THREE.MeshBasicMaterial({ color: CONFIG.goldColor, transparent: true, opacity: 0.3 });
-            const tube = new THREE.Mesh(tubeGeo, tubeMat);
-            spiralGroup.add(tube);
-
-            // Photos & Comments
-            for (let i = 0; i < CONFIG.imageCount; i++) {
-                const angle = i * CONFIG.angleStep;
-                const height = i * CONFIG.verticalStep;
-
-                const x = Math.cos(angle) * CONFIG.spiralRadius;
-                const z = Math.sin(angle) * CONFIG.spiralRadius;
-
-                const photoGroup = new THREE.Group();
-                photoGroup.position.set(x, height, z);
-
-                // Look at center, then rotate to face "path" direction roughly
-                photoGroup.lookAt(0, height, 0);
-                photoGroup.rotation.y += Math.PI;
-
-                // 1. Photo Mesh
-                const pGeo = new THREE.PlaneGeometry(CONFIG.imageWidth, CONFIG.imageHeight);
-                // Canvas for placeholder
-                const pCanvas = document.createElement('canvas');
-                pCanvas.width = 600; pCanvas.height = 400;
-                const ctx = pCanvas.getContext('2d');
-                ctx.fillStyle = '#f0f0f0'; ctx.fillRect(0, 0, 600, 400);
-                ctx.fillStyle = '#fff'; ctx.font = '30px Serif';
-                ctx.textAlign = 'center'; ctx.fillText('Photo ' + (i + 1), 300, 200);
-                const tex = new THREE.CanvasTexture(pCanvas);
-
-                // Image Loading Logic
-                // Use images from 3DgalleryImeges folder
-                const numStr = i.toString().padStart(2, '0');
-                const imageUrl = `3DgalleryImeges/photo${numStr}.jpg`;
-
-                textureLoader.load(imageUrl, (t) => {
-                    t.encoding = THREE.sRGBEncoding;
-                    photoMat.map = t;
-                    photoMat.needsUpdate = true;
-                }, undefined, (err) => {
-                    console.error("画像の読み込みに失敗しました:", imageUrl);
-                });
-
-                const photoMat = new THREE.MeshLambertMaterial({ map: tex });
-                const photoMesh = new THREE.Mesh(pGeo, photoMat);
-                photoMesh.castShadow = true;
-                // Shift photo to the LEFT slightly relative to group center
-                photoMesh.position.x = -CONFIG.imageWidth * 0.25;
-                photoGroup.add(photoMesh);
-                photos.push(photoMesh);
-
-                // Frame
-                const fGeo = new THREE.BoxGeometry(CONFIG.imageWidth + 0.2, CONFIG.imageHeight + 0.2, 0.1);
-                const frameMesh = new THREE.Mesh(fGeo, frameMat);
-                frameMesh.position.set(-CONFIG.imageWidth * 0.25, 0, -0.1);
-                frameMesh.castShadow = true;
-                photoGroup.add(frameMesh);
-
-                // 2. Comment Card (To the RIGHT of the photo)
-                const cWidth = 4;
-                const cHeight = 3;
-                const cGeo = new THREE.PlaneGeometry(cWidth, cHeight);
-
-                // Generate Comment Texture
-                const memory = MEMORIES[i] || { date: "2024.12.24", text: "Happy Memories\nForever" };
-                const cCanvas = document.createElement('canvas');
-                cCanvas.width = 400; cCanvas.height = 300;
-                const cCtx = cCanvas.getContext('2d');
-
-                // Card Background (Glassy White)
-                cCtx.fillStyle = "rgba(255, 255, 255, 0.95)";
-                cCtx.fillRect(0, 0, 400, 300);
-
-                // Border
-                cCtx.strokeStyle = "#d4af37";
-                cCtx.lineWidth = 4;
-                cCtx.strokeRect(10, 10, 380, 280);
-
-                // Text
-                cCtx.fillStyle = "#333";
-                cCtx.textAlign = "center";
-                cCtx.textBaseline = "middle";
-
-                // Date (Serif, Gold)
-                cCtx.font = "bold 40px 'Times New Roman', serif";
-                cCtx.fillStyle = "#bfa67a";
-                cCtx.fillText(memory.date, 200, 80);
-
-                // Body (Mincho, Black)
-                cCtx.font = "30px serif";
-                cCtx.fillStyle = "#555";
-                // Simple line wrapping
-                const lines = memory.text.split('\n');
-                let lineY = 160;
-                lines.forEach(line => {
-                    cCtx.fillText(line, 200, lineY);
-                    lineY += 50;
-                });
-
-                const cTex = new THREE.CanvasTexture(cCanvas);
-                const commentMat = new THREE.MeshBasicMaterial({ map: cTex, transparent: true });
-                const commentMesh = new THREE.Mesh(cGeo, commentMat);
-
-                // Position relative to Photo (Right side)
-                commentMesh.position.set(CONFIG.imageWidth * 0.45, -1, 0.2);
-                commentMesh.rotation.z = -0.05;
-                photoGroup.add(commentMesh);
-
-                spiralGroup.add(photoGroup);
-            }
-        }
-
-        // --- Particles ---
-        function createAmbientParticles() {
-            particlesGroup = new THREE.Group();
-            scene.add(particlesGroup);
-            const count = 1000;
-            const geo = new THREE.BufferGeometry();
-            const pos = [];
-            for (let i = 0; i < count; i++) {
-                const x = (Math.random() - 0.5) * 120;
-                const y = Math.random() * CONFIG.imageCount * CONFIG.verticalStep;
-                const z = (Math.random() - 0.5) * 120;
-                pos.push(x, y, z);
-            }
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({
-                color: CONFIG.goldColor, size: 0.15, transparent: true, opacity: 0.6
-            });
-            const points = new THREE.Points(geo, mat);
-            particlesGroup.add(points);
-        }
-
-        // --- Logic ---
-        function toggleAutoTour() {
-            isAutoTour = !isAutoTour;
-            const btn = document.getElementById('overviewBtn');
-            if (isAutoTour) {
-                btn.textContent = "STOP TOUR";
-                if (Math.abs(targetProgress - (CONFIG.imageCount - 1)) < 1) {
-                    targetProgress = 0;
-                    scrollProgress = 0;
+                // Disable shadows on mobile for performance
+                renderer.shadowMap.enabled = !isMobile;
+                if (!isMobile) {
+                    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
                 }
-            } else {
-                btn.textContent = "AUTO TOUR";
+
+                renderer.toneMapping = THREE.NoToneMapping; // Restore original colors
+                // renderer.toneMappingExposure = 1.1;
+                renderer.outputEncoding = THREE.sRGBEncoding; // Ensure sRGB output
+                document.body.appendChild(renderer.domElement);
+
+                setupLights();
+                createStylishSpiral();
+                createAmbientParticles();
+                createFloor();
+
+                window.addEventListener('resize', onResize);
+                document.addEventListener('wheel', onWheel, { passive: false });
+                document.addEventListener('touchstart', onTouchStart, { passive: false });
+                document.addEventListener('touchmove', onTouchMove, { passive: false });
+
+                document.getElementById('overviewBtn').addEventListener('click', toggleAutoTour);
+
+                // Slider Event Listener
+                const slider = document.getElementById('speedSlider');
+                // Set initial slider value to match new default (approx value 2)
+                slider.value = "2";
+
+                slider.addEventListener('input', (e) => {
+                    const val = parseInt(e.target.value);
+                    // Map slider 1-10 to SUPER slow range
+                    // Min (1): 0.0001, Max (10): 0.002
+                    CONFIG.autoScrollSpeed = 0.0001 + (val - 1) * 0.0002;
+                });
+
+                animate();
+
+                setTimeout(() => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loader').remove(), 1200);
+                }, 1000);
             }
-        }
 
-        function onWheel(e) {
-            if (isAutoTour) {
-                isAutoTour = false; // Stop tour if user interacts
-                document.getElementById('overviewBtn').textContent = "AUTO TOUR";
+            // --- Lighting ---
+            function setupLights() {
+                const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+                scene.add(ambient);
+
+                const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                dirLight.position.set(50, 100, 50);
+
+                // Only cast shadows on desktop
+                if (!isMobile) {
+                    dirLight.castShadow = true;
+                    dirLight.shadow.mapSize.width = 2048;
+                    dirLight.shadow.mapSize.height = 2048;
+                    dirLight.shadow.camera.near = 0.5;
+                    dirLight.shadow.camera.far = 500;
+                    const d = 60;
+                    dirLight.shadow.camera.left = -d;
+                    dirLight.shadow.camera.right = d;
+                    dirLight.shadow.camera.top = d;
+                    dirLight.shadow.camera.bottom = -d;
+                    dirLight.shadow.bias = -0.0001;
+                }
+                scene.add(dirLight);
+
+                const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.3);
+                hemiLight.position.set(0, 50, 0);
+                scene.add(hemiLight);
             }
-            e.preventDefault();
-            targetProgress += e.deltaY * CONFIG.scrollSpeed * 0.2;
-            targetProgress = Math.max(0, Math.min(CONFIG.imageCount - 1, targetProgress));
-        }
 
-        let touchStartY = 0;
-        function onTouchStart(e) { touchStartY = e.touches[0].clientY; }
-        function onTouchMove(e) {
-            if (isAutoTour) {
-                isAutoTour = false;
-                document.getElementById('overviewBtn').textContent = "AUTO TOUR";
+            function createFloor() {
+                const geometry = new THREE.PlaneGeometry(500, 500);
+                // Use ShadowMaterial to make floor transparent but keep shadows
+                const material = new THREE.ShadowMaterial({
+                    opacity: 0.3
+                });
+                const floor = new THREE.Mesh(geometry, material);
+                floor.rotation.x = -Math.PI / 2;
+                floor.position.y = -5;
+                if (!isMobile) floor.receiveShadow = true;
+                scene.add(floor);
             }
-            const d = touchStartY - e.touches[0].clientY;
-            targetProgress += d * CONFIG.scrollSpeed * 0.4;
-            targetProgress = Math.max(0, Math.min(CONFIG.imageCount - 1, targetProgress));
-            touchStartY = e.touches[0].clientY;
-        }
 
-        function onResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
+            // --- Spiral Gallery ---
+            function createStylishSpiral() {
+                spiralGroup = new THREE.Group();
+                scene.add(spiralGroup);
 
-        // --- Animation Loop ---
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = clock.getElapsedTime();
+                const textureLoader = new THREE.TextureLoader();
 
-            // Auto Tour Logic
-            if (isAutoTour) {
-                targetProgress += CONFIG.autoScrollSpeed;
-                if (targetProgress >= CONFIG.imageCount - 0.5) {
-                    targetProgress = CONFIG.imageCount - 1;
+                // Frame Material
+                const frameMat = new THREE.MeshStandardMaterial({
+                    color: CONFIG.goldColor,
+                    roughness: 0.4,
+                    metalness: 0.8
+                });
+
+                // Spiral Line (Path)
+                const points = [];
+                for (let i = 0; i <= CONFIG.imageCount * 1.5; i++) {
+                    const angle = i * CONFIG.angleStep * 0.5; // More samples
+                    const h = i * CONFIG.verticalStep * 0.5;
+                    const r = CONFIG.spiralRadius - 2;
+                    points.push(new THREE.Vector3(Math.cos(angle) * r, h, Math.sin(angle) * r));
+                }
+                // Create a smoother path visually using tube
+                const curvePoints = [];
+                for (let i = 0; i < CONFIG.imageCount + 5; i++) {
+                    const angle = i * CONFIG.angleStep;
+                    const h = i * CONFIG.verticalStep;
+                    const r = CONFIG.spiralRadius - 2;
+                    curvePoints.push(new THREE.Vector3(Math.cos(angle) * r, h, Math.sin(angle) * r));
+                }
+                const curve = new THREE.CatmullRomCurve3(curvePoints);
+                const tubeGeo = new THREE.TubeGeometry(curve, CONFIG.imageCount * 5, 0.08, 8, false);
+                const tubeMat = new THREE.MeshBasicMaterial({ color: CONFIG.goldColor, transparent: true, opacity: 0.3 });
+                const tube = new THREE.Mesh(tubeGeo, tubeMat);
+                spiralGroup.add(tube);
+
+                // Photos & Comments
+                for (let i = 0; i < CONFIG.imageCount; i++) {
+                    const angle = i * CONFIG.angleStep;
+                    const height = i * CONFIG.verticalStep;
+
+                    const x = Math.cos(angle) * CONFIG.spiralRadius;
+                    const z = Math.sin(angle) * CONFIG.spiralRadius;
+
+                    const photoGroup = new THREE.Group();
+                    photoGroup.position.set(x, height, z);
+
+                    // Look at center, then rotate to face "path" direction roughly
+                    photoGroup.lookAt(0, height, 0);
+                    photoGroup.rotation.y += Math.PI;
+
+                    // 1. Photo Mesh
+                    const pGeo = new THREE.PlaneGeometry(CONFIG.imageWidth, CONFIG.imageHeight);
+                    // Canvas for placeholder (Simple grey box)
+                    const pCanvas = document.createElement('canvas');
+                    pCanvas.width = 600; pCanvas.height = 400;
+                    const ctx = pCanvas.getContext('2d');
+                    ctx.fillStyle = '#f0f0f0'; ctx.fillRect(0, 0, 600, 400);
+                    // Optional: Add a subtle border or logo if desired, but simple is fine
+                    ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 20; ctx.strokeRect(0, 0, 600, 400);
+                    const tex = new THREE.CanvasTexture(pCanvas);
+
+                    // Image Loading Logic
+                    // Use images from 3DgalleryImeges folder
+                    let fileIndex = i;
+                    if (i >= 7) fileIndex++; // Skip photo07
+                    const numStr = fileIndex.toString().padStart(2, '0');
+                    const imageUrl = `3DgalleryImeges/photo${numStr}.jpg`;
+
+                    textureLoader.load(imageUrl, (t) => {
+                        t.encoding = THREE.sRGBEncoding;
+                        photoMat.map = t;
+                        photoMat.needsUpdate = true;
+                    }, undefined, (err) => {
+                        console.warn("Image missing, keeping placeholder:", imageUrl);
+                    });
+
+                    const photoMat = new THREE.MeshLambertMaterial({ map: tex });
+                    const photoMesh = new THREE.Mesh(pGeo, photoMat);
+                    if (!isMobile) photoMesh.castShadow = true;
+                    // Shift photo to the LEFT slightly relative to group center
+                    photoMesh.position.x = -CONFIG.imageWidth * 0.25;
+                    photoGroup.add(photoMesh);
+                    photos.push(photoMesh);
+
+                    // Frame
+                    const fGeo = new THREE.BoxGeometry(CONFIG.imageWidth + 0.2, CONFIG.imageHeight + 0.2, 0.1);
+                    const frameMesh = new THREE.Mesh(fGeo, frameMat);
+                    frameMesh.position.set(-CONFIG.imageWidth * 0.25, 0, -0.1);
+                    if (!isMobile) frameMesh.castShadow = true;
+                    photoGroup.add(frameMesh);
+
+                    // 2. Comment Card (To the RIGHT of the photo)
+                    const cWidth = 4;
+                    const cHeight = 3;
+                    const cGeo = new THREE.PlaneGeometry(cWidth, cHeight);
+
+                    // Generate Comment Texture
+                    const memory = MEMORIES[i] || { text: "" };
+                    const cCanvas = document.createElement('canvas');
+                    cCanvas.width = 400; cCanvas.height = 300;
+                    const cCtx = cCanvas.getContext('2d');
+
+                    // Card Background (Glassy White)
+                    cCtx.fillStyle = "rgba(255, 255, 255, 0.95)";
+                    cCtx.fillRect(0, 0, 400, 300);
+
+                    // Border
+                    cCtx.strokeStyle = "#d4af37";
+                    cCtx.lineWidth = 4;
+                    cCtx.strokeRect(10, 10, 380, 280);
+
+                    // Text
+                    cCtx.fillStyle = "#333";
+                    cCtx.textAlign = "center";
+                    cCtx.textBaseline = "middle";
+
+                    // Body (Mincho, Black) - Adjusted position since date is removed
+                    cCtx.font = "30px serif";
+                    cCtx.fillStyle = "#555";
+                    // Simple line wrapping
+                    const lines = memory.text.split('\n');
+                    // Center vertically based on number of lines
+                    const lineHeight = 50;
+                    const totalTextHeight = lines.length * lineHeight;
+                    let lineY = (300 - totalTextHeight) / 2 + (lineHeight / 2);
+
+                    lines.forEach(line => {
+                        cCtx.fillText(line, 200, lineY);
+                        lineY += lineHeight;
+                    });
+
+                    const cTex = new THREE.CanvasTexture(cCanvas);
+                    const commentMat = new THREE.MeshBasicMaterial({ map: cTex, transparent: true });
+                    const commentMesh = new THREE.Mesh(cGeo, commentMat);
+
+                    // Position relative to Photo (Right side)
+                    commentMesh.position.set(CONFIG.imageWidth * 0.45, -1, 0.2);
+                    commentMesh.rotation.z = -0.05;
+                    photoGroup.add(commentMesh);
+
+                    spiralGroup.add(photoGroup);
+                }
+            }
+
+            // --- Particles ---
+            function createAmbientParticles() {
+                particlesGroup = new THREE.Group();
+                scene.add(particlesGroup);
+                // Reduce particles on mobile
+                const count = isMobile ? 300 : 1000;
+                const geo = new THREE.BufferGeometry();
+                const pos = [];
+                for (let i = 0; i < count; i++) {
+                    const x = (Math.random() - 0.5) * 120;
+                    const y = Math.random() * CONFIG.imageCount * CONFIG.verticalStep;
+                    const z = (Math.random() - 0.5) * 120;
+                    pos.push(x, y, z);
+                }
+                geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+                const mat = new THREE.PointsMaterial({
+                    color: CONFIG.goldColor, size: 0.15, transparent: true, opacity: 0.6
+                });
+                const points = new THREE.Points(geo, mat);
+                particlesGroup.add(points);
+            }
+
+            // --- Logic ---
+            function toggleAutoTour() {
+                isAutoTour = !isAutoTour;
+                const btn = document.getElementById('overviewBtn');
+                if (isAutoTour) {
+                    btn.textContent = "STOP TOUR";
+                    if (Math.abs(targetProgress - (CONFIG.imageCount - 1)) < 1) {
+                        targetProgress = 0;
+                        scrollProgress = 0;
+                    }
+                } else {
+                    btn.textContent = "AUTO TOUR";
+                }
+            }
+
+            function onWheel(e) {
+                if (isAutoTour) {
+                    isAutoTour = false; // Stop tour if user interacts
+                    document.getElementById('overviewBtn').textContent = "AUTO TOUR";
+                }
+                e.preventDefault();
+                targetProgress += e.deltaY * CONFIG.scrollSpeed * 0.2;
+                targetProgress = Math.max(0, Math.min(CONFIG.imageCount - 1, targetProgress));
+            }
+
+            let touchStartY = 0;
+            function onTouchStart(e) { touchStartY = e.touches[0].clientY; }
+            function onTouchMove(e) {
+                if (isAutoTour) {
                     isAutoTour = false;
-                    document.getElementById('overviewBtn').textContent = "RESTART TOUR";
+                    document.getElementById('overviewBtn').textContent = "AUTO TOUR";
                 }
+                const d = touchStartY - e.touches[0].clientY;
+                // Reduced sensitivity for "saku-saku" but not too fast (0.6 -> 0.3)
+                targetProgress += d * CONFIG.scrollSpeed * 0.3;
+                targetProgress = Math.max(0, Math.min(CONFIG.imageCount - 1, targetProgress));
+                touchStartY = e.touches[0].clientY;
             }
 
-            // Smooth Scroll
-            scrollProgress += (targetProgress - scrollProgress) * CONFIG.damping;
+            function onResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
 
-            // Progress Bar
-            const percent = scrollProgress / (CONFIG.imageCount - 1);
-            document.getElementById('progress').style.height = (percent * 100) + '%';
+            // --- Animation Loop ---
+            function animate() {
+                requestAnimationFrame(animate);
+                const time = clock.getElapsedTime();
 
-            // --- CAMERA "CLIMBING" LOGIC ---
-            const currentAngle = scrollProgress * CONFIG.angleStep;
-            const currentHeight = scrollProgress * CONFIG.verticalStep;
-
-            const camRadiusOffset = 22; // Distance from center
-            const camAngleOffset = 0.3; // Angle lag behind current photo
-
-            const targetCamX = Math.cos(currentAngle - camAngleOffset) * (CONFIG.spiralRadius + camRadiusOffset);
-            const targetCamZ = Math.sin(currentAngle - camAngleOffset) * (CONFIG.spiralRadius + camRadiusOffset);
-
-            const targetCamY = currentHeight + 2;
-
-            camera.position.x += (targetCamX - camera.position.x) * 0.1;
-            camera.position.z += (targetCamZ - camera.position.z) * 0.1;
-            camera.position.y += (targetCamY - camera.position.y) * 0.1;
-
-            const lookX = Math.cos(currentAngle) * CONFIG.spiralRadius;
-            const lookZ = Math.sin(currentAngle) * CONFIG.spiralRadius;
-            const lookY = currentHeight + 1;
-
-            camera.lookAt(lookX, lookY, lookZ);
-
-            // Subtle Float
-            photos.forEach((mesh, i) => {
-                if (Math.abs(i - scrollProgress) < 6) {
-                    mesh.parent.position.y = (i * CONFIG.verticalStep) + Math.sin(time + i * 0.5) * 0.15;
+                // Auto Tour Logic
+                if (isAutoTour) {
+                    targetProgress += CONFIG.autoScrollSpeed;
+                    if (targetProgress >= CONFIG.imageCount - 0.5) {
+                        targetProgress = CONFIG.imageCount - 1;
+                        isAutoTour = false;
+                        document.getElementById('overviewBtn').textContent = "RESTART TOUR";
+                    }
                 }
-            });
 
-            if (particlesGroup) particlesGroup.rotation.y = time * 0.02;
+                // Smooth Scroll
+                scrollProgress += (targetProgress - scrollProgress) * CONFIG.damping;
 
-            renderer.render(scene, camera);
-        }
+                // Progress Bar
+                const percent = scrollProgress / (CONFIG.imageCount - 1);
+                document.getElementById('progress').style.height = (percent * 100) + '%';
 
-        init();
-    </script>
+                // --- CAMERA "CLIMBING" LOGIC ---
+                const currentAngle = scrollProgress * CONFIG.angleStep;
+                const currentHeight = scrollProgress * CONFIG.verticalStep;
+
+                const camRadiusOffset = 22; // Distance from center
+                const camAngleOffset = 0.3; // Angle lag behind current photo
+
+                const targetCamX = Math.cos(currentAngle - camAngleOffset) * (CONFIG.spiralRadius + camRadiusOffset);
+                const targetCamZ = Math.sin(currentAngle - camAngleOffset) * (CONFIG.spiralRadius + camRadiusOffset);
+
+                const targetCamY = currentHeight + 2;
+
+                camera.position.x += (targetCamX - camera.position.x) * 0.1;
+                camera.position.z += (targetCamZ - camera.position.z) * 0.1;
+                camera.position.y += (targetCamY - camera.position.y) * 0.1;
+
+                const lookX = Math.cos(currentAngle) * CONFIG.spiralRadius;
+                const lookZ = Math.sin(currentAngle) * CONFIG.spiralRadius;
+                const lookY = currentHeight + 1;
+
+                camera.lookAt(lookX, lookY, lookZ);
+
+                // Subtle Float
+                photos.forEach((mesh, i) => {
+                    if (Math.abs(i - scrollProgress) < 6) {
+                        mesh.parent.position.y = (i * CONFIG.verticalStep) + Math.sin(time + i * 0.5) * 0.15;
+                    }
+                });
+
+                if (particlesGroup) particlesGroup.rotation.y = time * 0.02;
+
+                renderer.render(scene, camera);
+            }
+
+            init();
+        </script>
 </body>
 
 </html>

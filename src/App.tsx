@@ -8,6 +8,8 @@ import HotelParking from './pages/HotelParking';
 import FloorMap from './pages/FloorMap';
 import DogSoccer from './pages/DogSoccer';
 import ThreeDGallery from './pages/ThreeDGallery';
+import GuestPage from './pages/GuestPage';
+import SeatingChart from './pages/SeatingChart';
 
 export default function App() {
     const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +49,8 @@ export default function App() {
                     <Route path="/floormap" element={<FloorMap />} />
                     <Route path="/3d-gallery" element={<ThreeDGallery />} /> {/* Added 3D Gallery route */}
                     <Route path="/dog-soccer" element={<DogSoccer />} />
+                    <Route path="/guest" element={<GuestPage />} />
+                    <Route path="/seating" element={<SeatingChart />} />
                 </Routes>
             </div>
         </Router>
