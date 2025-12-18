@@ -90,6 +90,21 @@ async function fetchGuests() {
                 if (prop.type === 'rich_text') return prop.rich_text?.[0]?.plain_text || "";
                 if (prop.type === 'select') return prop.select?.name || "";
                 if (prop.type === 'number') return String(prop.number || "");
+                if (prop.type === 'formula') {
+                    if (prop.formula.type === 'string') return prop.formula.string || "";
+                    if (prop.formula.type === 'number') return String(prop.formula.number || "");
+                    if (prop.formula.type === 'boolean') return String(prop.formula.boolean);
+                    return "";
+                }
+                if (prop.type === 'rollup') {
+                    // Handle rollup (array of values), usually we just want the first one or join them
+                    const array = prop.rollup?.array;
+                    if (array && array.length > 0) {
+                        // Recursively get text for the first item in rollup
+                        return getText(array[0]);
+                    }
+                    return "";
+                }
                 if (prop.type === 'phone_number') return prop.phone_number || "";
                 if (prop.type === 'email') return prop.email || "";
                 if (prop.type === 'url') return prop.url || "";
