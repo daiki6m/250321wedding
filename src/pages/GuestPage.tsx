@@ -39,6 +39,7 @@ const GuestPage = () => {
                     className="bg-white/5 backdrop-blur-md border border-white/10 p-8 md:p-12 rounded-2xl shadow-2xl text-center"
                 >
                     <div className="mb-8">
+
                         {guest.image && (
                             <div className="mb-6">
                                 <img
@@ -49,9 +50,26 @@ const GuestPage = () => {
                             </div>
                         )}
                         <p className="text-[#F39800] tracking-widest text-sm mb-2">WELCOME</p>
-                        <h1 className="text-3xl md:text-4xl font-bold mb-4">{guest.name}</h1>
-                        <div className="inline-block px-4 py-1 border border-[#2E7BF4]/50 rounded-full bg-[#2E7BF4]/10 text-[#2E7BF4] text-sm">
-                            Table {guest.table}
+                        <h1 className="text-3xl md:text-4xl font-bold mb-2">{guest.name}</h1>
+
+                        {guest.title && (
+                            <p className="text-gray-400 text-sm mb-4">{guest.title}</p>
+                        )}
+
+                        <div className="flex flex-wrap justify-center gap-2 mb-4">
+                            <div className="inline-block px-4 py-1 border border-[#2E7BF4]/50 rounded-full bg-[#2E7BF4]/10 text-[#2E7BF4] text-sm">
+                                Table {guest.table}
+                            </div>
+                            {guest.relationship && (
+                                <div className="inline-block px-4 py-1 border border-white/20 rounded-full bg-white/5 text-gray-300 text-sm">
+                                    {guest.relationship}
+                                </div>
+                            )}
+                            {guest.birthMonth && (
+                                <div className="inline-block px-4 py-1 border border-[#F39800]/50 rounded-full bg-[#F39800]/10 text-[#F39800] text-sm">
+                                    {guest.birthMonth}月生まれ
+                                </div>
+                            )}
                         </div>
                     </div>
 

@@ -79,32 +79,47 @@ async function fetchGuests() {
             fs.mkdirSync(imagesDir, { recursive: true });
         }
 
-        for (const page of response.results) {
+        for (const page of data.results) {
             const props = page.properties;
             const id = page.id;
-            const name = props['名前']?.title?.[0]?.plain_text || "Unknown";
-            const table = props['テーブル番号']?.rich_text?.[0]?.plain_text || "";
-            const message = props['メッセージ']?.rich_text?.[0]?.plain_text || "";
+
+            // Helper to safely get text from various property types
+            const getText = (prop) => {
+                if (!prop) return "";
+                if (prop.type === 'title') return prop.title?.[0]?.plain_text || "";
+                if (prop.type === 'rich_text') return prop.rich_text?.[0]?.plain_text || "";
+                if (prop.type === 'select') return prop.select?.name || "";
+                if (prop.type === 'number') return String(prop.number || "");
+                if (prop.type === 'phone_number') return prop.phone_number || "";
+                if (prop.type === 'email') return prop.email || "";
+                if (prop.type === 'url') return prop.url || "";
+                return "";
+            };
+
+            const name = getText(props['名前']) || "Unknown";
+            const table = getText(props['テーブル番号']);
+            const message = getText(props['メッセージ']);
+            const title = getText(props['肩書き']);
+            const birthMonth = getText(props['誕生月']);
+            const relationship = getText(props['間柄']);
 
             let imageUrl = null;
-            const imageProp = props['イメージ']?.files?.[0];
-            if (imageProp) {
-                const url = imageProp.file?.url || imageProp.external?.url;
+            const imageProp = props['イメージ'];
+            if (imageProp && imageProp.type === 'files' && imageProp.files.length > 0) {
+                const fileObj = imageProp.files[0];
+                const url = fileObj.file?.url || fileObj.external?.url;
                 if (url) {
                     try {
                         // Download image
-                        console.log(`⏳ Downloading image for ${name}...`);
+                        // console.log(`⏳ Downloading image for ${name}...`); // Reduce noise
                         const imgResp = await fetch(url);
                         if (imgResp.ok) {
                             const buffer = await imgResp.arrayBuffer();
-                            // Determine extension (default to jpg if unknown)
-                            // Simple way: assume jpg or png based on url or content-type, but for now just save as id.jpg or use original name if possible.
-                            // Let's use a safe default.
                             const ext = url.split('?')[0].split('.').pop() || 'jpg';
                             const filename = `${id}.${ext}`;
                             const filePath = path.join(imagesDir, filename);
                             fs.writeFileSync(filePath, Buffer.from(buffer));
-                            imageUrl = `/wedding/guest-images/${filename}`; // Adjust base path if needed
+                            imageUrl = `/wedding/guest-images/${filename}`;
                         }
                     } catch (err) {
                         console.error(`❌ Failed to download image for ${name}:`, err.message);
@@ -117,6 +132,9 @@ async function fetchGuests() {
                 name,
                 table,
                 message,
+                title,
+                birthMonth,
+                relationship,
                 image: imageUrl
             });
         }
