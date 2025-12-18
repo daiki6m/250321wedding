@@ -31,7 +31,7 @@ const SeatingChart = () => {
                 </h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {Object.entries(tables).sort().map(([tableName, guests]) => (
+                    {Object.entries(tables).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true })).map(([tableName, guests]) => (
                         <motion.div
                             key={tableName}
                             initial={{ opacity: 0, scale: 0.9 }}

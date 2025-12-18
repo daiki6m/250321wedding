@@ -73,15 +73,53 @@ async function fetchGuests() {
 
         const data = await response.json();
 
-        const guests = data.results.map((page) => {
+        const guests = [];
+        const imagesDir = path.join(__dirname, "../public/guest-images");
+        if (!fs.existsSync(imagesDir)) {
+            fs.mkdirSync(imagesDir, { recursive: true });
+        }
+
+        for (const page of response.results) {
             const props = page.properties;
-            return {
-                id: page.id,
-                name: props.Name?.title?.[0]?.plain_text || "Unknown",
-                table: props.Table?.rich_text?.[0]?.plain_text || "",
-                message: props.Message?.rich_text?.[0]?.plain_text || "",
-            };
-        });
+            const id = page.id;
+            const name = props['名前']?.title?.[0]?.plain_text || "Unknown";
+            const table = props['テーブル番号']?.rich_text?.[0]?.plain_text || "";
+            const message = props['メッセージ']?.rich_text?.[0]?.plain_text || "";
+
+            let imageUrl = null;
+            const imageProp = props['イメージ']?.files?.[0];
+            if (imageProp) {
+                const url = imageProp.file?.url || imageProp.external?.url;
+                if (url) {
+                    try {
+                        // Download image
+                        console.log(`⏳ Downloading image for ${name}...`);
+                        const imgResp = await fetch(url);
+                        if (imgResp.ok) {
+                            const buffer = await imgResp.arrayBuffer();
+                            // Determine extension (default to jpg if unknown)
+                            // Simple way: assume jpg or png based on url or content-type, but for now just save as id.jpg or use original name if possible.
+                            // Let's use a safe default.
+                            const ext = url.split('?')[0].split('.').pop() || 'jpg';
+                            const filename = `${id}.${ext}`;
+                            const filePath = path.join(imagesDir, filename);
+                            fs.writeFileSync(filePath, Buffer.from(buffer));
+                            imageUrl = `/wedding/guest-images/${filename}`; // Adjust base path if needed
+                        }
+                    } catch (err) {
+                        console.error(`❌ Failed to download image for ${name}:`, err.message);
+                    }
+                }
+            }
+
+            guests.push({
+                id,
+                name,
+                table,
+                message,
+                image: imageUrl
+            });
+        }
 
         const outputPath = path.join(__dirname, "../src/data/guests.json");
         const dir = path.dirname(outputPath);
