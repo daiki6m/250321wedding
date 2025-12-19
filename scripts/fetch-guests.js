@@ -14,9 +14,18 @@ const NOTION_API_KEY = process.env.NOTION_API_KEY ? process.env.NOTION_API_KEY.t
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID ? process.env.NOTION_DATABASE_ID.trim() : "";
 
 async function fetchGuests() {
+    console.log("🚀 Starting fetch-guests script...");
+    console.log("Environment check:");
+    console.log(`- NOTION_API_KEY: ${NOTION_API_KEY ? `Present (Starts with ${NOTION_API_KEY.substring(0, 7)}...)` : "Missing"}`);
+    console.log(`- NOTION_DATABASE_ID: ${NOTION_DATABASE_ID ? `Present (${NOTION_DATABASE_ID})` : "Missing"}`);
+
     if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
-        console.warn("⚠️ Notion API Key or Database ID not found. Skipping fetch.");
-        console.warn("   Using existing mock data if available.");
+        console.warn("⚠️ Notion API Key or Database ID not found.");
+        if (process.env.GITHUB_ACTIONS) {
+            console.error("❌ Error: Secrets are missing in GitHub Actions environment. Please check repository secrets.");
+            process.exit(1);
+        }
+        console.warn("   Skipping fetch and using existing data.");
         return;
     }
 
@@ -68,10 +77,13 @@ async function fetchGuests() {
 
         if (!response.ok) {
             const errText = await response.text();
-            throw new Error(`Notion API Error: ${response.status} ${response.statusText} - ${errText}`);
+            console.error(`❌ Notion API Query Failed: ${response.status} ${response.statusText}`);
+            console.error(`Response Body: ${errText}`);
+            throw new Error(`Notion API Error: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
+        console.log(`✅ Successfully queried Notion. Found ${data.results.length} raw records.`);
 
         const guests = [];
         const imagesDir = path.join(__dirname, "../public/guest-images");
@@ -155,16 +167,18 @@ async function fetchGuests() {
                 id,
                 name,
                 table,
-                group, // Add group to output
-                tableOrder, // Add to output
+                group,
+                tableOrder,
                 message,
                 title,
                 birthMonth,
                 relationship,
-                participation, // Add participation to output
+                participation,
                 image: imageUrl
             });
         }
+
+        console.log(`📊 Processed ${guests.length} valid guests after filtering.`);
 
         const outputPath = path.join(__dirname, "../src/data/guests.json");
         const dir = path.dirname(outputPath);
