@@ -203,7 +203,10 @@ async function fetchGuests() {
             fs.writeFileSync(outputPath, JSON.stringify([], null, 2));
             console.log("⚠️ Created empty guests.json as fallback.");
         }
-        // Do NOT exit with 1, allow build to continue
+        // In CI, we want the build to fail if data fetching fails
+        if (process.env.GITHUB_ACTIONS) {
+            process.exit(1);
+        }
         process.exit(0);
     }
 }
