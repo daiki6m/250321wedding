@@ -121,8 +121,9 @@ async function fetchGuests() {
             const relationship = getText(props['間柄']);
             const participation = getText(props['参加']); // Fetch participation status
 
-            // Skip if not attending
-            if (participation !== '出席') {
+            // Skip if not attending, cheering, or principal
+            const validParticipation = ['出席', '応援席', '本人'];
+            if (!validParticipation.includes(participation)) {
                 continue;
             }
 
@@ -160,6 +161,7 @@ async function fetchGuests() {
                 title,
                 birthMonth,
                 relationship,
+                participation, // Add participation to output
                 image: imageUrl
             });
         }
