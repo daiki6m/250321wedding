@@ -10,10 +10,15 @@ import DogSoccer from './pages/DogSoccer';
 import ThreeDGallery from './pages/ThreeDGallery';
 import GuestPage from './pages/GuestPage';
 import SeatingChart from './pages/SeatingChart';
+import Music from './pages/Music';
+import Timeline from './pages/Timeline';
+import VideoPage from './pages/VideoPage';
+import NewGallery from './pages/NewGallery';
+import PhotoUpload from './pages/PhotoUpload';
 
 export default function App() {
-    // Skip loading screen if on seating or guest pages
-    const shouldShowLoading = !window.location.pathname.includes('/seating') && !window.location.pathname.includes('/guest');
+    // Skip loading screen if on seating, guest, or music pages
+    const shouldShowLoading = !window.location.pathname.includes('/seating') && !window.location.pathname.includes('/guest') && !window.location.pathname.includes('/music') && !window.location.pathname.includes('/new-gallery') && !window.location.pathname.includes('/photo') && !window.location.pathname.includes('/3d-gallery');
     const [isLoading, setIsLoading] = useState(shouldShowLoading);
 
     if (isLoading) {
@@ -53,6 +58,11 @@ export default function App() {
                     <Route path="/dog-soccer" element={<DogSoccer />} />
                     <Route path="/guest" element={<GuestPage />} />
                     <Route path="/seating" element={<SeatingChart />} />
+                    <Route path="/music" element={<Music />} />
+                    <Route path="/timeline" element={<Timeline />} />
+                    <Route path="/video" element={<VideoPage />} />
+                    <Route path="/new-gallery" element={<NewGallery />} />
+                    <Route path="/photo" element={<PhotoUpload />} />
                 </Routes>
             </div>
         </Router>

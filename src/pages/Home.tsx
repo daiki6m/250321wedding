@@ -1,10 +1,29 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Calendar, ExternalLink, ArrowDown, PawPrint, Car, Building, Info, Menu, X, Users } from 'lucide-react';
-import { useState } from 'react';
+import { MapPin, Calendar, ExternalLink, ArrowDown, PawPrint, Car, Building, Info, Menu, X, Users, Clock, Music as MusicIcon, Camera, Video } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { COLORS, SoccerBall, SectionHeading, CountdownTimer, INVITATION_URL } from '../components/Shared';
 
-// --- Typewriter Component ---
+// --- Demo Controller ---
+const DemoController = ({ currentStage, setStage }: { currentStage: string, setStage: (s: 'pre' | 'day' | 'post') => void }) => {
+    return (
+        <div className="fixed bottom-4 left-4 z-[100] bg-black/80 backdrop-blur-md border border-white/20 p-4 rounded-xl shadow-2xl flex flex-col gap-2">
+            <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1">Demo Controller</p>
+            <div className="flex gap-2">
+                {(['pre', 'day', 'post'] as const).map((s) => (
+                    <button
+                        key={s}
+                        onClick={() => setStage(s)}
+                        className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${currentStage === s ? 'bg-[#F39800] text-white' : 'bg-white/10 text-gray-400 hover:bg-white/20'}`}
+                    >
+                        {s.toUpperCase()}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const TypewriterVerticalText = ({ text, delay = 0, className = "" }: { text: string, delay?: number, className?: string }) => {
     const characters = Array.from(text);
 
@@ -40,17 +59,22 @@ const TypewriterVerticalText = ({ text, delay = 0, className = "" }: { text: str
 };
 
 
-const Navigation = () => {
+const Navigation = ({ stage }: { stage: 'pre' | 'day' | 'post' }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const menuItems = [
         { label: "トップ", id: "hero" },
         { label: "ムービー", id: "movie" },
         { label: "ご挨拶", id: "greeting" },
-        { label: "Web招待状", id: "rsvp" },
+        ...(stage === 'pre' ? [{ label: "Web招待状", id: "rsvp" }] : []),
         { label: "プロフィール", id: "profile-section" },
         { label: "ペット", id: "pets" },
         { label: "ギャラリー", path: "/gallery" },
+        ...(stage === 'post' ? [{ label: "音楽", path: "/music" }] : []),
+        ...(stage !== 'pre' ? [
+            { label: "席次表", path: "/seating" },
+            { label: "タイムライン", path: "/timeline" }
+        ] : []),
         { label: "アクセス", id: "access" },
     ];
 
@@ -122,11 +146,32 @@ const Navigation = () => {
 };
 const Home = () => {
     const WEDDING_DATE = "2026-03-21T15:00:00";
-    const isPostWedding = new Date() > new Date(WEDDING_DATE);
-    // const isPostWedding = true; // For testing/demo purposes as requested
+    const WEDDING_END = "2026-03-21T19:00:00";
+
+    const [stage, setStage] = useState<'pre' | 'day' | 'post'>('pre');
+
+    useEffect(() => {
+        const updateStage = () => {
+            const now = new Date();
+            const start = new Date(WEDDING_DATE);
+            const end = new Date(WEDDING_END);
+
+            if (now < start) setStage('pre');
+            else if (now < end) setStage('day');
+            else setStage('post');
+        };
+
+        updateStage();
+        const timer = setInterval(updateStage, 60000); // Update every minute
+        return () => clearInterval(timer);
+    }, []);
+
+    // For testing: const stage = 'day'; 
+
     return (
         <>
-            <Navigation />
+            {import.meta.env.DEV && <DemoController currentStage={stage} setStage={setStage} />}
+            <Navigation stage={stage} />
             {/* --- HERO SECTION --- */}
             <section id="hero" className="relative min-h-screen flex flex-col items-center pt-32 pb-12 p-8 z-10 overflow-hidden">
                 <div className="absolute inset-0 z-[-1]">
@@ -156,8 +201,17 @@ const Home = () => {
                         className="font-zen text-2xl md:text-5xl font-bold tracking-[0.2em] select-none drop-shadow-lg text-center"
                         style={{ color: '#ffffffd2' }}
                     >
-                        感謝を胸に！<br />
-                        行くぞ！最高の舞台へ！
+                        {stage === 'post' ? (
+                            <>
+                                最高の舞台を<br />
+                                ありがとうございました！
+                            </>
+                        ) : (
+                            <>
+                                感謝を胸に！<br />
+                                行くぞ！最高の舞台へ！
+                            </>
+                        )}
                     </motion.p>
                 </div>
 
@@ -274,7 +328,7 @@ const Home = () => {
                     />
                 </div>
 
-                <div className="z-20 flex flex-row-reverse items-center justify-center gap-16 md:gap-20 w-full max-w-4xl mx-auto flex-grow">
+                <div className="z-20 flex flex-row-reverse items-center justify-center gap-16 md:gap-20 w-full max-max-4xl mx-auto flex-grow">
                     {/* Groom Name */}
                     <div className="min-h-[300px] border-l border-white/20 pl-1 md:pl-6 py-4 relative">
                         <motion.div
@@ -312,7 +366,7 @@ const Home = () => {
                             />
                         </motion.div>
                         <TypewriterVerticalText
-                            text="宝本 大樹"
+                            text="宝本大樹"
                             className="text-3xl md:text-5xl text-white font-zen writing-vertical-rl tracking-[0.2em] drop-shadow-2xl"
                             delay={0.5}
                         />
@@ -357,7 +411,7 @@ const Home = () => {
                             />
                         </motion.div>
                         <TypewriterVerticalText
-                            text="長谷川 真希"
+                            text="長谷川真希"
                             className="text-3xl md:text-5xl text-white font-zen writing-vertical-rl tracking-[0.2em] drop-shadow-2xl"
                             delay={2.0}
                         />
@@ -396,7 +450,7 @@ const Home = () => {
                             }}
                             className="text-sm md:text-base font-bold tracking-[0.2em] mb-2"
                         >
-                            Kick OFF!
+                            {stage === 'post' ? 'Full Time!' : 'Kick OFF!'}
                         </motion.p>
                         <div className="flex items-center gap-2">
                             <motion.div
@@ -433,18 +487,56 @@ const Home = () => {
                         transition={{ delay: 5.0, duration: 1 }}
                         className="mb-12"
                     >
-                        {isPostWedding ? (
+                        {stage === 'pre' ? (
+                            <CountdownTimer targetDate={WEDDING_DATE} />
+                        ) : stage === 'day' ? (
                             <div className="flex flex-col items-center gap-6">
                                 <p className="font-zen text-xl md:text-2xl text-white tracking-widest animate-pulse">
-                                    Welcome to our Wedding
+                                    Welcome to our Wedding Day!
                                 </p>
-                                <Link to="/seating" className="px-8 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
-                                    <Users size={20} />
-                                    <span>Seating Chart</span>
-                                </Link>
+                                <div className="flex flex-wrap justify-center gap-4">
+                                    <Link to="/new-gallery" className="px-8 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <Camera size={20} />
+                                        <span>ギャラリー (Gallery)</span>
+                                    </Link>
+                                    <Link to="/seating" className="px-8 py-3 bg-[#2E7BF4] text-white font-zen rounded-full hover:bg-[#2E7BF4]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <Users size={20} />
+                                        <span>席次表 (Seating)</span>
+                                    </Link>
+                                    <Link to="/timeline" className="px-8 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <Clock size={20} />
+                                        <span>タイムライン (Timeline)</span>
+                                    </Link>
+                                </div>
                             </div>
                         ) : (
-                            <CountdownTimer targetDate={WEDDING_DATE} />
+                            <div className="flex flex-col items-center gap-6">
+                                <p className="font-zen text-xl md:text-2xl text-white tracking-widest">
+                                    Thank you for coming!
+                                </p>
+                                <div className="flex flex-wrap justify-center gap-4 max-w-2xl">
+                                    <Link to="/new-gallery" className="px-6 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <Camera size={20} />
+                                        <span>ギャラリー (Gallery)</span>
+                                    </Link>
+                                    <Link to="/video" className="px-6 py-3 bg-[#2E7BF4] text-white font-zen rounded-full hover:bg-[#2E7BF4]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <Video size={20} />
+                                        <span>ビデオ (Video)</span>
+                                    </Link>
+                                    <Link to="/music" className="px-6 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <MusicIcon size={20} />
+                                        <span>音楽 (Wedding Music)</span>
+                                    </Link>
+                                    <Link to="/timeline" className="px-6 py-3 bg-[#2E7BF4] text-white font-zen rounded-full hover:bg-[#2E7BF4]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <Clock size={20} />
+                                        <span>タイムライン (Timeline)</span>
+                                    </Link>
+                                    <Link to="/seating" className="px-6 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <Users size={20} />
+                                        <span>席次表 (Seating)</span>
+                                    </Link>
+                                </div>
+                            </div>
                         )}
                     </motion.div>
 
