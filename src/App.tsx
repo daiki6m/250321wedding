@@ -7,7 +7,7 @@ import Manga from './pages/Manga';
 import HotelParking from './pages/HotelParking';
 import FloorMap from './pages/FloorMap';
 import DogSoccer from './pages/DogSoccer';
-import ThreeDGallery from './pages/ThreeDGallery';
+import GuestGallery3D from './pages/GuestGallery3D';
 import GuestPage from './pages/GuestPage';
 import SeatingChart from './pages/SeatingChart';
 import Music from './pages/Music';
@@ -15,10 +15,13 @@ import Timeline from './pages/Timeline';
 import VideoPage from './pages/VideoPage';
 import NewGallery from './pages/NewGallery';
 import PhotoUpload from './pages/PhotoUpload';
+import GuestComments from './pages/GuestComments';
+import CommentForm from './pages/CommentForm';
+import PhotoShower from './pages/PhotoShower';
 
 export default function App() {
     // Skip loading screen if on seating, guest, or music pages
-    const shouldShowLoading = !window.location.pathname.includes('/seating') && !window.location.pathname.includes('/guest') && !window.location.pathname.includes('/music') && !window.location.pathname.includes('/new-gallery') && !window.location.pathname.includes('/photo') && !window.location.pathname.includes('/3d-gallery');
+    const shouldShowLoading = !window.location.pathname.includes('/seating') && !window.location.pathname.includes('/guest') && !window.location.pathname.includes('/music') && !window.location.pathname.includes('/new-gallery') && !window.location.pathname.includes('/photo') && !window.location.pathname.includes('/guest-gallery-3d') && !window.location.pathname.includes('/comments') && !window.location.pathname.includes('/comment-form');
     const [isLoading, setIsLoading] = useState(shouldShowLoading);
 
     if (isLoading) {
@@ -54,7 +57,7 @@ export default function App() {
                     <Route path="/manga" element={<Manga />} />
                     <Route path="/hotel-parking" element={<HotelParking />} />
                     <Route path="/floormap" element={<FloorMap />} />
-                    <Route path="/3d-gallery" element={<ThreeDGallery />} /> {/* Added 3D Gallery route */}
+                    <Route path="/guest-gallery-3d" element={<GuestGallery3D />} /> {/* Renamed 3D Gallery route */}
                     <Route path="/dog-soccer" element={<DogSoccer />} />
                     <Route path="/guest" element={<GuestPage />} />
                     <Route path="/seating" element={<SeatingChart />} />
@@ -63,6 +66,9 @@ export default function App() {
                     <Route path="/video" element={<VideoPage />} />
                     <Route path="/new-gallery" element={<NewGallery />} />
                     <Route path="/photo" element={<PhotoUpload />} />
+                    <Route path="/comments" element={<GuestComments />} />
+                    <Route path="/comment-form" element={<CommentForm />} />
+                    <Route path="/photo-shower" element={<PhotoShower />} />
                 </Routes>
             </div>
         </Router>

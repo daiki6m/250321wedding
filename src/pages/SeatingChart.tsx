@@ -80,7 +80,7 @@ const SeatingChart = () => {
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
-                                            <div className="text-xl font-medium">{groom.name.includes(' ') ? groom.name.split(' ')[1] : groom.name}</div>
+                                            <div className="text-xl font-medium whitespace-nowrap">{groom.name.includes(' ') ? groom.name.split(' ')[1] : groom.name}</div>
                                         </div>
                                         <div className="text-[#F39800] text-2xl font-serif">&</div>
                                         <div className="flex flex-col items-center gap-4">
@@ -99,7 +99,7 @@ const SeatingChart = () => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="text-xl font-medium">{bride.name.includes(' ') ? bride.name.split(' ')[1] : bride.name}</div>
+                                            <div className="text-xl font-medium whitespace-nowrap">{bride.name.includes(' ') ? bride.name.split(' ')[1] : bride.name}</div>
                                         </div>
                                     </>
                                 );

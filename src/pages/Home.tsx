@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Calendar, ExternalLink, ArrowDown, PawPrint, Car, Building, Info, Menu, X, Users, Clock, Music as MusicIcon, Camera, Video } from 'lucide-react';
+import { MapPin, Calendar, ExternalLink, ArrowDown, PawPrint, Car, Building, Info, Menu, X, Users, Clock, Music as MusicIcon, Camera, Video, MessageSquare } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { COLORS, SoccerBall, SectionHeading, CountdownTimer, INVITATION_URL } from '../components/Shared';
@@ -70,6 +70,7 @@ const Navigation = ({ stage }: { stage: 'pre' | 'day' | 'post' }) => {
         { label: "プロフィール", id: "profile-section" },
         { label: "ペット", id: "pets" },
         { label: "ギャラリー", path: "/gallery" },
+        ...(stage !== 'pre' ? [{ label: "コメント", path: "/comments" }] : []),
         ...(stage === 'post' ? [{ label: "音楽", path: "/music" }] : []),
         ...(stage !== 'pre' ? [
             { label: "席次表", path: "/seating" },
@@ -150,7 +151,17 @@ const Home = () => {
 
     const [stage, setStage] = useState<'pre' | 'day' | 'post'>('pre');
 
+    // Check if this is the first visit in this session
+    const [isFirstVisit] = useState(() => {
+        const hasVisited = sessionStorage.getItem('home_visited');
+        return !hasVisited;
+    });
+
     useEffect(() => {
+        if (isFirstVisit) {
+            sessionStorage.setItem('home_visited', 'true');
+        }
+
         const updateStage = () => {
             const now = new Date();
             const start = new Date(WEDDING_DATE);
@@ -203,8 +214,13 @@ const Home = () => {
                     >
                         {stage === 'post' ? (
                             <>
-                                最高の舞台を<br />
-                                ありがとうございました！
+                                A Brand New Day！<br />
+                                誠にありがとうございました。
+                            </>
+                        ) : stage === 'day' ? (
+                            <>
+                                本日はお越しいただきまして<br />
+                                誠にありがとうございます
                             </>
                         ) : (
                             <>
@@ -303,7 +319,7 @@ const Home = () => {
                             repeat: Infinity,
                             ease: "easeInOut",
                             times: [0, 0.3, 0.7, 1],
-                            delay: 4
+                            delay: isFirstVisit ? 4 : 0
                         }}
                     />
                 </div>
@@ -323,7 +339,8 @@ const Home = () => {
                             duration: 8,
                             repeat: Infinity,
                             ease: "easeInOut",
-                            times: [0, 0.3, 0.7, 1]
+                            times: [0, 0.3, 0.7, 1],
+                            delay: isFirstVisit ? 0 : 4 // Offset if needed, or keep consistent
                         }}
                     />
                 </div>
@@ -332,7 +349,7 @@ const Home = () => {
                     {/* Groom Name */}
                     <div className="min-h-[300px] border-l border-white/20 pl-1 md:pl-6 py-4 relative">
                         <motion.div
-                            initial={{ scaleY: 0 }}
+                            initial={{ scaleY: isFirstVisit ? 0 : 1 }}
                             animate={{
                                 scaleY: [1, 2.5, 1],
                                 opacity: [0.6, 1, 0.6]
@@ -368,14 +385,14 @@ const Home = () => {
                         <TypewriterVerticalText
                             text="宝本大樹"
                             className="text-3xl md:text-5xl text-white font-zen writing-vertical-rl tracking-[0.2em] drop-shadow-2xl"
-                            delay={0.5}
+                            delay={isFirstVisit ? 0.5 : 0}
                         />
                     </div>
 
                     {/* Bride Name */}
                     <div className="min-h-[300px] mt-16 border-l border-white/20 pl-1 md:pl-6 py-4 relative">
                         <motion.div
-                            initial={{ scaleY: 0 }}
+                            initial={{ scaleY: isFirstVisit ? 0 : 1 }}
                             animate={{
                                 scaleY: [1, 2.5, 1],
                                 opacity: [0.6, 1, 0.6]
@@ -383,12 +400,12 @@ const Home = () => {
                             transition={{
                                 scaleY: {
                                     duration: 1,
-                                    delay: 1.5,
+                                    delay: isFirstVisit ? 1.5 : 0,
                                     ease: "easeOut"
                                 },
                                 opacity: {
                                     duration: 1,
-                                    delay: 1.5,
+                                    delay: isFirstVisit ? 1.5 : 0,
                                     ease: "easeOut"
                                 }
                             }}
@@ -413,15 +430,15 @@ const Home = () => {
                         <TypewriterVerticalText
                             text="長谷川真希"
                             className="text-3xl md:text-5xl text-white font-zen writing-vertical-rl tracking-[0.2em] drop-shadow-2xl"
-                            delay={2.0}
+                            delay={isFirstVisit ? 2.0 : 0}
                         />
                     </div>
                 </div>
 
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: isFirstVisit ? 0 : 1, y: isFirstVisit ? 20 : 0 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 2.5, duration: 0.8 }}
+                    transition={{ delay: isFirstVisit ? 2.5 : 0, duration: 0.8 }}
                     className="flex flex-col items-center text-white z-20 w-full mt-auto"
                 >
                     {/* Wedding Title */}
@@ -429,9 +446,9 @@ const Home = () => {
 
                     {/* Date & Party Block */}
                     <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
+                        initial={{ scale: isFirstVisit ? 0.8 : 1, opacity: isFirstVisit ? 0 : 1 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 3.8, type: "spring", stiffness: 200, damping: 10 }}
+                        transition={{ delay: isFirstVisit ? 3.8 : 0, type: "spring", stiffness: 200, damping: 10 }}
                         className="flex flex-col items-center mb-4"
                     >
                         <div className="flex items-center gap-3 mb-2">
@@ -472,9 +489,9 @@ const Home = () => {
                     </motion.div>
 
                     <motion.p
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: isFirstVisit ? 0 : 1, y: isFirstVisit ? 10 : 0 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 4.5, duration: 1 }}
+                        transition={{ delay: isFirstVisit ? 4.5 : 0, duration: 1 }}
                         className="font-zen text-sm md:text-base tracking-widest mb-6 opacity-80"
                     >
                         Nagasaki StadiumCityHotel
@@ -482,9 +499,9 @@ const Home = () => {
 
                     {/* Countdown Timer or Post-Wedding Menu */}
                     <motion.div
-                        initial={{ opacity: 0 }}
+                        initial={{ opacity: isFirstVisit ? 0 : 1 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 5.0, duration: 1 }}
+                        transition={{ delay: isFirstVisit ? 5.0 : 0, duration: 1 }}
                         className="mb-12"
                     >
                         {stage === 'pre' ? (
@@ -493,6 +510,9 @@ const Home = () => {
                             <div className="flex flex-col items-center gap-6">
                                 <p className="font-zen text-xl md:text-2xl text-white tracking-widest animate-pulse">
                                     Welcome to our Wedding Day!
+                                </p>
+                                <p className="font-zen text-sm md:text-base text-white/90 tracking-wider -mt-4 text-center whitespace-nowrap md:whitespace-normal">
+                                    本日はお越しいただきまして<br className="md:hidden" />誠にありがとうございます
                                 </p>
                                 <div className="flex flex-wrap justify-center gap-4">
                                     <Link to="/new-gallery" className="px-8 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
@@ -507,12 +527,19 @@ const Home = () => {
                                         <Clock size={20} />
                                         <span>タイムライン (Timeline)</span>
                                     </Link>
+                                    <Link to="/comments" className="px-8 py-3 bg-[#2E7BF4] text-white font-zen rounded-full hover:bg-[#2E7BF4]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <MessageSquare size={20} />
+                                        <span>コメント (Comments)</span>
+                                    </Link>
                                 </div>
                             </div>
                         ) : (
                             <div className="flex flex-col items-center gap-6">
                                 <p className="font-zen text-xl md:text-2xl text-white tracking-widest">
-                                    Thank you for coming!
+                                    A Brand New Day！
+                                </p>
+                                <p className="font-zen text-sm md:text-base text-white/90 tracking-wider -mt-4 text-center">
+                                    誠にありがとうございました。
                                 </p>
                                 <div className="flex flex-wrap justify-center gap-4 max-w-2xl">
                                     <Link to="/new-gallery" className="px-6 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
@@ -534,6 +561,10 @@ const Home = () => {
                                     <Link to="/seating" className="px-6 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
                                         <Users size={20} />
                                         <span>席次表 (Seating)</span>
+                                    </Link>
+                                    <Link to="/comments" className="px-6 py-3 bg-[#2E7BF4] text-white font-zen rounded-full hover:bg-[#2E7BF4]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <MessageSquare size={20} />
+                                        <span>コメント (Comments)</span>
                                     </Link>
                                 </div>
                             </div>
@@ -1247,7 +1278,7 @@ const Home = () => {
                             transition={{ duration: 0.8 }}
                             className="w-full max-w-2xl mx-auto mb-12"
                         >
-                            <Link to="/3d-gallery" className="block group">
+                            <a href={`${import.meta.env.BASE_URL}3Dgallery.html`} className="block group">
                                 <motion.div
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
@@ -1284,7 +1315,7 @@ const Home = () => {
                                         </motion.div>
                                     </div>
                                 </motion.div>
-                            </Link>
+                            </a>
                         </motion.div>
                     </div>
 

@@ -26,7 +26,7 @@ const GuestPage = () => {
                 <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-[#2E7BF4] rounded-full blur-[150px]"></div>
             </div>
 
-            <div className="relative z-10 max-w-2xl mx-auto p-8 pt-12">
+            <div className="relative z-10 max-w-2xl mx-auto px-4 py-12 md:p-8 md:pt-12">
                 <Link to="/seating" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-12 transition-colors">
                     <ArrowLeft size={20} />
                     <span>席次表に戻る</span>
@@ -36,7 +36,7 @@ const GuestPage = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="bg-white/5 backdrop-blur-md border border-white/10 p-8 md:p-12 rounded-2xl shadow-2xl text-center"
+                    className="bg-white/5 backdrop-blur-md border border-white/10 px-5 py-8 md:p-12 rounded-2xl shadow-2xl text-center"
                 >
                     <div className="mb-8">
 
@@ -75,16 +75,24 @@ const GuestPage = () => {
 
                     <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-8"></div>
 
-                    <div className="text-left leading-loose whitespace-pre-wrap font-shippori text-lg text-gray-200">
+                    <div className="text-left leading-loose whitespace-pre-wrap font-shippori text-base md:text-lg text-gray-200 tracking-wide">
                         {guest.message}
                     </div>
 
-                    <div className="mt-12 pt-8 border-t border-white/10">
-                        <Gift className="w-8 h-8 mx-auto mb-4 text-[#F39800]" />
-                        <p className="text-sm text-gray-400">
-                            本日はお越しいただき<br />本当にありがとうございます。
-                        </p>
-                    </div>
+                    {/* @ts-ignore */}
+                    {guest.participation !== '応援席' && (
+                        <div className="mt-12 pt-8 border-t border-white/10">
+                            <Gift className="w-8 h-8 mx-auto mb-4 text-[#F39800]" />
+                            <img
+                                src={`${import.meta.env.BASE_URL}TodayThankyou.png`}
+                                alt="Thank You"
+                                className="w-64 mx-auto mb-4 opacity-80"
+                            />
+                            <p className="text-sm text-gray-400">
+                                本日はお越しいただき<br />誠にありがとうございます。
+                            </p>
+                        </div>
+                    )}
                 </motion.div>
             </div>
         </div>

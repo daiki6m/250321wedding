@@ -229,7 +229,14 @@ const NewGallery = () => {
                     </Link>
                     <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                         <Link
-                            to="/3d-gallery"
+                            to="/photo-shower"
+                            className="bg-gradient-to-r from-[#2E7BF4] to-[#0EA5E9] text-white px-8 py-4 rounded-full font-bold shadow-lg hover:shadow-[#2E7BF4]/50 hover:scale-105 transition-all flex items-center justify-center gap-2"
+                        >
+                            <span className="text-xl">🎉</span>
+                            <span>ライブ投影</span>
+                        </Link>
+                        <Link
+                            to="/guest-gallery-3d"
                             className="bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-full font-bold border border-white/20 shadow-lg hover:bg-white/20 hover:scale-105 transition-all flex items-center justify-center gap-2"
                         >
                             <ImageIcon size={24} className="text-[#F39800]" />
