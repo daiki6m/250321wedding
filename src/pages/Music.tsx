@@ -1,47 +1,87 @@
 import { motion } from 'framer-motion';
-import { Music as MusicIcon, ExternalLink, ArrowLeft, Play } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SectionHeading } from '../components/Shared';
 
 interface Song {
     title: string;
     artist: string;
+    youtubeUrl?: string;
     spotifyUrl?: string;
     category: string;
+    artworkUrl: string;
 }
 
 const songs: Song[] = [
     {
-        title: "Universe",
-        artist: "Official髭男dism",
-        spotifyUrl: "https://open.spotify.com/track/17Y0t1VvXpYwYwYwYwYwYw",
-        category: "入場"
+        title: "Remember Me",
+        artist: "MAN WITH A MISSION",
+        youtubeUrl: "https://www.youtube.com/watch?v=bCt-jPWd4QE",
+        spotifyUrl: "https://open.spotify.com/search/MAN%20WITH%20A%20MISSION%20Remember%20Me",
+        category: "オープニングV",
+        artworkUrl: "https://prtimes.jp/i/13546/2030/resize/d13546-2030-388005-1.jpg"
     },
     {
-        title: "115万キロのフィルム",
-        artist: "Official髭男dism",
-        spotifyUrl: "https://open.spotify.com/track/17Y0t1VvXpYwYwYwYwYwYw",
-        category: "ケーキ入刀"
+        title: "V-ROAD",
+        artist: "FUNKIST",
+        youtubeUrl: "https://www.youtube.com/watch?v=0WKUPOVa-Wo",
+        spotifyUrl: "https://open.spotify.com/search/FUNKIST%20V-ROAD",
+        category: "入場",
+        artworkUrl: "https://baseec-img-mng.akamaized.net/images/item/origin/71ad91741115bb50ce994f81718f4ebd.jpg?imformat=generic"
     },
     {
-        title: "虹",
-        artist: "菅田将暉",
-        spotifyUrl: "https://open.spotify.com/track/17Y0t1VvXpYwYwYwYwYwYw",
-        category: "中座"
+        title: "ひとりぼっちの晩餐会 (Be Our Guest)",
+        artist: "美女と野獣",
+        youtubeUrl: "https://www.youtube.com/watch?v=54Gpo6iG0Lc",
+        spotifyUrl: "https://open.spotify.com/search/Be%20Our%20Guest",
+        category: "乾杯",
+        artworkUrl: "https://i3.gamebiz.jp/images/original/147083749760376e40b5a810011.jpg"
     },
     {
-        title: "家族になろうよ",
-        artist: "福山雅治",
-        spotifyUrl: "https://open.spotify.com/track/17Y0t1VvXpYwYwYwYwYwYw",
-        category: "手紙・花束贈呈"
+        title: "ザV系っぽい曲",
+        artist: "ゴールデンボンバー",
+        youtubeUrl: "https://www.youtube.com/watch?v=UJ9dOPEKAFk",
+        spotifyUrl: "https://open.spotify.com/search/ゴールデンボンバー%20ザV系っぽい曲",
+        category: "新婦お色直し退場",
+        artworkUrl: "https://i.ytimg.com/vi/UJ9dOPEKAFk/mqdefault.jpg"
     },
     {
-        title: "バンザイ 〜好きでよかった〜",
-        artist: "ウルフルズ",
-        spotifyUrl: "https://open.spotify.com/track/17Y0t1VvXpYwYwYwYwYwYw",
-        category: "退場"
+        title: "A Question Of Honor",
+        artist: "Sarah Brightman",
+        youtubeUrl: "https://www.youtube.com/watch?v=QBQlcq_HSdg",
+        spotifyUrl: "https://open.spotify.com/search/Sarah%20Brightman%20A%20Question%20Of%20Honor",
+        category: "新郎お色直し退場",
+        artworkUrl: "https://i.ytimg.com/vi/QBQlcq_HSdg/maxresdefault.jpg"
+    },
+    {
+        title: "Nobody's home",
+        artist: "ONE OK ROCK",
+        youtubeUrl: "https://www.youtube.com/watch?v=hzvd2y6bzqs",
+        spotifyUrl: "https://open.spotify.com/search/ONE%20OK%20ROCK%20Nobody's%20home",
+        category: "プロフィールV (新郎側)",
+        artworkUrl: "https://livedoor.blogimg.jp/kruchoro-1ok/imgs/1/9/195d0969.jpg"
+    },
+    {
+        title: "誕生日でも結婚式でも使える歌",
+        artist: "ゴールデンボンバー",
+        youtubeUrl: "https://www.youtube.com/watch?v=elQw5Hct7SM",
+        spotifyUrl: "https://open.spotify.com/search/ゴールデンボンバー%20誕生日でも結婚式でも使える歌",
+        category: "プロフィールV (新婦側)",
+        artworkUrl: "https://ogre.natalie.mu/media/news/music/2017/1229/goldenbomber_art201712.jpg?impolicy=m&imwidth=750&imdensity=1"
     }
 ];
+
+const YouTubeIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    </svg>
+);
+
+const SpotifyIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.48.66.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+    </svg>
+);
 
 const Music = () => {
     return (
@@ -72,50 +112,98 @@ const Music = () => {
                     className="space-y-6"
                 >
                     <p className="text-center text-gray-400 font-shippori mb-12 leading-relaxed">
-                        披露宴当日に使用する楽曲の一部をご紹介します。<br />
-                        Spotifyのリンクから試聴も可能です。
+                        披露宴当日に使用する楽曲をご紹介します。<br />
+                        各リンクから試聴も可能です。
                     </p>
 
-                    <div className="grid gap-4">
-                        {songs.map((song, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 * index }}
-                                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:border-[#F39800]/30 transition-all duration-300"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-[#F39800]/10 flex items-center justify-center text-[#F39800]">
-                                        <MusicIcon size={24} />
-                                    </div>
-                                    <div>
-                                        <div className="text-xs text-[#F39800] font-bold tracking-widest mb-1 uppercase">
-                                            {song.category}
-                                        </div>
-                                        <h3 className="text-xl font-zen font-bold text-white group-hover:text-[#F39800] transition-colors">
-                                            {song.title}
-                                        </h3>
-                                        <p className="text-sm text-gray-400 font-shippori">
-                                            {song.artist}
-                                        </p>
-                                    </div>
-                                </div>
+                    <div className="relative">
+                        {/* Timeline Line */}
+                        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#F39800]/0 via-[#F39800]/50 to-[#F39800]/0 md:-translate-x-1/2" />
 
-                                {song.spotifyUrl && (
-                                    <a
-                                        href={song.spotifyUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 px-6 py-2 bg-[#1DB954]/10 hover:bg-[#1DB954] text-[#1DB954] hover:text-white border border-[#1DB954]/30 rounded-full transition-all duration-300 text-sm font-bold"
+                        <div className="space-y-12">
+                            {songs.map((song, index) => {
+                                return (
+                                    <motion.div
+                                        key={index}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: "-100px" }}
+                                        transition={{ delay: 0.1 }}
+                                        className={`relative flex flex-col md:flex-row gap-8 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''
+                                            }`}
                                     >
-                                        <Play size={16} fill="currentColor" />
-                                        <span>Spotifyで聴く</span>
-                                        <ExternalLink size={14} />
-                                    </a>
-                                )}
-                            </motion.div>
-                        ))}
+                                        {/* Timeline Dot */}
+                                        <div
+                                            className="absolute left-4 md:left-1/2 top-8 w-4 h-4 rounded-full bg-[#F39800] shadow-[0_0_10px_#F39800] -translate-x-[7px] md:-translate-x-1/2 z-10"
+                                        />
+
+                                        {/* Content Card */}
+                                        <div className={`flex-1 pl-12 md:pl-0 ${index % 2 === 0 ? 'md:pr-12 text-left md:text-right' : 'md:pl-12 text-left'
+                                            }`}>
+                                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 md:p-6 hover:border-[#F39800]/30 transition-all duration-300 group overflow-hidden">
+                                                <div className={`flex flex-col md:flex-row gap-6 items-center ${index % 2 === 0 ? 'md:flex-row-reverse' : ''
+                                                    }`}>
+                                                    {/* Artwork */}
+                                                    <div className="w-full md:w-32 md:h-32 aspect-square flex-shrink-0 rounded-lg overflow-hidden shadow-lg">
+                                                        <img
+                                                            src={song.artworkUrl}
+                                                            alt={`${song.title} artwork`}
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                        />
+                                                    </div>
+
+                                                    {/* Info */}
+                                                    <div className={`flex-1 flex flex-col gap-3 w-full ${index % 2 === 0 ? 'md:items-end' : 'md:items-start'
+                                                        }`}>
+                                                        <div className="inline-block px-3 py-1 rounded-full bg-[#F39800]/10 text-[#F39800] text-xs font-bold tracking-widest uppercase">
+                                                            {song.category}
+                                                        </div>
+
+                                                        <div>
+                                                            <h3 className="text-xl font-zen font-bold text-white group-hover:text-[#F39800] transition-colors mb-1">
+                                                                {song.title}
+                                                            </h3>
+                                                            <p className="text-sm text-gray-400 font-shippori">
+                                                                {song.artist}
+                                                            </p>
+                                                        </div>
+
+                                                        <div className={`flex flex-wrap gap-3 mt-1 ${index % 2 === 0 ? 'md:justify-end' : 'md:justify-start'
+                                                            }`}>
+                                                            {song.youtubeUrl && (
+                                                                <a
+                                                                    href={song.youtubeUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FF0000]/10 hover:bg-[#FF0000] text-[#FF0000] hover:text-white border border-[#FF0000]/30 transition-all duration-300"
+                                                                    title="YouTube"
+                                                                >
+                                                                    <YouTubeIcon className="w-5 h-5" />
+                                                                </a>
+                                                            )}
+                                                            {song.spotifyUrl && (
+                                                                <a
+                                                                    href={song.spotifyUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1DB954]/10 hover:bg-[#1DB954] text-[#1DB954] hover:text-white border border-[#1DB954]/30 transition-all duration-300"
+                                                                    title="Spotify"
+                                                                >
+                                                                    <SpotifyIcon className="w-5 h-5" />
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Spacer for alternating layout */}
+                                        <div className="flex-1 hidden md:block" />
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </motion.div>
 

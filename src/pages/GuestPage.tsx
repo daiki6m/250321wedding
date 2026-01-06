@@ -50,7 +50,11 @@ const GuestPage = () => {
                             </div>
                         )}
                         <p className="text-[#F39800] tracking-widest text-sm mb-2">WELCOME</p>
-                        <h1 className="text-3xl md:text-4xl font-bold mb-2">{guest.name}</h1>
+                        <h1 className="text-3xl md:text-4xl font-bold mb-2">
+                            {guest.name}
+                            {/* @ts-ignore */}
+                            {guest.participation !== '応援席' && ' 様'}
+                        </h1>
 
                         {guest.title && (
                             <p className="text-gray-400 text-sm mb-4">{guest.title}</p>

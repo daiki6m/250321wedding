@@ -111,24 +111,40 @@ const SeatingChart = () => {
                 {/* Guest Tables Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {Object.entries(tables).sort(([a], [b]) => a.localeCompare(b)).map(([groupName, guests]) => {
-                        // Determine style based on the first guest's relationship
-                        const firstGuest = guests[0];
-                        const isTakamoto = firstGuest?.relationship?.includes('宝本家');
-                        const isHasegawa = firstGuest?.relationship?.includes('長谷川家');
+                        // Define table colors
+                        const TABLE_COLORS: Record<string, string> = {
+                            "A": "#d65b75",
+                            "B": "#f2a842",
+                            "C": "#6987cf",
+                            "D": "#cea1d1",
+                            "E": "#87bda2",
+                            "F": "#ffc2e8"
+                        };
 
-                        let borderColor = "border-white/10";
-                        let titleColor = "text-[#F39800]"; // Default Orange
-                        let cardBg = "bg-white/5";
+                        const baseColor = TABLE_COLORS[groupName] || "#F39800"; // Default to Orange if undefined
 
-                        if (isTakamoto) {
-                            borderColor = "border-[#2E7BF4]/50"; // Blue border
-                            titleColor = "text-[#2E7BF4]"; // Blue text
-                            cardBg = "bg-[#2E7BF4]/5"; // Slight blue tint
-                        } else if (isHasegawa) {
-                            borderColor = "border-[#ff69b4]/50"; // Pink border
-                            titleColor = "text-[#F39800]"; // Orange text (as requested)
-                            cardBg = "bg-[#ff69b4]/5"; // Slight pink tint
+                        // Convert hex to RGB for background opacity
+                        const hexToRgb = (hex: string) => {
+                            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                            return result ? {
+                                r: parseInt(result[1], 16),
+                                g: parseInt(result[2], 16),
+                                b: parseInt(result[3], 16)
+                            } : null;
                         }
+                        const rgb = hexToRgb(baseColor);
+                        const bgStyle = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.05)` : "rgba(255, 255, 255, 0.05)";
+
+
+                        // We'll use inline styles for dynamic colors that Tailwind might not purge correctly if constructed dynamically
+                        const cardStyle = {
+                            backgroundColor: bgStyle,
+                            borderColor: baseColor + '80', // 50% opacity
+                        };
+                        const titleStyle = {
+                            color: baseColor,
+                            borderColor: baseColor + '80',
+                        };
 
                         return (
                             <motion.div
@@ -137,9 +153,13 @@ const SeatingChart = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5 }}
-                                className={`${cardBg} backdrop-blur-md border ${borderColor} rounded-xl p-4 shadow-xl flex flex-col h-full min-h-[400px]`}
+                                style={cardStyle}
+                                className={`backdrop-blur-md border rounded-xl p-4 shadow-xl flex flex-col h-full min-h-[400px]`}
                             >
-                                <h2 className={`text-xl font-serif mb-4 ${titleColor} border-b ${borderColor} pb-2 text-center`}>
+                                <h2
+                                    className={`text-xl font-serif mb-4 border-b pb-2 text-center`}
+                                    style={titleStyle}
+                                >
                                     Table {groupName}
                                 </h2>
 
@@ -149,9 +169,17 @@ const SeatingChart = () => {
                                         <Link
                                             key={guest.id}
                                             to={`/guest?id=${guest.id}`}
-                                            className="bg-white/5 hover:bg-white/10 border border-white/5 hover:border-[#F39800]/50 rounded-lg p-2 transition-all duration-300 flex flex-col items-center gap-2 group h-full"
+                                            className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg p-2 transition-all duration-300 flex flex-col items-center gap-2 group h-full hover:border-opacity-100"
+                                            style={{ borderColor: 'rgba(255,255,255,0.05)' }} // Default border
+                                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = baseColor }}
+                                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)' }}
                                         >
-                                            <div className="w-12 h-12 rounded-full overflow-hidden bg-black/20 border border-white/10 group-hover:border-[#F39800] transition-colors">
+                                            <div
+                                                className="w-12 h-12 rounded-full overflow-hidden bg-black/20 border border-white/10 transition-colors"
+                                                style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+                                                onMouseEnter={(e) => { e.currentTarget.style.borderColor = baseColor }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}
+                                            >
                                                 {guest.image ? (
                                                     <img
                                                         src={import.meta.env.BASE_URL + guest.image}
@@ -165,8 +193,12 @@ const SeatingChart = () => {
                                                 )}
                                             </div>
                                             <div className="text-center w-full">
-                                                <div className="text-sm font-medium truncate w-full px-1 group-hover:text-[#F39800] transition-colors">
-                                                    {guest.name}
+                                                <div
+                                                    className="text-sm font-medium truncate w-full px-1 transition-colors"
+                                                    onMouseEnter={(e) => { e.currentTarget.style.color = baseColor }}
+                                                    onMouseLeave={(e) => { e.currentTarget.style.color = '' }}
+                                                >
+                                                    {guest.name} 様
                                                 </div>
                                                 {guest.title && (
                                                     <div className="text-[10px] text-gray-400 truncate">
@@ -231,7 +263,6 @@ const SeatingChart = () => {
                                         </div>
                                         <div className="text-center">
                                             <div className="font-medium text-sm group-hover:text-[#F39800] transition-colors">
-                                                {/* @ts-ignore */}
                                                 {guest.name}
                                             </div>
                                             {/* @ts-ignore */}

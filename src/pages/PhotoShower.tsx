@@ -17,8 +17,10 @@ type Photo = {
 
 const PhotoShower = () => {
     const [photos, setPhotos] = useState<Photo[]>([]);
+    const [queue, setQueue] = useState<Photo[]>([]);
+    const [spotlightPhoto, setSpotlightPhoto] = useState<Photo | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [isMuted, setIsMuted] = useState(true);
+    const [isMuted, setIsMuted] = useState(false); // Default to unmuted for better experience? Or keep muted? Let's keep user preference.
     const containerRef = useRef<HTMLDivElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -44,7 +46,7 @@ const PhotoShower = () => {
         fetchPhotos();
     }, []);
 
-    // Realtime subscription
+    // Realtime subscription - Add to QUEUE instead of direct display
     useEffect(() => {
         const channel = supabase
             .channel('photos-realtime')
@@ -53,13 +55,7 @@ const PhotoShower = () => {
                 { event: 'INSERT', schema: 'public', table: 'photos' },
                 (payload: RealtimePostgresInsertPayload<Photo>) => {
                     const newPhoto = { ...payload.new, isNew: true } as Photo;
-                    setPhotos((prev) => [newPhoto, ...prev].slice(0, 100)); // Keep max 100 photos
-
-                    // Play sound effect
-                    if (audioRef.current && !isMuted) {
-                        audioRef.current.currentTime = 0;
-                        audioRef.current.play().catch(() => { });
-                    }
+                    setQueue((prev) => [...prev, newPhoto]);
                 }
             )
             .subscribe();
@@ -67,7 +63,39 @@ const PhotoShower = () => {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [isMuted]);
+    }, []);
+
+    // Process Queue
+    useEffect(() => {
+        if (queue.length > 0 && !spotlightPhoto) {
+            const nextPhoto = queue[0];
+
+            // Pre-load image before showing spotlight
+            const img = new Image();
+            img.src = nextPhoto.url;
+            img.onload = () => {
+                setSpotlightPhoto(nextPhoto);
+                setQueue((prev) => prev.slice(1));
+
+                // Play sound
+                if (audioRef.current && !isMuted) {
+                    audioRef.current.currentTime = 0;
+                    audioRef.current.play().catch(() => { });
+                }
+
+                // Show spotlight for 5 seconds, then move to gallery
+                setTimeout(() => {
+                    setSpotlightPhoto(null);
+                    setPhotos((prev) => [nextPhoto, ...prev].slice(0, 100));
+                }, 5000);
+            };
+            img.onerror = () => {
+                console.error('Failed to load image:', nextPhoto.url);
+                // Skip this photo if it fails to load
+                setQueue((prev) => prev.slice(1));
+            };
+        }
+    }, [queue, spotlightPhoto, isMuted]);
 
     // Fullscreen toggle
     const toggleFullscreen = () => {
@@ -84,21 +112,20 @@ const PhotoShower = () => {
     const getPosition = (id: number, index: number) => {
         if (!positionsRef.current[id]) {
             // Create a grid-like scattered layout
-            const cols = 6; // Increased columns for better spread
+            const cols = 6;
             const row = Math.floor(index / cols);
             const col = index % cols;
 
-            const baseX = (col / cols) * 80 + 5; // 5-85%
-            const baseY = (row % 4) * 20 + 10; // Rows wrap around
+            const baseX = (col / cols) * 80 + 5;
+            const baseY = (row % 4) * 20 + 10;
 
-            // Add randomness
             const randomX = baseX + (Math.random() - 0.5) * 15;
             const randomY = baseY + (Math.random() - 0.5) * 10;
 
             positionsRef.current[id] = {
                 x: `${Math.max(2, Math.min(88, randomX))}%`,
                 y: `${Math.max(5, Math.min(80, randomY))}%`,
-                rotate: (Math.random() - 0.5) * 30, // Increased rotation for messier look
+                rotate: (Math.random() - 0.5) * 30,
             };
         }
         return positionsRef.current[id];
@@ -111,8 +138,17 @@ const PhotoShower = () => {
             ref={containerRef}
             className="min-h-screen bg-[#fdfbf7] text-gray-800 overflow-hidden relative font-zen"
         >
+            {/* Background Image with Overlay */}
+            <div
+                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+                style={{
+                    backgroundImage: "url('https://www.nagasakistadiumcity.com/wp-content/themes/stadiumcity/images/top/front_top_sp.webp?20250422')",
+                }}
+            />
+            <div className="absolute inset-0 z-0 bg-white/85 backdrop-blur-sm" />
+
             {/* Background Particles (Subtle) */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+            <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30 z-0">
                 {[...Array(20)].map((_, i) => (
                     <motion.div
                         key={i}
@@ -205,8 +241,8 @@ const PhotoShower = () => {
                                     zIndex: photos.length - index,
                                 }}
                                 initial={photo.isNew ? {
-                                    y: -800, // Start higher up
-                                    x: (Math.random() - 0.5) * 200, // Random horizontal start
+                                    y: -800,
+                                    x: (Math.random() - 0.5) * 200,
                                     rotate: (Math.random() - 0.5) * 90,
                                     opacity: 0,
                                     scale: 0.8,
@@ -231,7 +267,7 @@ const PhotoShower = () => {
                                     damping: 20,
                                     stiffness: 60,
                                     mass: 1.2,
-                                    duration: photo.isNew ? 2.5 : 0.5, // Slower fall
+                                    duration: photo.isNew ? 2.5 : 0.5,
                                 }}
                                 onAnimationComplete={() => {
                                     if (photo.isNew) {
@@ -243,14 +279,7 @@ const PhotoShower = () => {
                                     }
                                 }}
                             >
-                                {/* Polaroid Frame */}
-                                <div className="bg-white p-3 pb-4 shadow-[0_10px_30px_rgba(0,0,0,0.15)] transform hover:scale-105 transition-transform cursor-pointer border border-gray-100 w-48 md:w-56"
-                                    style={{
-                                        boxShadow: photo.isNew
-                                            ? '0 0 30px rgba(243, 152, 0, 0.3), 0 20px 50px rgba(0,0,0,0.2)'
-                                            : '0 10px 30px rgba(0,0,0,0.15)',
-                                    }}
-                                >
+                                <div className="bg-white p-3 pb-4 shadow-[0_10px_30px_rgba(0,0,0,0.15)] transform hover:scale-105 transition-transform cursor-pointer border border-gray-100 w-48 md:w-56">
                                     <div className="aspect-square w-full overflow-hidden bg-gray-100 mb-3">
                                         <img
                                             src={photo.url}
@@ -258,7 +287,6 @@ const PhotoShower = () => {
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
-
                                     <div className="text-center px-1">
                                         {photo.uploader && (
                                             <p className="text-gray-800 font-bold text-sm font-zen truncate mb-1">
@@ -270,30 +298,15 @@ const PhotoShower = () => {
                                                 {photo.caption}
                                             </p>
                                         )}
-                                        {!photo.uploader && !photo.caption && (
-                                            <p className="text-gray-300 text-xs font-serif italic">
-                                                Thank you
-                                            </p>
-                                        )}
                                     </div>
                                 </div>
-
-                                {/* New Photo Glow Effect */}
-                                {photo.isNew && (
-                                    <motion.div
-                                        className="absolute inset-0 bg-white/50 rounded-lg pointer-events-none mix-blend-overlay"
-                                        initial={{ opacity: 1 }}
-                                        animate={{ opacity: 0 }}
-                                        transition={{ duration: 1.5 }}
-                                    />
-                                )}
                             </motion.div>
                         );
                     })}
                 </AnimatePresence>
 
                 {/* Empty State */}
-                {photos.length === 0 && (
+                {photos.length === 0 && !spotlightPhoto && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div className="text-center opacity-50">
                             <motion.div
@@ -316,6 +329,75 @@ const PhotoShower = () => {
                     </div>
                 )}
             </div>
+
+            {/* Spotlight Overlay */}
+            <AnimatePresence>
+                {spotlightPhoto && (
+                    <motion.div
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        {/* Particles */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            {[...Array(30)].map((_, i) => (
+                                <motion.div
+                                    key={i}
+                                    className="absolute w-3 h-3 rounded-full"
+                                    style={{
+                                        backgroundColor: ['#F39800', '#2E7BF4', '#FFD700', '#FF69B4'][i % 4],
+                                        left: '50%',
+                                        top: '50%',
+                                    }}
+                                    initial={{ scale: 0, x: 0, y: 0 }}
+                                    animate={{
+                                        scale: [0, 1, 0],
+                                        x: (Math.random() - 0.5) * 800,
+                                        y: (Math.random() - 0.5) * 800,
+                                        rotate: Math.random() * 360,
+                                    }}
+                                    transition={{
+                                        duration: 2,
+                                        ease: "easeOut",
+                                        delay: 0.2,
+                                    }}
+                                />
+                            ))}
+                        </div>
+
+                        <motion.div
+                            className="bg-white p-4 pb-6 shadow-2xl rounded-sm max-w-2xl w-[90%] md:w-auto transform rotate-[-2deg]"
+                            initial={{ scale: 0.5, opacity: 0, y: 100, rotate: 10 }}
+                            animate={{ scale: 1, opacity: 1, y: 0, rotate: -2 }}
+                            exit={{ scale: 0.5, opacity: 0, y: -100, rotate: -10 }}
+                            transition={{ type: "spring", damping: 15, stiffness: 100 }}
+                        >
+                            <div className="aspect-square w-full md:w-[500px] overflow-hidden bg-gray-100 mb-4">
+                                <img
+                                    src={spotlightPhoto.url}
+                                    alt="New Photo"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div className="text-center">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.5 }}
+                                >
+                                    <p className="text-2xl font-bold text-gray-800 mb-2 font-zen">
+                                        {spotlightPhoto.uploader || 'Guest'}
+                                    </p>
+                                    <p className="text-lg text-gray-600 font-shippori">
+                                        {spotlightPhoto.caption}
+                                    </p>
+                                </motion.div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Sound Effect Audio */}
             <audio
