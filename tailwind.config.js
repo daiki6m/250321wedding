@@ -10,6 +10,7 @@ export default {
                 zen: ['"Zen Old Mincho"', "serif"],
                 shippori: ['"Shippori Mincho"', "serif"],
                 handwritten: ['"Zen Kurenaido"', "sans-serif"],
+                yomogi: ['"Yomogi"', "cursive"],
             },
         },
     },

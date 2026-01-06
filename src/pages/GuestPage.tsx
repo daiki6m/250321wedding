@@ -79,7 +79,7 @@ const GuestPage = () => {
 
                     <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-8"></div>
 
-                    <div className="text-left leading-loose whitespace-pre-wrap font-shippori text-base md:text-lg text-gray-200 tracking-wide">
+                    <div className="text-left leading-loose whitespace-pre-wrap font-handwritten text-base md:text-lg text-gray-200 tracking-wide">
                         {guest.message}
                     </div>
 
