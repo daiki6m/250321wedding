@@ -33,7 +33,7 @@ const songs: Song[] = [
         title: "ひとりぼっちの晩餐会 (Be Our Guest)",
         artist: "美女と野獣",
         youtubeUrl: "https://www.youtube.com/watch?v=54Gpo6iG0Lc",
-        spotifyUrl: "https://open.spotify.com/search/Be%20Our%20Guest",
+        spotifyUrl: "https://open.spotify.com/search/Be%20Our%20Guest%20%E7%BE%8E%E5%A5%B3%E3%81%A8%E9%87%8E%E7%8D%A3",
         category: "乾杯",
         artworkUrl: "https://i3.gamebiz.jp/images/original/147083749760376e40b5a810011.jpg"
     },
@@ -41,7 +41,7 @@ const songs: Song[] = [
         title: "ザV系っぽい曲",
         artist: "ゴールデンボンバー",
         youtubeUrl: "https://www.youtube.com/watch?v=UJ9dOPEKAFk",
-        spotifyUrl: "https://open.spotify.com/search/ゴールデンボンバー%20ザV系っぽい曲",
+        spotifyUrl: "https://open.spotify.com/search/%E3%82%B4%E3%83%BC%E3%83%AB%E3%83%87%E3%83%B3%E3%83%9C%E3%83%B3%E3%83%90%E3%83%BC%20%E3%82%B6V%E7%B3%BB%E3%81%A3%E3%81%BD%E3%81%84%E6%9B%B2",
         category: "新婦お色直し退場",
         artworkUrl: "https://i.ytimg.com/vi/UJ9dOPEKAFk/mqdefault.jpg"
     },
@@ -57,7 +57,7 @@ const songs: Song[] = [
         title: "Nobody's home",
         artist: "ONE OK ROCK",
         youtubeUrl: "https://www.youtube.com/watch?v=hzvd2y6bzqs",
-        spotifyUrl: "https://open.spotify.com/search/ONE%20OK%20ROCK%20Nobody's%20home",
+        spotifyUrl: "https://open.spotify.com/search/ONE%20OK%20ROCK%20Nobody%27s%20home",
         category: "プロフィールV (新郎側)",
         artworkUrl: "https://livedoor.blogimg.jp/kruchoro-1ok/imgs/1/9/195d0969.jpg"
     },
@@ -65,7 +65,7 @@ const songs: Song[] = [
         title: "誕生日でも結婚式でも使える歌",
         artist: "ゴールデンボンバー",
         youtubeUrl: "https://www.youtube.com/watch?v=elQw5Hct7SM",
-        spotifyUrl: "https://open.spotify.com/search/ゴールデンボンバー%20誕生日でも結婚式でも使える歌",
+        spotifyUrl: "https://open.spotify.com/search/%E3%82%B4%E3%83%BC%E3%83%AB%E3%83%87%E3%83%B3%E3%83%9C%E3%83%B3%E3%83%90%E3%83%BC%20%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%A7%E3%82%82%E7%B5%90%E5%A9%9A%E5%BC%8F%E3%81%A7%E3%82%82%E4%BD%BF%E3%81%88%E3%82%8B%E6%AD%8C",
         category: "プロフィールV (新婦側)",
         artworkUrl: "https://ogre.natalie.mu/media/news/music/2017/1229/goldenbomber_art201712.jpg?impolicy=m&imwidth=750&imdensity=1"
     }
@@ -140,11 +140,11 @@ const Music = () => {
                                         {/* Content Card */}
                                         <div className={`flex-1 pl-12 md:pl-0 ${index % 2 === 0 ? 'md:pr-12 text-left md:text-right' : 'md:pl-12 text-left'
                                             }`}>
-                                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 md:p-6 hover:border-[#F39800]/30 transition-all duration-300 group overflow-hidden">
-                                                <div className={`flex flex-col md:flex-row gap-6 items-center ${index % 2 === 0 ? 'md:flex-row-reverse' : ''
+                                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 md:p-6 hover:border-[#F39800]/30 transition-all duration-300 group">
+                                                <div className={`flex flex-col md:flex-row gap-4 md:gap-6 items-center ${index % 2 === 0 ? 'md:flex-row-reverse' : ''
                                                     }`}>
                                                     {/* Artwork */}
-                                                    <div className="w-full md:w-32 md:h-32 aspect-square flex-shrink-0 rounded-lg overflow-hidden shadow-lg">
+                                                    <div className="w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden shadow-lg">
                                                         <img
                                                             src={song.artworkUrl}
                                                             alt={`${song.title} artwork`}
