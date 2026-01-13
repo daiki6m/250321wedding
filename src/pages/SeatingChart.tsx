@@ -1,68 +1,119 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Users } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Users, X } from 'lucide-react';
 import guestsData from '../data/guests.json';
-// import { COLORS } from '../components/Shared';
+import { useState, useEffect, useMemo } from 'react';
 
 const SeatingChart = () => {
-    // Filter guests by type
-    // @ts-ignore
-    const mainTableGuests = guestsData.filter(g => g.participation === '本人');
-    // @ts-ignore
-    const cheeringGuests = guestsData.filter(g => g.participation === '応援席');
-    // @ts-ignore
-    // Fallback: If participation is missing, treat as '出席' (regular guest)
-    const regularGuests = guestsData.filter(g => g.participation === '出席' || !g.participation);
+    const { mainTableGuests, cheeringGuests, tables } = useMemo(() => {
+        // @ts-ignore
+        const main = guestsData.filter(g => g.participation === '本人');
+        // @ts-ignore
+        const cheering = guestsData.filter(g => g.participation === '応援席');
+        // @ts-ignore
+        const regular = guestsData.filter(g => g.participation === '出席' || !g.participation);
 
-    // Group regular guests by table group (A, B, C...)
-    const tables = regularGuests.reduce((acc, guest) => {
-        // @ts-ignore - group field exists in updated JSON
-        const group = guest.group || "Other";
-        if (!acc[group]) acc[group] = [];
-        acc[group].push(guest);
-        return acc;
-    }, {} as Record<string, typeof guestsData>);
+        const grouped = regular.reduce((acc, guest) => {
+            // @ts-ignore - group field exists in updated JSON
+            const group = guest.group || "Other";
+            if (!acc[group]) acc[group] = [];
+            acc[group].push(guest);
+            return acc;
+        }, {} as Record<string, typeof guestsData>);
 
-    // Sort guests within each group by tableOrder
-    Object.keys(tables).forEach(group => {
-        tables[group].sort((a, b) => {
-            // @ts-ignore - tableOrder field exists
-            const orderA = parseInt(a.tableOrder || "0", 10);
-            // @ts-ignore
-            const orderB = parseInt(b.tableOrder || "0", 10);
-            return orderA - orderB;
+        // Sort guests within each group by tableOrder
+        Object.keys(grouped).forEach(group => {
+            grouped[group].sort((a, b) => {
+                // @ts-ignore - tableOrder field exists
+                const orderA = parseInt(a.tableOrder || "0", 10);
+                // @ts-ignore
+                const orderB = parseInt(b.tableOrder || "0", 10);
+                return orderA - orderB;
+            });
         });
-    });
+
+        return { mainTableGuests: main, cheeringGuests: cheering, tables: grouped };
+    }, []);
+
+    // State for interactive mobile view
+    const [selectedTable, setSelectedTable] = useState<string | null>(null);
+    const [isMobile, setIsMobile] = useState(false);
+    const [showMiniature, setShowMiniature] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Periodic animation for mobile view
+    useEffect(() => {
+        if (!isMobile) return;
+
+        const interval = setInterval(() => {
+            setShowMiniature(prev => !prev);
+        }, 5000); // Toggle every 5 seconds
+
+        return () => clearInterval(interval);
+    }, [isMobile]);
+
+    // Pickup Table Carousel State
+    const [pickupIndex, setPickupIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPickupIndex(prev => (prev + 1) % Object.keys(tables).length);
+        }, 6000); // Switch table every 6 seconds
+
+        return () => clearInterval(interval);
+    }, [tables]);
+
+    const handleTableClick = (groupName: string) => {
+        if (isMobile) {
+            setSelectedTable(groupName);
+        }
+    };
+
+    const closeOverlay = () => {
+        setSelectedTable(null);
+    };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white font-zen relative overflow-hidden p-8 pt-12">
+        <div className="min-h-screen bg-[#050505] text-white font-zen relative overflow-hidden p-4 md:p-8 pt-12">
             <div className="absolute inset-0 pointer-events-none opacity-10">
                 <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-b from-[#2E7BF4]/20 to-transparent"></div>
             </div>
 
-            <div className="relative z-10 max-w-4xl mx-auto">
+            <div className="relative z-10 max-w-[1600px] mx-auto px-2 md:px-8">
                 <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
                     <ArrowLeft size={20} />
                     <span>トップへ戻る</span>
                 </Link>
 
-                <h1 className="text-3xl font-bold mb-12 text-center flex items-center justify-center gap-4">
-                    <Users className="text-[#F39800]" />
-                    <span>席次表</span>
-                </h1>
+                <div className="mb-12 text-center">
+                    <h1 className="text-3xl font-bold mb-2 flex items-center justify-center gap-4">
+                        <Users className="text-[#F39800]" />
+                        <span>席次表</span>
+                    </h1>
+                    <p className="text-[10px] md:text-xs text-gray-400 opacity-70">
+                        ※顔写真をタップするとコメントを表示することができます
+                    </p>
+                </div>
 
-                {/* Takasago (High Table) */}
                 {/* Takasago (High Table) */}
                 <div className="flex justify-center mb-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl max-w-2xl w-full text-center relative overflow-hidden"
+                        className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-8 shadow-2xl max-w-2xl w-full text-center relative overflow-hidden"
                     >
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#F39800] to-transparent opacity-50"></div>
-                        <h2 className="text-2xl font-serif mb-8 text-white tracking-widest">Main Table</h2>
-                        <div className="flex justify-center gap-12 items-center">
+                        <h2 className="text-xl md:text-2xl font-serif mb-8 text-white tracking-widest">Main Table</h2>
+                        <div className="flex justify-center gap-4 md:gap-12 items-center">
                             {(() => {
                                 // @ts-ignore
                                 const groom = mainTableGuests.find(g => g.name.includes('宝本') || g.name.includes('大樹')) || { name: 'Daiki', image: null };
@@ -71,8 +122,8 @@ const SeatingChart = () => {
 
                                 return (
                                     <>
-                                        <div className="flex flex-col items-center gap-4">
-                                            <div className="w-24 h-24 rounded-full border-2 border-[#2E7BF4] shadow-[0_0_15px_rgba(46,123,244,0.3)] overflow-hidden">
+                                        <div className="flex flex-col items-center gap-2 md:gap-4">
+                                            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-[#2E7BF4] shadow-[0_0_15px_rgba(46,123,244,0.3)] overflow-hidden">
                                                 <img
                                                     // @ts-ignore
                                                     src={groom.image ? (import.meta.env.BASE_URL + groom.image) : `${import.meta.env.BASE_URL}daiki.png`}
@@ -80,11 +131,11 @@ const SeatingChart = () => {
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
-                                            <div className="text-xl font-medium whitespace-nowrap">{groom.name.includes(' ') ? groom.name.split(' ')[1] : groom.name}</div>
+                                            <div className="text-base md:text-xl font-medium whitespace-nowrap">{groom.name.includes(' ') ? groom.name.split(' ')[1] : groom.name}</div>
                                         </div>
-                                        <div className="text-[#F39800] text-2xl font-serif">&</div>
-                                        <div className="flex flex-col items-center gap-4">
-                                            <div className="w-24 h-24 rounded-full border-2 border-[#ff69b4] shadow-[0_0_15px_rgba(255,105,180,0.3)] overflow-hidden">
+                                        <div className="text-[#F39800] text-xl md:text-2xl font-serif">&</div>
+                                        <div className="flex flex-col items-center gap-2 md:gap-4">
+                                            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-[#ff69b4] shadow-[0_0_15px_rgba(255,105,180,0.3)] overflow-hidden">
                                                 {/* @ts-ignore */}
                                                 {bride.image ? (
                                                     <img
@@ -99,7 +150,7 @@ const SeatingChart = () => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="text-xl font-medium whitespace-nowrap">{bride.name.includes(' ') ? bride.name.split(' ')[1] : bride.name}</div>
+                                            <div className="text-base md:text-xl font-medium whitespace-nowrap">{bride.name.includes(' ') ? bride.name.split(' ')[1] : bride.name}</div>
                                         </div>
                                     </>
                                 );
@@ -109,7 +160,8 @@ const SeatingChart = () => {
                 </div>
 
                 {/* Guest Tables Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Mobile: 3 columns, Compact. PC: 2/3 columns, Full. */}
+                <div className="grid grid-cols-3 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-8 lg:gap-16">
                     {Object.entries(tables).sort(([a], [b]) => a.localeCompare(b)).map(([groupName, guests]) => {
                         // Define table colors
                         const TABLE_COLORS: Record<string, string> = {
@@ -141,10 +193,6 @@ const SeatingChart = () => {
                             backgroundColor: bgStyle,
                             borderColor: baseColor + '80', // 50% opacity
                         };
-                        const titleStyle = {
-                            color: baseColor,
-                            borderColor: baseColor + '80',
-                        };
 
                         return (
                             <motion.div
@@ -154,70 +202,369 @@ const SeatingChart = () => {
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5 }}
                                 style={cardStyle}
-                                className={`backdrop-blur-md border rounded-xl p-4 shadow-xl flex flex-col h-full min-h-[400px]`}
+                                onClick={() => handleTableClick(groupName)}
+                                className={`backdrop-blur-md border rounded-xl p-2 md:p-4 shadow-xl flex flex-col relative cursor-pointer md:cursor-default
+                                    ${isMobile ? 'h-32 items-center justify-center' : 'h-[500px]'}
+                                `}
                             >
-                                <h2
-                                    className={`text-xl font-serif mb-4 border-b pb-2 text-center`}
-                                    style={titleStyle}
-                                >
-                                    Table {groupName}
-                                </h2>
-
-                                {/* 2-Column Grid for Guests */}
-                                <div className="grid grid-cols-2 gap-3 flex-grow content-start">
-                                    {guests.map((guest) => (
-                                        <Link
-                                            key={guest.id}
-                                            to={`/guest?id=${guest.id}`}
-                                            className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg p-2 transition-all duration-300 flex flex-col items-center gap-2 group h-full hover:border-opacity-100"
-                                            style={{ borderColor: 'rgba(255,255,255,0.05)' }} // Default border
-                                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = baseColor }}
-                                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)' }}
+                                {/* Circular Layout Container - Only visible on PC or if expanded (handled by overlay for mobile) */}
+                                {!isMobile ? (
+                                    <div className="relative w-full h-full">
+                                        {/* Center Table Label */}
+                                        <div
+                                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 flex items-center justify-center z-0"
+                                            style={{
+                                                borderColor: baseColor,
+                                                backgroundColor: bgStyle,
+                                                boxShadow: `0 0 20px ${baseColor}40`
+                                            }}
                                         >
-                                            <div
-                                                className="w-12 h-12 rounded-full overflow-hidden bg-black/20 border border-white/10 transition-colors"
-                                                style={{ borderColor: 'rgba(255,255,255,0.1)' }}
-                                                onMouseEnter={(e) => { e.currentTarget.style.borderColor = baseColor }}
-                                                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}
-                                            >
-                                                {guest.image ? (
-                                                    <img
-                                                        src={import.meta.env.BASE_URL + guest.image}
-                                                        alt={guest.name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-500">
-                                                        <Users size={16} />
-                                                    </div>
-                                                )}
+                                            <div className="text-center">
+                                                <span className="block text-xs text-gray-400 font-serif">Table</span>
+                                                <span className="block text-3xl font-serif font-bold" style={{ color: baseColor }}>{groupName}</span>
                                             </div>
-                                            <div className="text-center w-full">
-                                                <div
-                                                    className="text-sm font-medium truncate w-full px-1 transition-colors"
-                                                    onMouseEnter={(e) => { e.currentTarget.style.color = baseColor }}
-                                                    onMouseLeave={(e) => { e.currentTarget.style.color = '' }}
-                                                >
-                                                    {guest.name} 様
-                                                </div>
-                                                {guest.title && (
-                                                    <div className="text-[10px] text-gray-400 truncate">
-                                                        {guest.title}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </Link>
-                                    ))}
-                                    {/* Fill empty slots to maintain grid structure if needed, or just let min-height handle it */}
-                                    {[...Array(Math.max(0, 8 - guests.length))].map((_, i) => (
-                                        <div key={`empty-${i}`} className="border border-white/5 rounded-lg p-2 flex items-center justify-center opacity-30">
-                                            <span className="text-xs text-gray-600">Vacant</span>
                                         </div>
-                                    ))}
-                                </div>
+
+                                        {guests.map((guest, index) => {
+                                            const totalGuests = guests.length;
+                                            const angleStep = (2 * Math.PI) / totalGuests;
+                                            const startAngle = -Math.PI / 2;
+                                            const angle = startAngle + index * angleStep;
+                                            const radius = 120;
+                                            const left = `calc(50% + ${Math.cos(angle) * radius}px)`;
+                                            const top = `calc(50% + ${Math.sin(angle) * radius}px)`;
+
+                                            return (
+                                                <Link
+                                                    key={guest.id}
+                                                    to={`/guest?id=${guest.id}`}
+                                                    className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 group w-20 z-10"
+                                                    style={{ left, top }}
+                                                >
+                                                    <div
+                                                        className="w-12 h-12 rounded-full overflow-hidden bg-black/40 border border-white/10 transition-all duration-300 group-hover:scale-110 group-hover:border-opacity-100 shadow-lg"
+                                                        style={{ borderColor: 'rgba(255,255,255,0.2)' }}
+                                                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = baseColor }}
+                                                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }}
+                                                    >
+                                                        {guest.image ? (
+                                                            <img
+                                                                src={import.meta.env.BASE_URL + guest.image}
+                                                                alt={guest.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                                <Users size={16} />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-center w-28">
+                                                        <div
+                                                            className="text-xs font-medium truncate w-full px-1 transition-colors bg-black/20 rounded backdrop-blur-sm"
+                                                            onMouseEnter={(e) => { e.currentTarget.style.color = baseColor }}
+                                                            onMouseLeave={(e) => { e.currentTarget.style.color = '' }}
+                                                        >
+                                                            {guest.name} 様
+                                                        </div>
+                                                        {guest.title && (
+                                                            <div className="text-[9px] text-gray-400 truncate mt-0.5">
+                                                                {guest.title}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    // Mobile Compact View (Animated)
+                                    <div className="relative w-full h-full flex items-center justify-center">
+                                        <AnimatePresence mode="wait">
+                                            {!showMiniature ? (
+                                                <motion.div
+                                                    key="simple"
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    exit={{ opacity: 0 }}
+                                                    transition={{ duration: 0.8 }}
+                                                    className="absolute inset-0 flex items-center justify-center"
+                                                >
+                                                    <div
+                                                        className="w-16 h-16 rounded-full border-2 flex items-center justify-center"
+                                                        style={{
+                                                            borderColor: baseColor,
+                                                            backgroundColor: bgStyle,
+                                                        }}
+                                                    >
+                                                        <div className="text-center">
+                                                            <span className="block text-[10px] text-gray-400 font-serif">Table</span>
+                                                            <span className="block text-xl font-serif font-bold" style={{ color: baseColor }}>{groupName}</span>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            ) : (
+                                                <motion.div
+                                                    key="miniature"
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    exit={{ opacity: 0 }}
+                                                    transition={{ duration: 0.8 }}
+                                                    className="absolute inset-0 flex items-center justify-center"
+                                                >
+                                                    {guests.map((guest, index) => {
+                                                        const totalGuests = guests.length;
+                                                        const angleStep = (2 * Math.PI) / totalGuests;
+                                                        const startAngle = -Math.PI / 2;
+                                                        const angle = startAngle + index * angleStep;
+                                                        // Miniature radius - adjusted for 30px photos
+                                                        const radius = 36;
+                                                        const left = `calc(50% + ${Math.cos(angle) * radius}px)`;
+                                                        const top = `calc(50% + ${Math.sin(angle) * radius}px)`;
+
+                                                        return (
+                                                            <div
+                                                                key={guest.id}
+                                                                className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-[1px] w-[30px] z-10 pointer-events-none"
+                                                                style={{ left, top }}
+                                                            >
+                                                                <div
+                                                                    className="w-[30px] h-[30px] rounded-full overflow-hidden bg-black/40 border border-white/10 shadow-sm"
+                                                                    style={{ borderColor: 'rgba(255,255,255,0.2)' }}
+                                                                >
+                                                                    {guest.image ? (
+                                                                        <img
+                                                                            src={import.meta.env.BASE_URL + guest.image}
+                                                                            alt={guest.name}
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                                            <Users size={14} />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                )}
                             </motion.div>
                         );
                     })}
+                </div>
+
+                {/* Mobile Expanded Overlay */}
+                <AnimatePresence>
+                    {selectedTable && isMobile && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+                            onClick={closeOverlay}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.8, opacity: 0 }}
+                                className="w-full max-w-sm aspect-square relative"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Close Button */}
+                                <button
+                                    onClick={closeOverlay}
+                                    className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white"
+                                >
+                                    <X size={24} />
+                                </button>
+
+                                {(() => {
+                                    const guests = tables[selectedTable];
+                                    const TABLE_COLORS: Record<string, string> = {
+                                        "A": "#d65b75", "B": "#f2a842", "C": "#6987cf",
+                                        "D": "#cea1d1", "E": "#87bda2", "F": "#ffc2e8"
+                                    };
+                                    const baseColor = TABLE_COLORS[selectedTable] || "#F39800";
+                                    const hexToRgb = (hex: string) => {
+                                        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                                        return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+                                    }
+                                    const rgb = hexToRgb(baseColor);
+                                    const bgStyle = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)` : "rgba(255, 255, 255, 0.1)";
+
+                                    return (
+                                        <div className="relative w-full h-full bg-white/5 backdrop-blur-xl rounded-full border border-white/10"
+                                            style={{ borderColor: baseColor }}
+                                        >
+                                            {/* Center Label */}
+                                            <div
+                                                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 flex items-center justify-center z-0"
+                                                style={{
+                                                    borderColor: baseColor,
+                                                    backgroundColor: bgStyle,
+                                                    boxShadow: `0 0 30px ${baseColor}60`
+                                                }}
+                                            >
+                                                <div className="text-center">
+                                                    <span className="block text-xs text-gray-400 font-serif">Table</span>
+                                                    <span className="block text-4xl font-serif font-bold" style={{ color: baseColor }}>{selectedTable}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Guests */}
+                                            {guests.map((guest, index) => {
+                                                const totalGuests = guests.length;
+                                                const angleStep = (2 * Math.PI) / totalGuests;
+                                                const startAngle = -Math.PI / 2;
+                                                const angle = startAngle + index * angleStep;
+                                                // Mobile overlay radius
+                                                const radius = 130;
+                                                const left = `calc(50% + ${Math.cos(angle) * radius}px)`;
+                                                const top = `calc(50% + ${Math.sin(angle) * radius}px)`;
+
+                                                return (
+                                                    <Link
+                                                        key={guest.id}
+                                                        to={`/guest?id=${guest.id}`}
+                                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 group w-20 z-10"
+                                                        style={{ left, top }}
+                                                    >
+                                                        <div
+                                                            className="w-12 h-12 rounded-full overflow-hidden bg-black/40 border border-white/10 shadow-lg"
+                                                            style={{ borderColor: baseColor }}
+                                                        >
+                                                            {guest.image ? (
+                                                                <img
+                                                                    src={import.meta.env.BASE_URL + guest.image}
+                                                                    alt={guest.name}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                                    <Users size={16} />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-center w-24">
+                                                            <div className="text-xs font-medium truncate w-full px-1 bg-black/40 rounded text-white">
+                                                                {guest.name} 様
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    );
+                                })()}
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Pickup Table Section */}
+                <div className="mt-24 mb-16">
+                    <h2 className="text-2xl font-serif mb-8 text-center text-[#F39800] flex items-center justify-center gap-4">
+                        <span className="h-px w-12 bg-gradient-to-r from-transparent to-[#F39800]"></span>
+                        <span>Pickup Table</span>
+                        <span className="h-px w-12 bg-gradient-to-l from-transparent to-[#F39800]"></span>
+                    </h2>
+
+                    <div className="flex justify-center h-[400px] relative overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            {(() => {
+                                const tableKeys = Object.keys(tables).sort();
+                                const currentTableKey = tableKeys[pickupIndex];
+                                const guests = tables[currentTableKey];
+
+                                // Define table colors (reused)
+                                const TABLE_COLORS: Record<string, string> = {
+                                    "A": "#d65b75", "B": "#f2a842", "C": "#6987cf",
+                                    "D": "#cea1d1", "E": "#87bda2", "F": "#ffc2e8"
+                                };
+                                const baseColor = TABLE_COLORS[currentTableKey] || "#F39800";
+                                const hexToRgb = (hex: string) => {
+                                    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                                    return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+                                }
+                                const rgb = hexToRgb(baseColor);
+                                const bgStyle = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)` : "rgba(255, 255, 255, 0.1)";
+
+                                return (
+                                    <motion.div
+                                        key={currentTableKey}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 1.1 }}
+                                        transition={{ duration: 0.8 }}
+                                        className="absolute w-full max-w-md aspect-square flex items-center justify-center"
+                                    >
+                                        <div className="relative w-full h-full">
+                                            {/* Center Label */}
+                                            <div
+                                                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 flex items-center justify-center z-0"
+                                                style={{
+                                                    borderColor: baseColor,
+                                                    backgroundColor: bgStyle,
+                                                    boxShadow: `0 0 30px ${baseColor}60`
+                                                }}
+                                            >
+                                                <div className="text-center">
+                                                    <span className="block text-xs text-gray-400 font-serif">Table</span>
+                                                    <span className="block text-4xl font-serif font-bold" style={{ color: baseColor }}>{currentTableKey}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Guests */}
+                                            {guests.map((guest, index) => {
+                                                const totalGuests = guests.length;
+                                                const angleStep = (2 * Math.PI) / totalGuests;
+                                                const startAngle = -Math.PI / 2;
+                                                const angle = startAngle + index * angleStep;
+                                                const radius = 130;
+                                                const left = `calc(50% + ${Math.cos(angle) * radius}px)`;
+                                                const top = `calc(50% + ${Math.sin(angle) * radius}px)`;
+
+                                                return (
+                                                    <Link
+                                                        key={guest.id}
+                                                        to={`/guest?id=${guest.id}`}
+                                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 group w-20 z-10"
+                                                        style={{ left, top }}
+                                                    >
+                                                        <div
+                                                            className="w-14 h-14 rounded-full overflow-hidden bg-black/40 border border-white/10 shadow-lg transition-transform duration-300"
+                                                            style={{ borderColor: baseColor }}
+                                                        >
+                                                            {guest.image ? (
+                                                                <img
+                                                                    src={import.meta.env.BASE_URL + guest.image}
+                                                                    alt={guest.name}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                                    <Users size={20} />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-center w-24">
+                                                            <div className="text-xs font-medium truncate w-full px-1 bg-black/40 rounded text-white backdrop-blur-sm">
+                                                                {guest.name} 様
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    </motion.div>
+                                );
+                            })()}
+                        </AnimatePresence>
+                    </div>
                 </div>
 
                 {/* Cheering Seats Section */}
