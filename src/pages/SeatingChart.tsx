@@ -71,6 +71,25 @@ const SeatingChart = () => {
         return () => clearInterval(interval);
     }, [tables]);
 
+    // Time-based link lock: Links enabled after March 21, 2026 16:20 JST
+    const UNLOCK_DATE = new Date('2026-03-21T16:20:00+09:00');
+    const [isLinksEnabled, setIsLinksEnabled] = useState(() => Date.now() >= UNLOCK_DATE.getTime());
+
+    useEffect(() => {
+        // Check periodically in case page is open when unlock time passes
+        const checkUnlock = () => {
+            if (Date.now() >= UNLOCK_DATE.getTime()) {
+                setIsLinksEnabled(true);
+            }
+        };
+
+        // Check every minute
+        const interval = setInterval(checkUnlock, 60000);
+        checkUnlock(); // Also check immediately
+
+        return () => clearInterval(interval);
+    }, []);
+
     const handleTableClick = (groupName: string) => {
         if (isMobile) {
             setSelectedTable(groupName);
@@ -99,7 +118,10 @@ const SeatingChart = () => {
                         <span>席次表</span>
                     </h1>
                     <p className="text-[10px] md:text-xs text-gray-400 opacity-70">
-                        ※顔写真をタップするとコメントを表示することができます
+                        {isLinksEnabled
+                            ? "※顔写真をタップするとコメントを表示することができます"
+                            : "※16:20 以降にゲストページへアクセスできます"
+                        }
                     </p>
                 </div>
 
@@ -234,7 +256,7 @@ const SeatingChart = () => {
                                             const left = `calc(50% + ${Math.cos(angle) * radius}px)`;
                                             const top = `calc(50% + ${Math.sin(angle) * radius}px)`;
 
-                                            return (
+                                            return isLinksEnabled ? (
                                                 <Link
                                                     key={guest.id}
                                                     to={`/guest?id=${guest.id}`}
@@ -274,6 +296,39 @@ const SeatingChart = () => {
                                                         )}
                                                     </div>
                                                 </Link>
+                                            ) : (
+                                                <div
+                                                    key={guest.id}
+                                                    className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 w-20 z-10 cursor-default"
+                                                    style={{ left, top }}
+                                                >
+                                                    <div
+                                                        className="w-12 h-12 rounded-full overflow-hidden bg-black/40 border border-white/10 shadow-lg"
+                                                        style={{ borderColor: 'rgba(255,255,255,0.2)' }}
+                                                    >
+                                                        {guest.image ? (
+                                                            <img
+                                                                src={import.meta.env.BASE_URL + guest.image}
+                                                                alt={guest.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                                <Users size={16} />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-center w-28">
+                                                        <div className="text-xs font-medium truncate w-full px-1 bg-black/20 rounded backdrop-blur-sm">
+                                                            {guest.name} 様
+                                                        </div>
+                                                        {guest.title && (
+                                                            <div className="text-[9px] text-gray-400 truncate mt-0.5">
+                                                                {guest.title}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             );
                                         })}
                                     </div>
@@ -426,7 +481,7 @@ const SeatingChart = () => {
                                                 const left = `calc(50% + ${Math.cos(angle) * radius}px)`;
                                                 const top = `calc(50% + ${Math.sin(angle) * radius}px)`;
 
-                                                return (
+                                                return isLinksEnabled ? (
                                                     <Link
                                                         key={guest.id}
                                                         to={`/guest?id=${guest.id}`}
@@ -455,6 +510,34 @@ const SeatingChart = () => {
                                                             </div>
                                                         </div>
                                                     </Link>
+                                                ) : (
+                                                    <div
+                                                        key={guest.id}
+                                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 w-20 z-10 cursor-default"
+                                                        style={{ left, top }}
+                                                    >
+                                                        <div
+                                                            className="w-12 h-12 rounded-full overflow-hidden bg-black/40 border border-white/10 shadow-lg"
+                                                            style={{ borderColor: baseColor }}
+                                                        >
+                                                            {guest.image ? (
+                                                                <img
+                                                                    src={import.meta.env.BASE_URL + guest.image}
+                                                                    alt={guest.name}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                                    <Users size={16} />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-center w-24">
+                                                            <div className="text-xs font-medium truncate w-full px-1 bg-black/40 rounded text-white">
+                                                                {guest.name} 様
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 );
                                             })}
                                         </div>
@@ -528,7 +611,7 @@ const SeatingChart = () => {
                                                 const left = `calc(50% + ${Math.cos(angle) * radius}px)`;
                                                 const top = `calc(50% + ${Math.sin(angle) * radius}px)`;
 
-                                                return (
+                                                return isLinksEnabled ? (
                                                     <Link
                                                         key={guest.id}
                                                         to={`/guest?id=${guest.id}`}
@@ -557,6 +640,34 @@ const SeatingChart = () => {
                                                             </div>
                                                         </div>
                                                     </Link>
+                                                ) : (
+                                                    <div
+                                                        key={guest.id}
+                                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 w-20 z-10 cursor-default"
+                                                        style={{ left, top }}
+                                                    >
+                                                        <div
+                                                            className="w-14 h-14 rounded-full overflow-hidden bg-black/40 border border-white/10 shadow-lg"
+                                                            style={{ borderColor: baseColor }}
+                                                        >
+                                                            {guest.image ? (
+                                                                <img
+                                                                    src={import.meta.env.BASE_URL + guest.image}
+                                                                    alt={guest.name}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                                    <Users size={20} />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-center w-24">
+                                                            <div className="text-xs font-medium truncate w-full px-1 bg-black/40 rounded text-white backdrop-blur-sm">
+                                                                {guest.name} 様
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 );
                                             })}
                                         </div>
@@ -584,43 +695,81 @@ const SeatingChart = () => {
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-xl">
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                                 {cheeringGuests.map((guest) => (
-                                    <Link
-                                        // @ts-ignore
-                                        key={guest.id}
-                                        // @ts-ignore
-                                        to={`/guest?id=${guest.id}`}
-                                        className="flex flex-col items-center gap-3 group"
-                                    >
-                                        <div className="w-16 h-16 rounded-full overflow-hidden bg-white/10 border-2 border-white/20 group-hover:border-[#F39800] group-hover:scale-110 transition-all duration-300 shadow-lg relative">
-                                            {/* @ts-ignore */}
-                                            {guest.image ? (
-                                                <img
-                                                    // @ts-ignore
-                                                    src={import.meta.env.BASE_URL + guest.image}
-                                                    // @ts-ignore
-                                                    alt={guest.name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-gray-500">
-                                                    <Users size={24} />
-                                                </div>
-                                            )}
-                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className="font-medium text-sm group-hover:text-[#F39800] transition-colors">
-                                                {guest.name}
+                                    isLinksEnabled ? (
+                                        <Link
+                                            // @ts-ignore
+                                            key={guest.id}
+                                            // @ts-ignore
+                                            to={`/guest?id=${guest.id}`}
+                                            className="flex flex-col items-center gap-3 group"
+                                        >
+                                            <div className="w-16 h-16 rounded-full overflow-hidden bg-white/10 border-2 border-white/20 group-hover:border-[#F39800] group-hover:scale-110 transition-all duration-300 shadow-lg relative">
+                                                {/* @ts-ignore */}
+                                                {guest.image ? (
+                                                    <img
+                                                        // @ts-ignore
+                                                        src={import.meta.env.BASE_URL + guest.image}
+                                                        // @ts-ignore
+                                                        alt={guest.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                        <Users size={24} />
+                                                    </div>
+                                                )}
+                                                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                                             </div>
-                                            {/* @ts-ignore */}
-                                            {guest.title && (
-                                                <div className="text-xs text-gray-400 mt-1">
-                                                    {/* @ts-ignore */}
-                                                    {guest.title}
+                                            <div className="text-center">
+                                                <div className="font-medium text-sm group-hover:text-[#F39800] transition-colors">
+                                                    {guest.name}
                                                 </div>
-                                            )}
+                                                {/* @ts-ignore */}
+                                                {guest.title && (
+                                                    <div className="text-xs text-gray-400 mt-1">
+                                                        {/* @ts-ignore */}
+                                                        {guest.title}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </Link>
+                                    ) : (
+                                        <div
+                                            // @ts-ignore
+                                            key={guest.id}
+                                            className="flex flex-col items-center gap-3 cursor-default"
+                                        >
+                                            <div className="w-16 h-16 rounded-full overflow-hidden bg-white/10 border-2 border-white/20 shadow-lg relative">
+                                                {/* @ts-ignore */}
+                                                {guest.image ? (
+                                                    <img
+                                                        // @ts-ignore
+                                                        src={import.meta.env.BASE_URL + guest.image}
+                                                        // @ts-ignore
+                                                        alt={guest.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                                        <Users size={24} />
+                                                    </div>
+                                                )}
+                                                <div className="absolute inset-0 bg-black/20"></div>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="font-medium text-sm">
+                                                    {guest.name}
+                                                </div>
+                                                {/* @ts-ignore */}
+                                                {guest.title && (
+                                                    <div className="text-xs text-gray-400 mt-1">
+                                                        {/* @ts-ignore */}
+                                                        {guest.title}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </Link>
+                                    )
                                 ))}
                             </div>
                         </div>
