@@ -71,16 +71,22 @@ const SeatingChart = () => {
         return () => clearInterval(interval);
     }, [tables]);
 
-    // Time-based link lock: Links enabled after March 21, 2026 16:20 JST
-    const UNLOCK_DATE = new Date('2026-03-21T16:20:00+09:00');
-    const [isLinksEnabled, setIsLinksEnabled] = useState(() => Date.now() >= UNLOCK_DATE.getTime());
+    // Time-based link lock: Links DISABLED only during March 21, 2026 00:00 - 16:20 JST
+    const LOCK_START = new Date('2026-03-21T00:00:00+09:00');
+    const LOCK_END = new Date('2026-03-21T16:20:00+09:00');
+
+    const checkLinksEnabled = () => {
+        const now = Date.now();
+        // Links are disabled if within the lock window
+        return now < LOCK_START.getTime() || now >= LOCK_END.getTime();
+    };
+
+    const [isLinksEnabled, setIsLinksEnabled] = useState(checkLinksEnabled);
 
     useEffect(() => {
-        // Check periodically in case page is open when unlock time passes
+        // Check periodically in case page is open when lock window starts/ends
         const checkUnlock = () => {
-            if (Date.now() >= UNLOCK_DATE.getTime()) {
-                setIsLinksEnabled(true);
-            }
+            setIsLinksEnabled(checkLinksEnabled());
         };
 
         // Check every minute
