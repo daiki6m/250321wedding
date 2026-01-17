@@ -24,8 +24,7 @@ const PhotoShower = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
 
-    // Store positions to prevent re-randomization on render
-    const positionsRef = useRef<Record<number, { x: string; y: string; rotate: number }>>({});
+
 
     // Fetch initial photos
     useEffect(() => {
@@ -108,30 +107,65 @@ const PhotoShower = () => {
         }
     };
 
-    // Get or create position for a photo
+    // SCATTER_ORDER: Prioritize center, then corners, then edges
+    // Grid 5x4 = 20 slots
+    // Center slots: 6, 7, 8, 11, 12, 13
+    const SCATTER_ORDER = [
+        7, 12, 11, 8, // Center 4
+        0, 4, 15, 19, // Corners
+        2, 17, 10, 9, // Mid-edges
+        5, 14, 1, 18, // Side-edges
+        3, 16, 6, 13  // Remaining
+    ];
+
+    // Get position for a photo based on its current index
     const getPosition = (id: number, index: number) => {
-        if (!positionsRef.current[id]) {
-            // Create a grid-like scattered layout
-            const cols = 6;
-            const row = Math.floor(index / cols);
-            const col = index % cols;
+        // Map current index to a scattered slot
+        // Use modulo to cycle through slots if we have more than 20 photos
+        const slotIndex = index % SCATTER_ORDER.length;
+        const slot = SCATTER_ORDER[slotIndex];
 
-            const baseX = (col / cols) * 80 + 5;
-            const baseY = (row % 4) * 20 + 10;
+        const cols = 5;
+        const rows = 4;
 
-            const randomX = baseX + (Math.random() - 0.5) * 15;
-            const randomY = baseY + (Math.random() - 0.5) * 10;
+        const row = Math.floor(slot / cols);
+        const col = slot % cols;
 
-            positionsRef.current[id] = {
-                x: `${Math.max(2, Math.min(88, randomX))}%`,
-                y: `${Math.max(5, Math.min(80, randomY))}%`,
-                rotate: (Math.random() - 0.5) * 30,
-            };
-        }
-        return positionsRef.current[id];
+        // Add randomness within the slot based on ID (deterministic jitter)
+        // This ensures the photo stays in the same relative spot within the slot
+        // even if it moves to a different slot later (if we wanted to keep it static, but here we want flow)
+        // Actually, we want the photo to move to the NEW slot's position.
+        // Let's make jitter based on ID so it looks unique to the photo.
+        const jitterX = (id % 100) / 100; // 0.0 - 0.99
+        const jitterY = ((id * 13) % 100) / 100; // 0.0 - 0.99
+
+        const baseX = (col / cols) * 80 + 5; // 5% to 85%
+        const baseY = (row / rows) * 70 + 10; // 10% to 80%
+
+        const randomX = baseX + (jitterX - 0.5) * 10;
+        const randomY = baseY + (jitterY - 0.5) * 10;
+
+        return {
+            x: `${Math.max(2, Math.min(88, randomX))}%`,
+            y: `${Math.max(5, Math.min(85, randomY))}%`,
+            rotate: (jitterX - 0.5) * 40,
+        };
     };
 
     const uploadUrl = `${window.location.origin}${import.meta.env.BASE_URL}photo`;
+
+    // Demo function
+    const addDemoPhoto = () => {
+        const demoPhoto: Photo = {
+            id: Date.now(),
+            url: `https://picsum.photos/seed/${Date.now()}/400/400`,
+            caption: 'Demo Photo',
+            uploader: 'Demo User',
+            created_at: new Date().toISOString(),
+            isNew: true
+        };
+        setQueue(prev => [...prev, demoPhoto]);
+    };
 
     return (
         <div
@@ -212,6 +246,13 @@ const PhotoShower = () => {
 
             {/* Control Buttons */}
             <div className="absolute bottom-6 right-6 z-50 flex gap-3">
+                {/* Demo Button (Temporary) */}
+                <button
+                    onClick={addDemoPhoto}
+                    className="bg-white/80 backdrop-blur-md px-4 py-2 rounded-full text-gray-700 hover:bg-white transition-all border border-gray-200 shadow-lg text-sm font-bold"
+                >
+                    Demo
+                </button>
                 <button
                     onClick={() => setIsMuted(!isMuted)}
                     className="bg-white/80 backdrop-blur-md p-3 rounded-full text-gray-700 hover:bg-white transition-all border border-gray-200 shadow-lg"

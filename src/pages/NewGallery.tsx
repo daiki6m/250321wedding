@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Image as ImageIcon, Upload, X, Loader2, Download, Heart, Filter, Camera } from 'lucide-react';
+import { ArrowLeft, Image as ImageIcon, Upload, X, Loader2, Heart, Filter, Camera, Check, CheckCircle, Share2 } from 'lucide-react';
 import { SectionHeading } from '../components/Shared';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import imageCompression from 'browser-image-compression';
+import JSZip from 'jszip';
 
 type Photo = {
     id: number;
@@ -25,6 +26,12 @@ const NewGallery = () => {
     const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
     const [selectedUploader, setSelectedUploader] = useState<string>('All');
     const [isMobile, setIsMobile] = useState(false);
+
+    // Multi-select state
+    const [isSelectMode, setIsSelectMode] = useState(false);
+    const [selectedPhotoIds, setSelectedPhotoIds] = useState<Set<number>>(new Set());
+    const [isDownloading, setIsDownloading] = useState(false);
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Generate deterministic random style for each photo based on its ID
@@ -171,22 +178,97 @@ const NewGallery = () => {
         }
     };
 
-    const handleDownload = async (photo: Photo) => {
+    // Helper to fetch blob from URL
+    const fetchBlob = async (url: string) => {
+        const response = await fetch(url);
+        return await response.blob();
+    };
+
+    // Handle single or multiple downloads/sharing
+    const handleShare = async (targetPhotos: Photo[]) => {
+        if (targetPhotos.length === 0) return;
+        setIsDownloading(true);
+
         try {
-            const response = await fetch(photo.url);
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `wedding-photo-${photo.id}.jpg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
+            // 1. Fetch all blobs
+            const files = await Promise.all(targetPhotos.map(async (photo) => {
+                const blob = await fetchBlob(photo.url);
+                // Create a File object (needed for navigator.share)
+                const ext = photo.url.split('.').pop()?.split('?')[0] || 'jpg';
+                return new File([blob], `wedding-${photo.id}.${ext}`, { type: blob.type });
+            }));
+
+            // 2. Try native sharing (iOS/Android)
+            if (navigator.share && navigator.canShare && navigator.canShare({ files })) {
+                try {
+                    await navigator.share({
+                        files: files,
+                        title: 'Wedding Photos',
+                        text: '結婚式の写真です！'
+                    });
+                    setIsDownloading(false);
+                    return; // Success
+                } catch (shareError) {
+                    console.log('Share API failed or cancelled, falling back to download', shareError);
+                    // Continue to fallback
+                }
+            }
+
+            // 3. Fallback: Download (Single -> Link, Multiple -> Zip)
+            if (files.length === 1) {
+                const url = window.URL.createObjectURL(files[0]);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = files[0].name;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            } else {
+                // Zip for multiple
+                const zip = new JSZip();
+                files.forEach((file) => {
+                    zip.file(file.name, file);
+                });
+                const content = await zip.generateAsync({ type: "blob" });
+                const url = window.URL.createObjectURL(content);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `wedding-photos-${Date.now()}.zip`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }
+
         } catch (error) {
-            console.error('Download failed:', error);
-            // Fallback: open in new tab
-            window.open(photo.url, '_blank');
+            console.error('Download/Share failed:', error);
+            alert('ダウンロードに失敗しました。');
+        } finally {
+            setIsDownloading(false);
+            // Exit select mode if successful
+            if (isSelectMode) {
+                setIsSelectMode(false);
+                setSelectedPhotoIds(new Set());
+            }
+        }
+    };
+
+    const toggleSelection = (id: number) => {
+        const newSet = new Set(selectedPhotoIds);
+        if (newSet.has(id)) {
+            newSet.delete(id);
+        } else {
+            newSet.add(id);
+        }
+        setSelectedPhotoIds(newSet);
+    };
+
+    const handlePhotoClick = (photo: Photo) => {
+        if (isSelectMode) {
+            toggleSelection(photo.id);
+        } else {
+            setSelectedPhoto(photo);
         }
     };
 
@@ -261,27 +343,45 @@ const NewGallery = () => {
                     </p>
                 </div>
 
-                {/* Uploader Filter */}
-                {uniqueUploaders.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto pb-4 mb-4 px-4 no-scrollbar justify-center">
-                        <div className="flex items-center gap-2 text-gray-400 mr-2 shrink-0">
-                            <Filter size={16} />
-                            <span className="text-xs">Filter by:</span>
+                {/* Controls: Filter and Select Mode */}
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 px-4">
+                    {/* Uploader Filter */}
+                    {uniqueUploaders.length > 1 ? (
+                        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar w-full md:w-auto">
+                            <div className="flex items-center gap-2 text-gray-400 mr-2 shrink-0">
+                                <Filter size={16} />
+                                <span className="text-xs">Filter:</span>
+                            </div>
+                            {uniqueUploaders.map((name) => (
+                                <button
+                                    key={name}
+                                    onClick={() => setSelectedUploader(name)}
+                                    className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${selectedUploader === name
+                                        ? 'bg-[#F39800] text-white font-bold shadow-md'
+                                        : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                                        }`}
+                                >
+                                    {name === 'All' ? 'すべて' : name}
+                                </button>
+                            ))}
                         </div>
-                        {uniqueUploaders.map((name) => (
-                            <button
-                                key={name}
-                                onClick={() => setSelectedUploader(name)}
-                                className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${selectedUploader === name
-                                    ? 'bg-[#F39800] text-white font-bold shadow-md'
-                                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                                    }`}
-                            >
-                                {name === 'All' ? 'すべて' : name}
-                            </button>
-                        ))}
-                    </div>
-                )}
+                    ) : <div></div>}
+
+                    {/* Select Mode Toggle */}
+                    <button
+                        onClick={() => {
+                            setIsSelectMode(!isSelectMode);
+                            setSelectedPhotoIds(new Set());
+                        }}
+                        className={`px-6 py-2 rounded-full font-bold transition-all flex items-center gap-2 ${isSelectMode
+                            ? 'bg-white text-black shadow-lg'
+                            : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                            }`}
+                    >
+                        {isSelectMode ? <CheckCircle size={20} /> : <Check size={20} />}
+                        <span>{isSelectMode ? '選択をキャンセル' : '写真を選択して保存'}</span>
+                    </button>
+                </div>
 
                 {loading ? (
                     <div className="flex justify-center mt-20">
@@ -301,6 +401,8 @@ const NewGallery = () => {
                             ) : (
                                 filteredPhotos.map((photo, index) => {
                                     const style = getStyle(photo.id);
+                                    const isSelected = selectedPhotoIds.has(photo.id);
+
                                     return (
                                         <motion.div
                                             key={photo.id}
@@ -308,10 +410,11 @@ const NewGallery = () => {
                                             initial={{ opacity: 0, scale: 0.5, y: 50 }}
                                             animate={{
                                                 opacity: 1,
-                                                scale: 1,
-                                                y: [style.y, style.y - 10, style.y],
-                                                x: style.x,
-                                                rotate: style.rotate
+                                                scale: isSelectMode && isSelected ? 0.9 : 1,
+                                                y: isSelectMode ? 0 : [style.y, style.y - 10, style.y],
+                                                x: isSelectMode ? 0 : style.x,
+                                                rotate: isSelectMode ? 0 : style.rotate,
+                                                filter: isSelectMode && !isSelected ? 'brightness(0.6)' : 'brightness(1)'
                                             }}
                                             transition={{
                                                 y: {
@@ -321,21 +424,26 @@ const NewGallery = () => {
                                                     delay: style.delay
                                                 },
                                                 opacity: { duration: 0.5 },
-                                                scale: { duration: 0.5 }
+                                                scale: { duration: 0.2 }
                                             }}
                                             whileHover={{
-                                                scale: 1.1,
+                                                scale: 1.05,
                                                 zIndex: 50,
-                                                rotate: 0,
                                                 transition: { duration: 0.2 }
                                             }}
-                                            className={`relative bg-white p-2 pb-6 shadow-xl cursor-pointer overflow-hidden w-[140px] md:w-[180px] md:pb-8 hover:shadow-2xl transition-shadow`}
-                                            onClick={() => setSelectedPhoto(photo)}
+                                            className={`relative bg-white p-2 pb-6 shadow-xl cursor-pointer overflow-hidden w-[140px] md:w-[180px] md:pb-8 hover:shadow-2xl transition-shadow ${isSelected ? 'ring-4 ring-[#F39800]' : ''}`}
+                                            onClick={() => handlePhotoClick(photo)}
                                             style={{
                                                 transformOrigin: 'center center',
                                                 zIndex: index % 10
                                             }}
                                         >
+                                            {isSelectMode && (
+                                                <div className={`absolute top-2 right-2 z-20 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'bg-[#F39800] border-[#F39800]' : 'bg-black/30 border-white'}`}>
+                                                    {isSelected && <Check size={14} className="text-white" />}
+                                                </div>
+                                            )}
+
                                             <div className="aspect-square w-full overflow-hidden bg-gray-100">
                                                 <img
                                                     src={photo.url}
@@ -359,6 +467,34 @@ const NewGallery = () => {
                     </div>
                 )}
             </div>
+
+            {/* Floating Action Bar for Selection */}
+            <AnimatePresence>
+                {isSelectMode && selectedPhotoIds.size > 0 && (
+                    <motion.div
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                        className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4"
+                    >
+                        <button
+                            onClick={() => {
+                                const selected = photos.filter(p => selectedPhotoIds.has(p.id));
+                                handleShare(selected);
+                            }}
+                            disabled={isDownloading}
+                            className="bg-[#F39800] text-white px-8 py-4 rounded-full font-bold shadow-2xl flex items-center gap-3 hover:scale-105 transition-transform"
+                        >
+                            {isDownloading ? (
+                                <Loader2 className="animate-spin" size={24} />
+                            ) : (
+                                <Share2 size={24} />
+                            )}
+                            <span>{selectedPhotoIds.size}枚を保存/共有</span>
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Lightbox Modal */}
             <AnimatePresence>
@@ -414,11 +550,12 @@ const NewGallery = () => {
 
                                     <div className="mt-8 flex gap-4">
                                         <button
-                                            onClick={() => handleDownload(selectedPhoto)}
+                                            onClick={() => handleShare([selectedPhoto])}
+                                            disabled={isDownloading}
                                             className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-full font-bold transition-all flex items-center justify-center gap-2"
                                         >
-                                            <Download size={20} />
-                                            <span>保存する</span>
+                                            {isDownloading ? <Loader2 className="animate-spin" size={20} /> : <Share2 size={20} />}
+                                            <span>保存/共有する</span>
                                         </button>
                                     </div>
                                 </div>
