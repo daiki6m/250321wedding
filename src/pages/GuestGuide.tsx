@@ -85,13 +85,13 @@ const GuestGuide = () => {
                                 <div className="text-left">
                                     <p className="text-xs text-gray-400 tracking-widest uppercase">FAQ</p>
                                     <p className="text-sm font-bold text-white tracking-wider">
-                                        よくあるご質問については<br />
+                                        ホテルでよくあるご質問については<br />
                                         こちらをクリック
                                     </p>
                                 </div>
                             </a>
                         </div>
-                        <div className="w-full aspect-[16/9] bg-white/5 rounded-xl overflow-hidden border border-white/10 relative">
+                        <div className="w-full max-w-md mx-auto aspect-[9/16] bg-white/5 rounded-xl overflow-hidden border border-white/10 relative">
                             <iframe
                                 loading="lazy"
                                 className="absolute inset-0 w-full h-full border-0 p-0 m-0"
