@@ -76,6 +76,7 @@ const Navigation = ({ stage }: { stage: 'pre' | 'day' | 'post' }) => {
             { label: "席次表", path: "/seating" },
             { label: "タイムライン", path: "/timeline" }
         ] : []),
+        { label: "ご案内", path: "/guest-guide" },
         { label: "アクセス", id: "access" },
     ];
 
@@ -585,7 +586,21 @@ const Home = () => {
             {/* --- MOVIE SECTION (Moved) --- */}
             < section id="movie" className="py-24 px-6 bg-black relative z-30" >
                 <div className="max-w-4xl mx-auto">
+                    <div className="flex justify-center mb-16">
+                        <Link to="/guest-guide" className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                            <div className="bg-[#F39800] p-2 rounded-full text-white">
+                                <Info size={20} />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-xs text-gray-400 tracking-widest uppercase">参列者の方へ</p>
+                                <p className="text-lg font-bold text-white tracking-wider">会場案内</p>
+                            </div>
+                            <ArrowDown className="ml-2 text-gray-500 group-hover:text-white transition-colors -rotate-90" size={20} />
+                        </Link>
+                    </div>
+
                     <SectionHeading subtitle="Movie">招待状ムービー</SectionHeading>
+
                     <div className="aspect-video bg-[#1a1a1a] rounded-sm border border-white/10 flex items-center justify-center relative overflow-hidden shadow-2xl">
                         <iframe
                             width="100%"

@@ -18,10 +18,11 @@ import PhotoUpload from './pages/PhotoUpload';
 import GuestComments from './pages/GuestComments';
 import CommentForm from './pages/CommentForm';
 import PhotoShower from './pages/PhotoShower';
+import GuestGuide from './pages/GuestGuide';
 
 export default function App() {
     // Skip loading screen if on seating, guest, or music pages
-    const shouldShowLoading = !window.location.pathname.includes('/seating') && !window.location.pathname.includes('/guest') && !window.location.pathname.includes('/music') && !window.location.pathname.includes('/new-gallery') && !window.location.pathname.includes('/photo') && !window.location.pathname.includes('/guest-gallery-3d') && !window.location.pathname.includes('/comments') && !window.location.pathname.includes('/comment-form');
+    const shouldShowLoading = !window.location.pathname.includes('/seating') && !window.location.pathname.includes('/guest') && !window.location.pathname.includes('/music') && !window.location.pathname.includes('/new-gallery') && !window.location.pathname.includes('/photo') && !window.location.pathname.includes('/guest-gallery-3d') && !window.location.pathname.includes('/comments') && !window.location.pathname.includes('/comment-form') && !window.location.pathname.includes('/guest-guide');
     const [isLoading, setIsLoading] = useState(shouldShowLoading);
 
     if (isLoading) {
@@ -69,6 +70,7 @@ export default function App() {
                     <Route path="/comments" element={<GuestComments />} />
                     <Route path="/comment-form" element={<CommentForm />} />
                     <Route path="/photo-shower" element={<PhotoShower />} />
+                    <Route path="/guest-guide" element={<GuestGuide />} />
                 </Routes>
             </div>
         </Router>
