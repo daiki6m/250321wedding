@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Clock, GlassWater, Heart, Music, Camera, Utensils, Star } from 'lucide-react';
 
 const timelineEvents = [
@@ -48,6 +49,58 @@ const timelineEvents = [
 ];
 
 const Timeline = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [isSlideshowMode, setIsSlideshowMode] = useState(false);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('slideshow') === 'true') {
+            setIsSlideshowMode(true);
+        }
+    }, [location.search]);
+
+    // Auto-scroll logic
+    useEffect(() => {
+        if (!isSlideshowMode) return;
+
+        let lastTime = 0;
+        let hasNavigated = false;
+        const scrollSpeed = 1.5; // pixels per frame - increased for faster scroll
+
+        const goToNext = () => {
+            if (hasNavigated) return;
+            hasNavigated = true;
+            navigate('/photo-shower?slideshow=true');
+        };
+
+        // Maximum 1 minute timeout
+        const maxTimeout = setTimeout(goToNext, 60000);
+
+        const performScroll = (time: number) => {
+            if (hasNavigated) return;
+            if (!lastTime) lastTime = time;
+            const delta = time - lastTime;
+            window.scrollBy(0, scrollSpeed * (delta / 16));
+            lastTime = time;
+
+            // Check if we reached the bottom
+            const isBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 2;
+            if (isBottom) {
+                // Wait a bit at the bottom then transition
+                setTimeout(goToNext, 3000);
+                return;
+            }
+            requestAnimationFrame(performScroll);
+        };
+
+        const animationId = requestAnimationFrame(performScroll);
+
+        return () => {
+            cancelAnimationFrame(animationId);
+            clearTimeout(maxTimeout);
+        };
+    }, [isSlideshowMode, navigate]);
     return (
         <div className="min-h-screen bg-[#050505] text-white font-zen relative overflow-hidden p-8 pt-12">
             {/* Background Decoration */}

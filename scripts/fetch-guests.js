@@ -132,6 +132,7 @@ async function fetchGuests() {
             const birthMonth = getText(props['誕生月']);
             const relationship = getText(props['間柄']);
             const participation = getText(props['参加']); // Fetch participation status
+            const honorific = getText(props['敬称']) || '様'; // Fetch honorific, default to 様
 
             // Skip if not attending, cheering, or principal
             const validParticipation = ['出席', '応援席', '本人'];
@@ -174,6 +175,7 @@ async function fetchGuests() {
                 birthMonth,
                 relationship,
                 participation,
+                honorific,
                 image: imageUrl
             });
         }

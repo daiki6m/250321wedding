@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { SectionHeading } from '../components/Shared';
 import { supabase } from '../lib/supabase';
@@ -16,7 +16,67 @@ type Comment = {
 };
 
 const GuestComments = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [realtimeComments, setRealtimeComments] = useState<Comment[]>([]);
+    const [isSlideshowMode, setIsSlideshowMode] = useState(false);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('slideshow') === 'true') {
+            setIsSlideshowMode(true);
+        }
+    }, [location.search]);
+
+    // Auto-scroll logic
+    useEffect(() => {
+        if (!isSlideshowMode) return;
+
+        let hasNavigated = false;
+        let lastTime = 0;
+        const scrollSpeed = 2; // pixels per frame
+
+        const goToNext = () => {
+            if (hasNavigated) return;
+            hasNavigated = true;
+            navigate('/photo-shower?slideshow=true');
+        };
+
+        // Maximum 1 minute timeout
+        const maxTimeout = setTimeout(goToNext, 60000);
+
+        const performScroll = (time: number) => {
+            if (hasNavigated) return;
+            if (!lastTime) lastTime = time;
+            const delta = time - lastTime;
+            window.scrollBy(0, scrollSpeed * (delta / 16));
+            lastTime = time;
+
+            // Check if we reached the bottom
+            const isBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 10;
+            if (isBottom) {
+                // Wait at the bottom then transition
+                setTimeout(goToNext, 5000);
+                return;
+            }
+            requestAnimationFrame(performScroll);
+        };
+
+        // Delay start of scrolling by 3 seconds to let page load
+        const startDelay = setTimeout(() => {
+            // Scroll to top first
+            window.scrollTo(0, 0);
+            // Start scrolling after small delay
+            setTimeout(() => {
+                requestAnimationFrame(performScroll);
+            }, 500);
+        }, 3000);
+
+        return () => {
+            clearTimeout(startDelay);
+            clearTimeout(maxTimeout);
+        };
+    }, [isSlideshowMode, navigate]);
 
     useEffect(() => {
         fetchComments();
@@ -74,7 +134,6 @@ const GuestComments = () => {
 
     const CommentSection = ({ comments }: { comments: Comment[] }) => (
         <div className="mb-16">
-            {/* Title is removed from here as it's now handled by tabs, but we keep the structure if needed or simplify */}
             {comments.length === 0 ? (
                 <p className="text-center text-gray-500 font-shippori py-12">まだメッセージはありません</p>
             ) : (
@@ -125,7 +184,6 @@ const GuestComments = () => {
             </SectionHeading>
 
             <div className="max-w-4xl mx-auto">
-                {/* Back to Top */}
                 <div className="mb-8">
                     <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
                         <ArrowLeft className="w-5 h-5" />
@@ -133,7 +191,6 @@ const GuestComments = () => {
                     </Link>
                 </div>
 
-                {/* Write Message Button */}
                 <div className="flex justify-center mb-12">
                     <Link
                         to="/comment-form"
@@ -144,7 +201,6 @@ const GuestComments = () => {
                     </Link>
                 </div>
 
-                {/* Tabs */}
                 <div className="flex justify-center gap-4 mb-12">
                     <button
                         onClick={() => setActiveTab('PRE')}
@@ -168,7 +224,6 @@ const GuestComments = () => {
                     </button>
                 </div>
 
-                {/* Content */}
                 <div className="min-h-[300px]">
                     {activeTab === 'WEDDING' ? (
                         <motion.div

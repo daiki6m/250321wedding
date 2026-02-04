@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, Maximize, Minimize, Volume2, VolumeX, Play, Pause } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 import { UploadQRCode } from '../components/QRCode';
@@ -16,15 +16,63 @@ type Photo = {
 };
 
 const PhotoShower = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [queue, setQueue] = useState<Photo[]>([]);
     const [spotlightPhoto, setSpotlightPhoto] = useState<Photo | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [isMuted, setIsMuted] = useState(false); // Default to unmuted for better experience? Or keep muted? Let's keep user preference.
+    const [isMuted, setIsMuted] = useState(false);
+    const [isSlideshowMode, setIsSlideshowMode] = useState(false);
+    const [countdown, setCountdown] = useState(120); // 120 seconds = 2 minutes
+    const [showQRPopup, setShowQRPopup] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
 
+    // Initial check for slideshow mode from URL
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('slideshow') === 'true') {
+            setIsSlideshowMode(true);
+        }
+    }, [location.search]);
 
+    // Slideshow transition logic
+    useEffect(() => {
+        if (!isSlideshowMode) return;
+
+        // Reset countdown when starting
+        setCountdown(120);
+
+        // Countdown interval
+        const countdownInterval = setInterval(() => {
+            setCountdown(prev => {
+                if (prev <= 1) {
+                    navigate('/seating?slideshow=true');
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(countdownInterval);
+    }, [isSlideshowMode, navigate]);
+
+    // Show QR popup every 45 seconds in slideshow mode
+    useEffect(() => {
+        if (!isSlideshowMode) return;
+
+        const showPopup = () => {
+            setShowQRPopup(true);
+            // Auto-hide after 8 seconds
+            setTimeout(() => setShowQRPopup(false), 8000);
+        };
+
+        // Show first popup after 45 seconds
+        const interval = setInterval(showPopup, 45000);
+
+        return () => clearInterval(interval);
+    }, [isSlideshowMode]);
 
     // Fetch initial photos
     useEffect(() => {
@@ -109,7 +157,6 @@ const PhotoShower = () => {
 
     // SCATTER_ORDER: Prioritize center, then corners, then edges
     // Grid 5x4 = 20 slots
-    // Center slots: 6, 7, 8, 11, 12, 13
     const SCATTER_ORDER = [
         7, 12, 11, 8, // Center 4
         0, 4, 15, 19, // Corners
@@ -120,22 +167,13 @@ const PhotoShower = () => {
 
     // Get position for a photo based on its current index
     const getPosition = (id: number, index: number) => {
-        // Map current index to a scattered slot
-        // Use modulo to cycle through slots if we have more than 20 photos
         const slotIndex = index % SCATTER_ORDER.length;
         const slot = SCATTER_ORDER[slotIndex];
-
         const cols = 5;
         const rows = 4;
-
         const row = Math.floor(slot / cols);
         const col = slot % cols;
 
-        // Add randomness within the slot based on ID (deterministic jitter)
-        // This ensures the photo stays in the same relative spot within the slot
-        // even if it moves to a different slot later (if we wanted to keep it static, but here we want flow)
-        // Actually, we want the photo to move to the NEW slot's position.
-        // Let's make jitter based on ID so it looks unique to the photo.
         const jitterX = (id % 100) / 100; // 0.0 - 0.99
         const jitterY = ((id * 13) % 100) / 100; // 0.0 - 0.99
 
@@ -154,18 +192,7 @@ const PhotoShower = () => {
 
     const uploadUrl = `${window.location.origin}${import.meta.env.BASE_URL}photo`;
 
-    // Demo function
-    const addDemoPhoto = () => {
-        const demoPhoto: Photo = {
-            id: Date.now(),
-            url: `https://picsum.photos/seed/${Date.now()}/400/400`,
-            caption: 'Demo Photo',
-            uploader: 'Demo User',
-            created_at: new Date().toISOString(),
-            isNew: true
-        };
-        setQueue(prev => [...prev, demoPhoto]);
-    };
+
 
     return (
         <div
@@ -244,14 +271,49 @@ const PhotoShower = () => {
                 </div>
             </div>
 
+            {/* QR Code Popup (shows every 45 seconds in slideshow mode) */}
+            <AnimatePresence>
+                {showQRPopup && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.5 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                        onClick={() => setShowQRPopup(false)}
+                    >
+                        <motion.div
+                            initial={{ y: 50 }}
+                            animate={{ y: 0 }}
+                            exit={{ y: 50 }}
+                            className="bg-white rounded-3xl p-8 shadow-2xl text-center max-w-md mx-4"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2 font-zen">📸 写真を投稿しよう！</h2>
+                            <p className="text-gray-600 mb-6 font-shippori">下のQRコードを読み取って<br />お二人に写真を送りましょう</p>
+                            <div className="flex justify-center mb-4">
+                                <UploadQRCode url={uploadUrl} size={200} />
+                            </div>
+                            <p className="text-sm text-gray-500">タップで閉じる</p>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Control Buttons */}
-            <div className="absolute bottom-6 right-6 z-50 flex gap-3">
-                {/* Demo Button (Temporary) */}
+            <div className="absolute bottom-6 right-6 z-50 flex gap-3 items-center">
+                {/* Countdown Display */}
+                {isSlideshowMode && (
+                    <div className="bg-black/80 backdrop-blur-md px-6 py-3 rounded-full text-white font-zen text-xl border border-white/30 shadow-lg">
+                        画面が切り替わるまで <span className="text-white font-bold text-2xl ml-1">{countdown}</span> 秒
+                    </div>
+                )}
                 <button
-                    onClick={addDemoPhoto}
-                    className="bg-white/80 backdrop-blur-md px-4 py-2 rounded-full text-gray-700 hover:bg-white transition-all border border-gray-200 shadow-lg text-sm font-bold"
+                    onClick={() => setIsSlideshowMode(!isSlideshowMode)}
+                    className={`${isSlideshowMode ? 'bg-[#F39800] text-white' : 'bg-white/80 text-gray-700'} backdrop-blur-md px-4 py-2 rounded-full hover:opacity-90 transition-all border border-gray-200 shadow-lg text-sm font-bold flex items-center gap-2`}
                 >
-                    Demo
+                    {isSlideshowMode ? <Pause size={18} /> : <Play size={18} />}
+                    {isSlideshowMode ? 'スライドショー実行中' : 'スライドショー開始'}
                 </button>
                 <button
                     onClick={() => setIsMuted(!isMuted)}
@@ -440,10 +502,9 @@ const PhotoShower = () => {
                 )}
             </AnimatePresence>
 
-            {/* Sound Effect Audio */}
             <audio
                 ref={audioRef}
-                src={`${import.meta.env.BASE_URL}shutter.mp3`}
+                src={`${import.meta.env.BASE_URL}photoshower.mp3`}
                 preload="auto"
             />
         </div>

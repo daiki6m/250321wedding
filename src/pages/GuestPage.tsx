@@ -53,7 +53,7 @@ const GuestPage = () => {
                         <h1 className="text-3xl md:text-4xl font-bold mb-2">
                             {guest.name}
                             {/* @ts-ignore */}
-                            {guest.participation !== '応援席' && ' 様'}
+                            {guest.participation !== '応援席' && ` ${guest.honorific || '様'}`}
                         </h1>
 
                         {guest.title && (
