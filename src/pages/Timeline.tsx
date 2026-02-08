@@ -1,7 +1,7 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, GlassWater, Heart, Music, Camera, Utensils, Star } from 'lucide-react';
+import { ArrowLeft, Clock, Heart, Camera, Utensils, Star } from 'lucide-react';
 
 const timelineEvents = [
     {
