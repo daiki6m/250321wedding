@@ -5,46 +5,34 @@ import { ArrowLeft, Clock, GlassWater, Heart, Music, Camera, Utensils, Star } fr
 
 const timelineEvents = [
     {
-        time: "14:30",
-        title: "Reception Open",
-        description: "受付開始",
-        icon: <Clock className="text-[#F39800]" />,
-    },
-    {
         time: "15:00",
         title: "Wedding Ceremony",
-        description: "挙式開始",
+        description: "挙式",
         icon: <Heart className="text-[#ff69b4]" />,
     },
     {
+        time: "15:30",
+        title: "Photo Session",
+        description: "集合写真",
+        icon: <Camera className="text-[#2E7BF4]" />,
+    },
+    {
         time: "16:00",
-        title: "Welcome Party",
-        description: "ウェルカムパーティー",
-        icon: <GlassWater className="text-[#2E7BF4]" />,
+        title: "Reception",
+        description: "受付",
+        icon: <Clock className="text-[#F39800]" />,
     },
     {
         time: "16:30",
-        title: "Reception Party",
-        description: "披露宴開宴",
+        title: "Wedding Reception",
+        description: "披露宴",
         icon: <Utensils className="text-[#F39800]" />,
     },
     {
-        time: "17:30",
-        title: "Cake Cutting",
-        description: "ケーキ入刀・再入場",
-        icon: <Star className="text-[#ff69b4]" />,
-    },
-    {
-        time: "18:30",
-        title: "Closing",
-        description: "おひらき",
-        icon: <Music className="text-[#2E7BF4]" />,
-    },
-    {
-        time: "19:00",
+        time: "19:00~",
         title: "Send-off",
-        description: "お見送り",
-        icon: <Camera className="text-white" />,
+        description: "お見送り・ホテルでのご宿泊をお楽しみください",
+        icon: <Star className="text-white" />,
     }
 ];
 

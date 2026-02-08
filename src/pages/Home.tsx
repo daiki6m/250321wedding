@@ -542,6 +542,46 @@ const Home = () => {
                                 <p className="font-zen text-sm md:text-base text-white/90 tracking-wider -mt-4 text-center">
                                     誠にありがとうございました。
                                 </p>
+
+                                {/* Days Counters Grid */}
+                                <div className="flex flex-col gap-4 my-4">
+                                    {(() => {
+                                        const groomBirth = new Date('1993-06-23');
+                                        const brideBirth = new Date('1992-03-31');
+                                        const weddingDate = new Date('2026-03-21');
+                                        const today = new Date();
+                                        const groomDays = Math.floor((today.getTime() - groomBirth.getTime()) / (1000 * 60 * 60 * 24));
+                                        const brideDays = Math.floor((today.getTime() - brideBirth.getTime()) / (1000 * 60 * 60 * 24));
+                                        const weddingDays = Math.floor((today.getTime() - weddingDate.getTime()) / (1000 * 60 * 60 * 24));
+                                        return (
+                                            <>
+                                                {/* Wedding Day Counter - Full Width */}
+                                                <div className="flex flex-col items-center bg-white/5 backdrop-blur-md border border-[#F39800]/30 rounded-xl px-8 py-4">
+                                                    <span className="text-[#F39800] text-xs tracking-widest mb-2">結婚式から</span>
+                                                    <span className="text-white text-3xl md:text-4xl font-bold">{weddingDays.toLocaleString()}</span>
+                                                    <span className="text-gray-400 text-xs mt-1">日目</span>
+                                                </div>
+
+                                                {/* Birth Counters - Side by Side */}
+                                                <div className="flex flex-wrap justify-center gap-4">
+                                                    <div className="flex flex-col items-center bg-white/5 backdrop-blur-md border border-[#2E7BF4]/30 rounded-xl px-6 py-4">
+                                                        <span className="text-[#2E7BF4] text-xs tracking-widest mb-2">新郎 大樹</span>
+                                                        <span className="text-gray-400 text-xs mb-1">生まれてから</span>
+                                                        <span className="text-white text-2xl md:text-3xl font-bold">{groomDays.toLocaleString()}</span>
+                                                        <span className="text-gray-400 text-xs mt-1">日目</span>
+                                                    </div>
+                                                    <div className="flex flex-col items-center bg-white/5 backdrop-blur-md border border-[#d4749d]/30 rounded-xl px-6 py-4">
+                                                        <span className="text-[#d4749d] text-xs tracking-widest mb-2">新婦 真希</span>
+                                                        <span className="text-gray-400 text-xs mb-1">生まれてから</span>
+                                                        <span className="text-white text-2xl md:text-3xl font-bold">{brideDays.toLocaleString()}</span>
+                                                        <span className="text-gray-400 text-xs mt-1">日目</span>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+
                                 <div className="flex flex-wrap justify-center gap-4 max-w-2xl">
                                     <Link to="/new-gallery" className="px-6 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
                                         <Camera size={20} />
@@ -583,128 +623,134 @@ const Home = () => {
 
 
 
-            {/* --- MOVIE SECTION (Moved) --- */}
-            < section id="movie" className="py-24 px-6 bg-black relative z-30" >
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex justify-center mb-16">
-                        <Link to="/guest-guide" className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                            <div className="bg-[#F39800] p-2 rounded-full text-white">
-                                <Info size={20} />
-                            </div>
-                            <div className="text-left">
-                                <p className="text-xs text-gray-400 tracking-widest uppercase">参列者の方へ</p>
-                                <p className="text-lg font-bold text-white tracking-wider">会場案内</p>
-                            </div>
-                            <ArrowDown className="ml-2 text-gray-500 group-hover:text-white transition-colors -rotate-90" size={20} />
-                        </Link>
-                    </div>
-
-                    <SectionHeading subtitle="Movie">招待状ムービー</SectionHeading>
-
-                    <div className="aspect-video bg-[#1a1a1a] rounded-sm border border-white/10 flex items-center justify-center relative overflow-hidden shadow-2xl">
-                        <iframe
-                            width="100%"
-                            height="100%"
-                            src="https://www.youtube.com/embed/Sjer15l91B0"
-                            title="YouTube video player"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowFullScreen
-                            className="absolute inset-0"
-                        ></iframe>
-                    </div>
-                </div>
-            </section >
-
-            {/* --- GREETING --- */}
-            < section id="greeting" className="py-24 px-6 md:px-12 max-w-4xl mx-auto relative z-10" >
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="bg-[#1a1a1a]/90 backdrop-blur-sm p-12 md:p-16 shadow-2xl border-t-2 relative overflow-hidden"
-                    style={{ borderTopColor: COLORS.ORANGE }}
-                >
-                    <div className="absolute top-0 left-0 w-16 h-1" style={{ backgroundColor: COLORS.BLUE }}></div>
-                    <div className="absolute bottom-0 right-0 w-16 h-1" style={{ backgroundColor: COLORS.ORANGE }}></div>
-
-                    <div className="flex flex-col md:flex-row gap-12 items-center">
-                        <div className="md:w-1/2 font-zen leading-8 text-justify tracking-wide text-gray-300">
-                            <p className="mb-8">
-                                謹啓<br />
-                                師走の候<br />
-                                皆様にはますますご清祥のことと<br />
-                                お慶び申し上げます
-                            </p>
-                            <p className="mb-8">
-                                私たちは2025年3月3日に<br />
-                                入籍いたしました<br />
-                                つきましては<br />
-                                幾久しくご懇情賜りたく<br />
-                                ご挨拶ならびに披露の小宴を<br />
-                                催したいと存じます
-                            </p>
-                            <p>
-                                ご多用中<br />
-                                誠に恐縮ではございますが<br />
-                                ご臨席いただきたく<br />
-                                ご案内申し上げます<br />
-                                <span className="block text-right mt-8 text-sm text-gray-500">敬白</span>
-                            </p>
+            {/* --- MOVIE SECTION (Moved) - Hidden in post stage --- */}
+            {stage !== 'post' && (
+                <section id="movie" className="py-24 px-6 bg-black relative z-30" >
+                    <div className="max-w-4xl mx-auto">
+                        <div className="flex justify-center mb-16">
+                            <Link to="/guest-guide" className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                                <div className="bg-[#F39800] p-2 rounded-full text-white">
+                                    <Info size={20} />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-xs text-gray-400 tracking-widest uppercase">参列者の方へ</p>
+                                    <p className="text-lg font-bold text-white tracking-wider">会場案内</p>
+                                </div>
+                                <ArrowDown className="ml-2 text-gray-500 group-hover:text-white transition-colors -rotate-90" size={20} />
+                            </Link>
                         </div>
-                        <div className="md:w-1/2 h-full min-h-[300px]">
-                            <video
-                                src={`${import.meta.env.BASE_URL}topmovie.mp4`}
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="h-full w-full object-cover rounded-sm filter grayscale contrast-125 brightness-90"
-                                style={{
-                                    maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                                    WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                                    maskComposite: 'intersect',
-                                    WebkitMaskComposite: 'source-in'
-                                }}
-                            />
+
+                        <SectionHeading subtitle="Movie">招待状ムービー</SectionHeading>
+
+                        <div className="aspect-video bg-[#1a1a1a] rounded-sm border border-white/10 flex items-center justify-center relative overflow-hidden shadow-2xl">
+                            <iframe
+                                width="100%"
+                                height="100%"
+                                src="https://www.youtube.com/embed/Sjer15l91B0"
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                className="absolute inset-0"
+                            ></iframe>
                         </div>
                     </div>
-                </motion.div>
-            </section >
+                </section>
+            )}
 
-            {/* --- RSVP SECTION (Moved) --- */}
-            < section id="rsvp" className="py-24 px-6 bg-black relative z-10" >
-                <div className="max-w-3xl mx-auto">
-                    <div className="bg-[#1a1a1a] p-12 md:p-16 rounded-sm border border-white/10 shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-24 h-1" style={{ backgroundColor: COLORS.ORANGE }}></div>
-                        <div className="absolute bottom-0 left-0 w-24 h-1" style={{ backgroundColor: COLORS.BLUE }}></div>
+            {/* --- GREETING - Hidden in post stage --- */}
+            {stage !== 'post' && (
+                <section id="greeting" className="py-24 px-6 md:px-12 max-w-4xl mx-auto relative z-10" >
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="bg-[#1a1a1a]/90 backdrop-blur-sm p-12 md:p-16 shadow-2xl border-t-2 relative overflow-hidden"
+                        style={{ borderTopColor: COLORS.ORANGE }}
+                    >
+                        <div className="absolute top-0 left-0 w-16 h-1" style={{ backgroundColor: COLORS.BLUE }}></div>
+                        <div className="absolute bottom-0 right-0 w-16 h-1" style={{ backgroundColor: COLORS.ORANGE }}></div>
 
-                        <h3 className="font-zen text-2xl font-bold mb-6 text-center text-white">Web招待状</h3>
-                        <p className="text-center text-gray-400 mb-10 font-shippori leading-relaxed">
-                            以下のリンクより<br />
-                            招待状のご記入を<br />
-                            お願い申し上げます
-                        </p>
-                        <motion.a
-                            href={INVITATION_URL}
-                            target="_blank"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="block w-full text-white text-center py-5 px-8 rounded-sm shadow-lg transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
-                            style={{ backgroundColor: COLORS.BLUE }}
-                        >
-                            <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300"></div>
-                            <ExternalLink className="w-5 h-5" />
-                            <span className="font-bold tracking-widest font-zen text-lg">ENTRY <br />(回答する)</span>
-                        </motion.a>
-                        <p className="text-sm text-center text-gray-400 mt-10 font-shippori">お手数ではございますが、<br />
-                            ご都合の程を1月31日迄に<br />
-                            ご一報賜りますよう<br />
-                            お願い申し上げます</p>
+                        <div className="flex flex-col md:flex-row gap-12 items-center">
+                            <div className="md:w-1/2 font-zen leading-8 text-justify tracking-wide text-gray-300">
+                                <p className="mb-8">
+                                    謹啓<br />
+                                    師走の候<br />
+                                    皆様にはますますご清祥のことと<br />
+                                    お慶び申し上げます
+                                </p>
+                                <p className="mb-8">
+                                    私たちは2025年3月3日に<br />
+                                    入籍いたしました<br />
+                                    つきましては<br />
+                                    幾久しくご懇情賜りたく<br />
+                                    ご挨拶ならびに披露の小宴を<br />
+                                    催したいと存じます
+                                </p>
+                                <p>
+                                    ご多用中<br />
+                                    誠に恐縮ではございますが<br />
+                                    ご臨席いただきたく<br />
+                                    ご案内申し上げます<br />
+                                    <span className="block text-right mt-8 text-sm text-gray-500">敬白</span>
+                                </p>
+                            </div>
+                            <div className="md:w-1/2 h-full min-h-[300px]">
+                                <video
+                                    src={`${import.meta.env.BASE_URL}topmovie.mp4`}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="h-full w-full object-cover rounded-sm filter grayscale contrast-125 brightness-90"
+                                    style={{
+                                        maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
+                                        WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
+                                        maskComposite: 'intersect',
+                                        WebkitMaskComposite: 'source-in'
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </motion.div>
+                </section>
+            )}
+
+            {/* --- RSVP SECTION (Moved) - Hidden in post stage --- */}
+            {stage !== 'post' && (
+                <section id="rsvp" className="py-24 px-6 bg-black relative z-10" >
+                    <div className="max-w-3xl mx-auto">
+                        <div className="bg-[#1a1a1a] p-12 md:p-16 rounded-sm border border-white/10 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-1" style={{ backgroundColor: COLORS.ORANGE }}></div>
+                            <div className="absolute bottom-0 left-0 w-24 h-1" style={{ backgroundColor: COLORS.BLUE }}></div>
+
+                            <h3 className="font-zen text-2xl font-bold mb-6 text-center text-white">Web招待状</h3>
+                            <p className="text-center text-gray-400 mb-10 font-shippori leading-relaxed">
+                                以下のリンクより<br />
+                                招待状のご記入を<br />
+                                お願い申し上げます
+                            </p>
+                            <motion.a
+                                href={INVITATION_URL}
+                                target="_blank"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="block w-full text-white text-center py-5 px-8 rounded-sm shadow-lg transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
+                                style={{ backgroundColor: COLORS.BLUE }}
+                            >
+                                <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300"></div>
+                                <ExternalLink className="w-5 h-5" />
+                                <span className="font-bold tracking-widest font-zen text-lg">ENTRY <br />(回答する)</span>
+                            </motion.a>
+                            <p className="text-sm text-center text-gray-400 mt-10 font-shippori">お手数ではございますが、<br />
+                                ご都合の程を1月31日迄に<br />
+                                ご一報賜りますよう<br />
+                                お願い申し上げます</p>
+                        </div>
                     </div>
-                </div>
-            </section >
+                </section>
+            )}
 
 
 

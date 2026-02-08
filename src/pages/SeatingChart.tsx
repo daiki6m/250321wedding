@@ -42,7 +42,38 @@ const SeatingChart = () => {
     const [showMiniature, setShowMiniature] = useState(false);
     const [isSlideshowMode, setIsSlideshowMode] = useState(false);
     const [slideshowProgress, setSlideshowProgress] = useState(0); // 0: cycling pickup, 1: showing all, 2: transitioning
+    const [showGroomProfile, setShowGroomProfile] = useState(false);
+    const [showBrideProfile, setShowBrideProfile] = useState(false);
     const tablesCount = Object.keys(tables).length;
+
+    // Groom profile data
+    const groomProfile = {
+        name: '宝本 大樹',
+        birthday: '1993年6月23日（32歳）',
+        birthplace: '佐賀県',
+        occupation: '株式会社竹中工務店',
+        personality: 'クリエイティブな愛犬エンジニア',
+        hobbies: 'キャンプ、ギター、犬たちと遊ぶ、動画編集、写真',
+        favoriteMusic: 'ロック',
+        favoriteColor: 'グレー',
+        firstImpression: '「綺麗。変な人かもしれん、あやしい人かな？」',
+        partnerInOneWord: '「最高の飼い主、パートナー！」'
+    };
+
+    // Bride profile data
+    const brideProfile = {
+        name: '宝本 真希',
+        birthday: '1994年3月31日（31歳）',
+        birthplace: '長崎県',
+        occupation: 'マックス・エクスプレス（倉庫・検品）',
+        personality: '人見知りで真面目だけどマイペース',
+        hobbies: '料理、アニメ、パズル、考えること（特技：ネモのヘアスタイルを考えること）',
+        favoriteMusic: 'the GazettE',
+        favoriteColor: '黒、赤',
+        firstImpression: '「声小さいなーきこえん」',
+        partnerInOneWord: '「私に似てて、私に激甘！」',
+        vow: 'あなたの健康を守ります（ペイ風）'
+    };
 
     useEffect(() => {
         const checkMobile = () => {
@@ -293,10 +324,13 @@ const SeatingChart = () => {
                                 return (
                                     <>
                                         <div className="flex flex-col items-center gap-2 md:gap-4">
-                                            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-[#2E7BF4] shadow-[0_0_15px_rgba(46,123,244,0.3)] overflow-hidden">
+                                            <div
+                                                className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-[#2E7BF4] shadow-[0_0_15px_rgba(46,123,244,0.3)] overflow-hidden cursor-pointer hover:scale-110 transition-transform duration-300"
+                                                onClick={() => setShowGroomProfile(true)}
+                                            >
                                                 <img
                                                     // @ts-ignore
-                                                    src={groom.image ? (import.meta.env.BASE_URL + groom.image) : `${import.meta.env.BASE_URL}daiki.png`}
+                                                    src={groom.image ? (import.meta.env.BASE_URL + groom.image) : `${import.meta.env.BASE_URL}Daiki.png`}
                                                     alt={groom.name}
                                                     className="w-full h-full object-cover"
                                                 />
@@ -305,7 +339,10 @@ const SeatingChart = () => {
                                         </div>
                                         <div className="text-[#F39800] text-xl md:text-2xl font-serif">&</div>
                                         <div className="flex flex-col items-center gap-2 md:gap-4">
-                                            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-[#ff69b4] shadow-[0_0_15px_rgba(255,105,180,0.3)] overflow-hidden">
+                                            <div
+                                                className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-[#ff69b4] shadow-[0_0_15px_rgba(255,105,180,0.3)] overflow-hidden cursor-pointer hover:scale-110 transition-transform duration-300"
+                                                onClick={() => setShowBrideProfile(true)}
+                                            >
                                                 {/* @ts-ignore */}
                                                 {bride.image ? (
                                                     <img
@@ -328,6 +365,153 @@ const SeatingChart = () => {
                         </div>
                     </motion.div>
                 </div>
+
+                {/* Groom Profile Modal */}
+                <AnimatePresence>
+                    {showGroomProfile && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 overflow-y-auto"
+                            onClick={() => setShowGroomProfile(false)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                                className="relative w-full max-w-lg bg-gradient-to-b from-[#1a1a2e] to-[#0a0a15] border border-[#2E7BF4]/30 rounded-2xl p-6 md:p-8 shadow-2xl my-8"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Close Button */}
+                                <button
+                                    onClick={() => setShowGroomProfile(false)}
+                                    className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                                >
+                                    <X size={20} />
+                                </button>
+
+                                {/* Header with Photo */}
+                                <div className="flex flex-col items-center mb-6">
+                                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-[#2E7BF4] shadow-[0_0_30px_rgba(46,123,244,0.4)] overflow-hidden mb-4">
+                                        <img
+                                            src={`${import.meta.env.BASE_URL}Daiki.png`}
+                                            alt="宝本 大樹"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <h3 className="text-2xl md:text-3xl font-bold text-white">{groomProfile.name}</h3>
+                                    <p className="text-[#2E7BF4] text-sm mt-1">Groom</p>
+                                </div>
+
+                                {/* Profile Info Grid */}
+                                <div className="space-y-3">
+                                    {[
+                                        { label: '生年月日', value: groomProfile.birthday },
+                                        { label: '出身地', value: groomProfile.birthplace },
+                                        { label: '職業', value: groomProfile.occupation },
+                                        { label: '自分を一言で', value: groomProfile.personality },
+                                        { label: '趣味', value: groomProfile.hobbies },
+                                        { label: '好きな音楽', value: groomProfile.favoriteMusic },
+                                        { label: '好きな色', value: groomProfile.favoriteColor },
+                                        { label: '妻への第一印象', value: groomProfile.firstImpression },
+                                        { label: '相手を一言で', value: groomProfile.partnerInOneWord },
+                                    ].map((item, index) => (
+                                        <motion.div
+                                            key={item.label}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 py-2 border-b border-white/10 last:border-0"
+                                        >
+                                            <span className="text-[#2E7BF4] text-sm font-medium whitespace-nowrap min-w-[100px]">
+                                                {item.label}
+                                            </span>
+                                            <span className="text-white text-sm">
+                                                {item.value}
+                                            </span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Bride Profile Modal */}
+                <AnimatePresence>
+                    {showBrideProfile && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 overflow-y-auto"
+                            onClick={() => setShowBrideProfile(false)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                                className="relative w-full max-w-lg bg-gradient-to-b from-[#1f1a2e] to-[#0f0a15] border border-[#d4749d]/30 rounded-2xl p-6 md:p-8 shadow-2xl my-8"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Close Button */}
+                                <button
+                                    onClick={() => setShowBrideProfile(false)}
+                                    className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                                >
+                                    <X size={20} />
+                                </button>
+
+                                {/* Header with Photo */}
+                                <div className="flex flex-col items-center mb-6">
+                                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-[#d4749d] shadow-[0_0_30px_rgba(212,116,157,0.3)] overflow-hidden mb-4">
+                                        <img
+                                            src={`${import.meta.env.BASE_URL}Maki.png`}
+                                            alt="宝本 真希"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <h3 className="text-2xl md:text-3xl font-bold text-white">{brideProfile.name}</h3>
+                                    <p className="text-[#d4749d] text-sm mt-1">Bride</p>
+                                </div>
+
+                                {/* Profile Info Grid */}
+                                <div className="space-y-3">
+                                    {[
+                                        { label: '生年月日', value: brideProfile.birthday },
+                                        { label: '出身地', value: brideProfile.birthplace },
+                                        { label: '職業', value: brideProfile.occupation },
+                                        { label: '自分を一言で', value: brideProfile.personality },
+                                        { label: '趣味・特技', value: brideProfile.hobbies },
+                                        { label: '好きな音楽', value: brideProfile.favoriteMusic },
+                                        { label: '好きな色', value: brideProfile.favoriteColor },
+                                        { label: '夫への第一印象', value: brideProfile.firstImpression },
+                                        { label: '相手を一言で', value: brideProfile.partnerInOneWord },
+                                        { label: '誓いの言葉', value: brideProfile.vow },
+                                    ].map((item, index) => (
+                                        <motion.div
+                                            key={item.label}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 py-2 border-b border-white/10 last:border-0"
+                                        >
+                                            <span className="text-[#d4749d] text-sm font-medium whitespace-nowrap min-w-[100px]">
+                                                {item.label}
+                                            </span>
+                                            <span className="text-white text-sm">
+                                                {item.value}
+                                            </span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Guest Tables Grid */}
                 {/* Mobile: 3 columns, Compact. PC: 2/3 columns, Full. */}

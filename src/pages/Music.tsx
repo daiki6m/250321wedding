@@ -22,7 +22,7 @@ const songs: Song[] = [
         artworkUrl: "https://prtimes.jp/i/13546/2030/resize/d13546-2030-388005-1.jpg"
     },
     {
-        title: "V-ROAD",
+        title: "V-ROAD 2024 ver.",
         artist: "FUNKIST",
         youtubeUrl: "https://www.youtube.com/watch?v=0WKUPOVa-Wo",
         spotifyUrl: "https://open.spotify.com/search/FUNKIST%20V-ROAD",
@@ -30,20 +30,28 @@ const songs: Song[] = [
         artworkUrl: "https://baseec-img-mng.akamaized.net/images/item/origin/71ad91741115bb50ce994f81718f4ebd.jpg?imformat=generic"
     },
     {
-        title: "ひとりぼっちの晩餐会 (Be Our Guest)",
-        artist: "美女と野獣",
+        title: "ひとりぼっちの晩餐会",
+        artist: "美女と野獣 (ルミエール、ポット夫人 他)",
         youtubeUrl: "https://www.youtube.com/watch?v=54Gpo6iG0Lc",
         spotifyUrl: "https://open.spotify.com/search/Be%20Our%20Guest%20%E7%BE%8E%E5%A5%B3%E3%81%A8%E9%87%8E%E7%8D%A3",
         category: "乾杯",
         artworkUrl: "https://i3.gamebiz.jp/images/original/147083749760376e40b5a810011.jpg"
     },
     {
-        title: "ザV系っぽい曲",
-        artist: "ゴールデンボンバー",
-        youtubeUrl: "https://www.youtube.com/watch?v=UJ9dOPEKAFk",
-        spotifyUrl: "https://open.spotify.com/search/%E3%82%B4%E3%83%BC%E3%83%AB%E3%83%87%E3%83%B3%E3%83%9C%E3%83%B3%E3%83%90%E3%83%BC%20%E3%82%B6V%E7%B3%BB%E3%81%A3%E3%81%BD%E3%81%84%E6%9B%B2",
+        title: "美女と野獣",
+        artist: "美女と野獣 (ポット夫人 / 岩崎宏美)",
+        youtubeUrl: "https://www.youtube.com/watch?v=kesedsq3NLo",
+        spotifyUrl: "https://open.spotify.com/search/%E7%BE%8E%E5%A5%B3%E3%81%A8%E9%87%8E%E7%8D%A3%20%E5%B2%A9%E5%B4%8E%E5%AE%8F%E7%BE%8E",
+        category: "ケーキ入刀",
+        artworkUrl: "https://i.ytimg.com/vi/kesedsq3NLo/maxresdefault.jpg"
+    },
+    {
+        title: "UNFINISHED",
+        artist: "the GazettE",
+        youtubeUrl: "https://www.youtube.com/watch?v=PougFiKu0Gs",
+        spotifyUrl: "https://open.spotify.com/search/the%20GazettE%20UNFINISHED",
         category: "新婦お色直し退場",
-        artworkUrl: "https://i.ytimg.com/vi/UJ9dOPEKAFk/mqdefault.jpg"
+        artworkUrl: "https://i.ytimg.com/vi/PougFiKu0Gs/maxresdefault.jpg"
     },
     {
         title: "A Question Of Honor",
@@ -54,7 +62,7 @@ const songs: Song[] = [
         artworkUrl: "https://i.ytimg.com/vi/QBQlcq_HSdg/maxresdefault.jpg"
     },
     {
-        title: "Nobody's home",
+        title: "Nobody's HOME",
         artist: "ONE OK ROCK",
         youtubeUrl: "https://www.youtube.com/watch?v=hzvd2y6bzqs",
         spotifyUrl: "https://open.spotify.com/search/ONE%20OK%20ROCK%20Nobody%27s%20home",
@@ -68,6 +76,54 @@ const songs: Song[] = [
         spotifyUrl: "https://open.spotify.com/search/%E3%82%B4%E3%83%BC%E3%83%AB%E3%83%87%E3%83%B3%E3%83%9C%E3%83%B3%E3%83%90%E3%83%BC%20%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%A7%E3%82%82%E7%B5%90%E5%A9%9A%E5%BC%8F%E3%81%A7%E3%82%82%E4%BD%BF%E3%81%88%E3%82%8B%E6%AD%8C",
         category: "プロフィールV (新婦側)",
         artworkUrl: "https://ogre.natalie.mu/media/news/music/2017/1229/goldenbomber_art201712.jpg?impolicy=m&imwidth=750&imdensity=1"
+    },
+    {
+        title: "A Thousand Miles",
+        artist: "Vanessa Carlton",
+        youtubeUrl: "https://www.youtube.com/watch?v=Cwkej79U3ek",
+        spotifyUrl: "https://open.spotify.com/search/Vanessa%20Carlton%20A%20Thousand%20Miles",
+        category: "プロフィールV (二人)",
+        artworkUrl: "https://i.ytimg.com/vi/Cwkej79U3ek/maxresdefault.jpg"
+    },
+    {
+        title: "強いぞガストン",
+        artist: "美女と野獣 (ル・フウ、ガストン 他)",
+        youtubeUrl: "https://www.youtube.com/watch?v=XqKfW9eL8oc",
+        spotifyUrl: "https://open.spotify.com/search/%E5%BC%B7%E3%81%84%E3%81%9E%E3%82%AC%E3%82%B9%E3%83%88%E3%83%B3%20%E7%BE%8E%E5%A5%B3%E3%81%A8%E9%87%8E%E7%8D%A3",
+        category: "新郎新婦クイズ",
+        artworkUrl: "https://content-jp.umgi.net/products/uw/UWCD-8105_mKB_extralarge.jpg?19022020013730"
+    },
+    {
+        title: "愛の芽生え",
+        artist: "美女と野獣 (ベル、野獣 他)",
+        youtubeUrl: "https://www.youtube.com/watch?v=TeQLgZGz7cs",
+        spotifyUrl: "https://open.spotify.com/search/%E6%84%9B%E3%81%AE%E8%8A%BD%E7%94%9F%E3%81%88%20%E7%BE%8E%E5%A5%B3%E3%81%A8%E9%87%8E%E7%8D%A3",
+        category: "再入場",
+        artworkUrl: "https://content-jp.umgi.net/products/uw/UWCD-8105_mKB_extralarge.jpg?19022020013730"
+    },
+    {
+        title: "輝く未来",
+        artist: "塔の上のラプンツェル",
+        youtubeUrl: "https://www.youtube.com/watch?v=T216hcAd-Dg",
+        spotifyUrl: "https://open.spotify.com/search/%E8%BC%9D%E3%81%8F%E6%9C%AA%E6%9D%A5%20%E3%83%A9%E3%83%97%E3%83%B3%E3%83%84%E3%82%A7%E3%83%AB",
+        category: "花束・記念品贈呈",
+        artworkUrl: "https://i.ytimg.com/vi/T216hcAd-Dg/maxresdefault.jpg"
+    },
+    {
+        title: "A Brand New Day",
+        artist: "D",
+        youtubeUrl: "https://www.youtube.com/watch?v=example",
+        spotifyUrl: "https://open.spotify.com/search/D%20A%20Brand%20New%20Day",
+        category: "エンドロールV",
+        artworkUrl: `${import.meta.env.BASE_URL}a-brand-new-day.png`
+    },
+    {
+        title: "ザ・グロウ",
+        artist: "シャノン・サンダース (ディズニープリンセス・ベスト)",
+        youtubeUrl: "https://www.youtube.com/watch?v=FDUwls5lbf4",
+        spotifyUrl: "https://open.spotify.com/search/%E3%82%B6%E3%83%BB%E3%82%B0%E3%83%AD%E3%82%A6%20%E3%82%B7%E3%83%A3%E3%83%8E%E3%83%B3%E3%82%B5%E3%83%B3%E3%83%80%E3%83%BC%E3%82%B9",
+        category: "退場",
+        artworkUrl: "https://i.ytimg.com/vi/FDUwls5lbf4/maxresdefault.jpg"
     }
 ];
 

@@ -147,19 +147,31 @@ async function fetchGuests() {
                 const url = fileObj.file?.url || fileObj.external?.url;
                 if (url) {
                     try {
-                        // Download image
-                        // console.log(`⏳ Downloading image for ${name}...`); // Reduce noise
-                        const imgResp = await fetch(url);
+                        console.log(`⏳ Processing ${guests.length + 1}/${data.results.length}: ${name}`);
+                        // Download image with timeout
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+                        const imgResp = await fetch(url, { signal: controller.signal });
+                        clearTimeout(timeoutId);
+
                         if (imgResp.ok) {
                             const buffer = await imgResp.arrayBuffer();
                             const ext = url.split('?')[0].split('.').pop() || 'jpg';
+                            // Use ID for filename to avoid collisions and handle updates
                             const filename = `${id}.${ext}`;
                             const filePath = path.join(imagesDir, filename);
                             fs.writeFileSync(filePath, Buffer.from(buffer));
                             imageUrl = `guest-images/${filename}`;
+                        } else {
+                            console.error(`❌ Failed to download image for ${name}: ${imgResp.status} ${imgResp.statusText}`);
                         }
                     } catch (err) {
-                        console.error(`❌ Failed to download image for ${name}:`, err.message);
+                        if (err.name === 'AbortError') {
+                            console.error(`❌ Timeout downloading image for ${name}`);
+                        } else {
+                            console.error(`❌ Failed to download image for ${name}:`, err.message);
+                        }
                     }
                 }
             }
