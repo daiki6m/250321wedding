@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Calendar, ExternalLink, ArrowDown, PawPrint, Car, Building, Info, Menu, X, Users, Clock, Music as MusicIcon, Camera, Video, MessageSquare } from 'lucide-react';
+import { MapPin, Calendar, ExternalLink, ArrowDown, PawPrint, Car, Building, Info, Menu, X, Users, Clock, Music as MusicIcon, Camera, Video, MessageSquare, BarChart3 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { COLORS, SoccerBall, SectionHeading, CountdownTimer, INVITATION_URL } from '../components/Shared';
@@ -606,6 +606,10 @@ const Home = () => {
                                     <Link to="/comments" className="px-6 py-3 bg-[#2E7BF4] text-white font-zen rounded-full hover:bg-[#2E7BF4]/80 transition-colors shadow-lg flex items-center gap-2">
                                         <MessageSquare size={20} />
                                         <span>コメント (Comments)</span>
+                                    </Link>
+                                    <Link to="/birthday-stats" className="px-6 py-3 bg-[#F39800] text-white font-zen rounded-full hover:bg-[#F39800]/80 transition-colors shadow-lg flex items-center gap-2">
+                                        <BarChart3 size={20} />
+                                        <span>誕生月クイズ (Birthday Quiz)</span>
                                     </Link>
                                 </div>
                             </div>

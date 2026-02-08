@@ -19,6 +19,7 @@ import GuestComments from './pages/GuestComments';
 import CommentForm from './pages/CommentForm';
 import PhotoShower from './pages/PhotoShower';
 import GuestGuide from './pages/GuestGuide';
+import BirthdayStats from './pages/BirthdayStats';
 
 export default function App() {
     // Skip loading screen if on seating, guest, or music pages
@@ -71,6 +72,7 @@ export default function App() {
                     <Route path="/comment-form" element={<CommentForm />} />
                     <Route path="/photo-shower" element={<PhotoShower />} />
                     <Route path="/guest-guide" element={<GuestGuide />} />
+                    <Route path="/birthday-stats" element={<BirthdayStats />} />
                 </Routes>
             </div>
         </Router>
