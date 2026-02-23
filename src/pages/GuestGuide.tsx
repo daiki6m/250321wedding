@@ -14,7 +14,7 @@ const GuestGuide = () => {
 
 
     const videos = [
-        { id: 'video1', title: '案内動画', url: 'https://www.youtube.com/embed/mvSfN6FSHoQ' },
+        { id: 'video1', title: '案内動画', url: 'https://www.youtube.com/embed/3TxJ2Mj-shQ' },
     ];
 
     return (
@@ -42,9 +42,9 @@ const GuestGuide = () => {
                             <Video className="text-[#F39800]" size={24} />
                             <h2 className="text-2xl font-bold">案内動画</h2>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex justify-center">
                             {videos.map((video) => (
-                                <div key={video.id} className="bg-white/5 border border-white/10 rounded-xl overflow-hidden shadow-lg">
+                                <div key={video.id} className="w-full max-w-2xl bg-white/5 border border-white/10 rounded-xl overflow-hidden shadow-lg">
                                     <div className="aspect-video w-full relative">
                                         <iframe
                                             width="100%"
@@ -72,7 +72,43 @@ const GuestGuide = () => {
                             <h2 className="text-2xl font-bold">案内資料</h2>
                         </div>
 
+
                         <div className="flex justify-center mb-8">
+                            <a
+                                href={`${import.meta.env.BASE_URL}スタジアムシティホテル駐車場・会場案内.pdf`}
+                                download="スタジアムシティホテル駐車場・会場案内.pdf"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#F39800] hover:bg-[#f2a842] text-white rounded-full font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                            >
+                                <Download size={20} />
+                                <span>PDFをダウンロード</span>
+                            </a>
+                        </div>
+
+                        {/* Canva Page Guide */}
+                        <div className="w-full max-w-md mx-auto mb-4 bg-white/10 border border-white/20 rounded-xl p-4 text-sm text-gray-200">
+                            <p className="font-bold text-[#F39800] mb-2 border-b border-white/10 pb-1">下記該当ページをご確認ください</p>
+                            <ul className="space-y-1 mt-2">
+                                <li className="flex justify-between"><span>着付ご予定の方</span><span className="text-[#2E7BF4]">7~8ページ</span></li>
+                                <li className="flex justify-between"><span>ヘアセットご予定の方</span><span className="text-[#2E7BF4]">9~10ページ</span></li>
+                                <li className="flex justify-between"><span>男性の方</span><span className="text-[#2E7BF4]">11ページ</span></li>
+                                <li className="flex justify-between"><span>お子様をお連れのゲストの方</span><span className="text-[#2E7BF4]">12ページ</span></li>
+                                <li className="flex justify-between"><span>結婚式後の親族交流会</span><span className="text-[#2E7BF4]">13ページ</span></li>
+                            </ul>
+                        </div>
+
+                        <div className="w-full max-w-md mx-auto aspect-[9/16] bg-white/5 rounded-xl overflow-hidden border border-white/10 relative">
+                            <iframe
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full border-0 p-0 m-0"
+                                src="https://www.canva.com/design/DAG-NgNoWCY/UzqQJkSILXR2Y4-GiTlIBQ/view?embed"
+                                allowFullScreen
+                                allow="fullscreen"
+                            >
+                            </iframe>
+                        </div>
+
+                        {/* Useful Links Section */}
+                        <div className="flex justify-center mb-8 mt-12">
                             <a
                                 href="https://bot.talkappi.com/faq?facility_cd=nagasakistadiumcity-hotel-qa&member_id=b01a9ebb-e9b1-e8e0-763f-7d79bc79fabc&lang=ja&h=7&size=87.5%25"
                                 target="_blank"
@@ -91,27 +127,89 @@ const GuestGuide = () => {
                                 </div>
                             </a>
                         </div>
-                        <div className="w-full max-w-md mx-auto aspect-[9/16] bg-white/5 rounded-xl overflow-hidden border border-white/10 relative">
-                            <iframe
-                                loading="lazy"
-                                className="absolute inset-0 w-full h-full border-0 p-0 m-0"
-                                src="https://www.canva.com/design/DAG-NgNoWCY/UzqQJkSILXR2Y4-GiTlIBQ/view?embed"
-                                allowFullScreen
-                                allow="fullscreen"
-                            >
-                            </iframe>
+                        <div className="max-w-3xl mx-auto space-y-4">
+                            <h3 className="text-xl font-bold text-center text-[#D4A373] mb-6">周辺施設・各種ご案内</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <a
+                                    href="https://www.nagasakistadiumcity.com/tenant_search/#gourmet"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-5 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div className="bg-[#2E7BF4] p-2 rounded-full text-white">
+                                        <ExternalLink size={16} />
+                                    </div>
+                                    <span className="font-bold text-sm">お食事について</span>
+                                </a>
+                                <a
+                                    href="https://platinumaps.jp/d/nagasakistadiumcity?q=%E5%96%AB%E7%85%99%E6%89%80&floor=1F&area=15&list=1"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-5 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div className="bg-[#555] p-2 rounded-full text-white">
+                                        <ExternalLink size={16} />
+                                    </div>
+                                    <span className="font-bold text-sm">喫煙場所について</span>
+                                </a>
+                                <a
+                                    href="https://platinumaps.jp/d/nagasakistadiumcity?spot=370384&culture=ja"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-5 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div className="bg-[#F39800] p-2 rounded-full text-white">
+                                        <ExternalLink size={16} />
+                                    </div>
+                                    <span className="font-bold text-sm">コンビニエンスストア</span>
+                                </a>
+                                <a
+                                    href="https://platinumaps.jp/d/nagasakistadiumcity?q=%E6%8E%88%E4%B9%B3%E5%AE%A4&floor=2F&area=17&list=1"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-5 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div className="bg-[#E84E8A] p-2 rounded-full text-white">
+                                        <ExternalLink size={16} />
+                                    </div>
+                                    <span className="font-bold text-sm">おむつ交換所・授乳室</span>
+                                </a>
+                                <a
+                                    href="https://platinumaps.jp/d/nagasakistadiumcity?spot=336221"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-5 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div className="bg-[#34A853] p-2 rounded-full text-white">
+                                        <ExternalLink size={16} />
+                                    </div>
+                                    <span className="font-bold text-sm">医薬品などの購入について</span>
+                                </a>
+                                <a
+                                    href="https://platinumaps.jp/d/nagasakistadiumcity?spot=336206&culture=ja"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-5 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div className="bg-[#8E44AD] p-2 rounded-full text-white">
+                                        <ExternalLink size={16} />
+                                    </div>
+                                    <span className="font-bold text-sm">KIDS PARK ZONE について</span>
+                                </a>
+                                <a
+                                    href="https://platinumaps.jp/d/nagasakistadiumcity?spot=336190&culture=ja"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-5 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all duration-300 hover:-translate-y-1 sm:col-span-2"
+                                >
+                                    <div className="bg-[#D4A373] p-2 rounded-full text-white">
+                                        <ExternalLink size={16} />
+                                    </div>
+                                    <span className="font-bold text-sm">結婚式後の親族交流会 お店の場所について</span>
+                                </a>
+                            </div>
                         </div>
 
-                        <div className="flex justify-center mt-6">
-                            <a
-                                href={`${import.meta.env.BASE_URL}スタジアムシティ案内図.pdf`}
-                                download="スタジアムシティ案内図.pdf"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#F39800] hover:bg-[#f2a842] text-white rounded-full font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                            >
-                                <Download size={20} />
-                                <span>PDFをダウンロード</span>
-                            </a>
-                        </div>
                     </section>
 
                     {/* 3. Parking Section (Adapted from HotelParking.tsx) */}

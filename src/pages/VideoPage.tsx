@@ -10,10 +10,13 @@ const VideoPage = () => {
     }, []);
 
     const videos = [
-        { id: 'video1', title: 'Opening Movie', url: 'https://www.youtube.com/embed/Sjer15l91B0' }, // Placeholder
-        { id: 'video2', title: 'Profile Movie', url: 'https://www.youtube.com/embed/Sjer15l91B0' }, // Placeholder
-        { id: 'video3', title: 'Endroll Movie', url: 'https://www.youtube.com/embed/Sjer15l91B0' }, // Placeholder
-        { id: 'video4', title: 'Special Movie', url: 'https://www.youtube.com/embed/Sjer15l91B0' }, // Placeholder
+        { id: 'opening', title: 'オープニングムービー', url: 'https://www.youtube.com/embed/UTPUfSWmM0o' },
+        { id: 'profile-daiki', title: 'プロフィールムービー　大樹', url: 'https://www.youtube.com/embed/vdCBb6zO7_g' },
+        { id: 'profile-maki', title: 'プロフィールムービー　真希', url: 'https://www.youtube.com/embed/J5diPg7T7xQ' },
+        { id: 'profile-both', title: 'プロフィールムービー　二人', url: 'https://www.youtube.com/embed/cUnZT_HObv4' },
+        { id: 'endroll', title: 'エンドロールムービー', url: 'https://www.youtube.com/embed/BZ16TgCSS-U' },
+        { id: 'invitation', title: '招待状ムービー', url: 'https://www.youtube.com/embed/Sjer15l91B0' },
+        { id: 'parking-guide', title: '駐車場式場案内ムービー', url: 'https://www.youtube.com/embed/3TxJ2Mj-shQ' },
     ];
 
     return (
@@ -57,6 +60,14 @@ const VideoPage = () => {
                                     <Video size={20} className="text-[#F39800]" />
                                     {video.title}
                                 </h3>
+                                <a
+                                    href={video.url.replace('/embed/', '/watch?v=')}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-[#2E7BF4] hover:text-[#F39800] mt-2 inline-block transition-colors"
+                                >
+                                    YouTubeで見る
+                                </a>
                             </div>
                         </motion.div>
                     ))}

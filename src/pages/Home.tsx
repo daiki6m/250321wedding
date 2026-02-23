@@ -66,7 +66,6 @@ const Navigation = ({ stage }: { stage: 'pre' | 'day' | 'post' }) => {
         { label: "トップ", id: "hero" },
         { label: "ムービー", id: "movie" },
         { label: "ご挨拶", id: "greeting" },
-        ...(stage === 'pre' ? [{ label: "Web招待状", id: "rsvp" }] : []),
         { label: "プロフィール", id: "profile-section" },
         { label: "ペット", id: "pets" },
         { label: "ギャラリー", path: "/gallery" },
@@ -721,42 +720,29 @@ const Home = () => {
                 </section>
             )}
 
-            {/* --- RSVP SECTION (Moved) - Hidden in post stage --- */}
-            {stage !== 'post' && (
-                <section id="rsvp" className="py-24 px-6 bg-black relative z-10" >
-                    <div className="max-w-3xl mx-auto">
-                        <div className="bg-[#1a1a1a] p-12 md:p-16 rounded-sm border border-white/10 shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-24 h-1" style={{ backgroundColor: COLORS.ORANGE }}></div>
-                            <div className="absolute bottom-0 left-0 w-24 h-1" style={{ backgroundColor: COLORS.BLUE }}></div>
+            {/* --- RSVP SECTION (Moved) - Removed --- */}
 
-                            <h3 className="font-zen text-2xl font-bold mb-6 text-center text-white">Web招待状</h3>
-                            <p className="text-center text-gray-400 mb-10 font-shippori leading-relaxed">
-                                以下のリンクより<br />
-                                招待状のご記入を<br />
-                                お願い申し上げます
-                            </p>
-                            <motion.a
-                                href={INVITATION_URL}
-                                target="_blank"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="block w-full text-white text-center py-5 px-8 rounded-sm shadow-lg transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
-                                style={{ backgroundColor: COLORS.BLUE }}
-                            >
-                                <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300"></div>
-                                <ExternalLink className="w-5 h-5" />
-                                <span className="font-bold tracking-widest font-zen text-lg">ENTRY <br />(回答する)</span>
-                            </motion.a>
-                            <p className="text-sm text-center text-gray-400 mt-10 font-shippori">お手数ではございますが、<br />
-                                ご都合の程を1月31日迄に<br />
-                                ご一報賜りますよう<br />
-                                お願い申し上げます</p>
+            {/* --- ENDROLL MOVIE SECTION - Only in post stage --- */}
+            {stage === 'post' && (
+                <section id="endroll-movie" className="py-24 px-6 bg-black relative z-30" >
+                    <div className="max-w-4xl mx-auto">
+                        <SectionHeading subtitle="Endroll Movie">エンドロールムービー</SectionHeading>
+
+                        <div className="aspect-video bg-[#1a1a1a] rounded-sm border border-white/10 flex items-center justify-center relative overflow-hidden shadow-2xl mt-12">
+                            <iframe
+                                width="100%"
+                                height="100%"
+                                src="https://www.youtube.com/embed/BZ16TgCSS-U"
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                className="absolute inset-0"
+                            ></iframe>
                         </div>
                     </div>
                 </section>
             )}
-
-
 
             {/* --- PROFILE --- */}
             < section id="profile-section" className="py-24 px-6 bg-black relative z-10" >

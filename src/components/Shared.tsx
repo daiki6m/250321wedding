@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 // --- Theme Colors ---
 export const COLORS = {
@@ -108,6 +109,7 @@ export const PhotoCard = ({ src, alt, className = "" }: { src: string, alt: stri
 export const SakuraBackground = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isVisible, setIsVisible] = useState(true);
+    const location = useLocation();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -221,6 +223,10 @@ export const SakuraBackground = () => {
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
+
+    if (location.pathname.startsWith('/video')) {
+        return null;
+    }
 
     return (
         <canvas
