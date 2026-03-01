@@ -112,7 +112,7 @@ const songs: Song[] = [
     {
         title: "A Brand New Day",
         artist: "D",
-        youtubeUrl: "https://www.youtube.com/watch?v=example",
+        youtubeUrl: "https://www.youtube.com/watch?v=rsn3K6MwzxA",
         spotifyUrl: "https://open.spotify.com/search/D%20A%20Brand%20New%20Day",
         category: "エンドロールV",
         artworkUrl: `${import.meta.env.BASE_URL}a-brand-new-day.png`

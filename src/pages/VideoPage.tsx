@@ -14,7 +14,7 @@ const VideoPage = () => {
         { id: 'profile-daiki', title: 'プロフィールムービー　大樹', url: 'https://www.youtube.com/embed/vdCBb6zO7_g' },
         { id: 'profile-maki', title: 'プロフィールムービー　真希', url: 'https://www.youtube.com/embed/J5diPg7T7xQ' },
         { id: 'profile-both', title: 'プロフィールムービー　二人', url: 'https://www.youtube.com/embed/cUnZT_HObv4' },
-        { id: 'endroll', title: 'エンドロールムービー', url: 'https://www.youtube.com/embed/BZ16TgCSS-U' },
+        { id: 'endroll', title: 'エンドロールムービー', url: 'https://www.youtube.com/embed/rsn3K6MwzxA' },
         { id: 'invitation', title: '招待状ムービー', url: 'https://www.youtube.com/embed/Sjer15l91B0' },
         { id: 'parking-guide', title: '駐車場式場案内ムービー', url: 'https://www.youtube.com/embed/3TxJ2Mj-shQ' },
     ];
