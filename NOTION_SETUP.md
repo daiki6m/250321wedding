@@ -12,6 +12,8 @@
 4. 「保存」をクリックします。
 5. 表示された **「内部インテグレーションシークレット」** (APIキー) をコピーして控えておきます。
    - 例: `secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+   <YOUR_NOTION_API_KEY>
+
 
 ## 2. Notionデータベースの準備
 1. Notionで新しいページを作成し、「データベース（フルページ）」を作成します。
@@ -22,6 +24,7 @@
 3. データベースのURLを確認し、**「データベースID」** を取得します。
    - URL形式: `https://www.notion.so/myworkspace/xxxxxxxxxxxxxxxxxxxxxxxxxxxx?v=...`
    - `myworkspace/` の後ろから `?` の前までの32桁の文字列がIDです。
+   170bb2a8c87f81f4a17ccafbca10917b
 
 ## 3. インテグレーションをデータベースに接続
 1. 作成したデータベースの右上にある「...」メニューをクリックします。
