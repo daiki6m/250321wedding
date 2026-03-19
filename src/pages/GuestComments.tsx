@@ -42,8 +42,8 @@ const GuestComments = () => {
             navigate('/photo-shower?slideshow=true');
         };
 
-        // Maximum 1 minute timeout
-        const maxTimeout = setTimeout(goToNext, 60000);
+        // Maximum 5 minutes timeout to ensure all comments can be scrolled
+        const maxTimeout = setTimeout(goToNext, 300000);
 
         const performScroll = (time: number) => {
             if (hasNavigated) return;
@@ -184,48 +184,82 @@ const GuestComments = () => {
             </SectionHeading>
 
             <div className="max-w-4xl mx-auto">
-                <div className="mb-8">
-                    <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-                        <ArrowLeft className="w-5 h-5" />
-                        <span className="font-zen font-bold">トップへ戻る</span>
-                    </Link>
-                </div>
+                {!isSlideshowMode && (
+                    <>
+                        <div className="mb-8">
+                            <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                                <ArrowLeft className="w-5 h-5" />
+                                <span className="font-zen font-bold">トップへ戻る</span>
+                            </Link>
+                        </div>
 
-                <div className="flex justify-center mb-12">
-                    <Link
-                        to="/comment-form"
-                        className="bg-gradient-to-r from-[#F39800] to-[#2E7BF4] text-white font-bold py-4 px-12 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center gap-3"
-                    >
-                        <Send className="w-5 h-5" />
-                        <span>メッセージを送る</span>
-                    </Link>
-                </div>
+                        <div className="flex justify-center mb-12">
+                            <Link
+                                to="/comment-form"
+                                className="bg-gradient-to-r from-[#F39800] to-[#2E7BF4] text-white font-bold py-4 px-12 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center gap-3"
+                            >
+                                <Send className="w-5 h-5" />
+                                <span>メッセージを送る</span>
+                            </Link>
+                        </div>
 
-                <div className="flex justify-center gap-4 mb-12">
-                    <button
-                        onClick={() => setActiveTab('PRE')}
-                        className={`px-6 py-3 rounded-full font-zen font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === 'PRE'
-                            ? 'bg-white text-black shadow-lg scale-105'
-                            : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                            }`}
-                    >
-                        <MessageSquare className="w-4 h-4" />
-                        <span>招待状メッセージ</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('WEDDING')}
-                        className={`px-6 py-3 rounded-full font-zen font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === 'WEDDING'
-                            ? 'bg-[#F39800] text-white shadow-lg scale-105'
-                            : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                            }`}
-                    >
-                        <MessageSquare className="w-4 h-4" />
-                        <span>式当日</span>
-                    </button>
-                </div>
+                        <div className="flex justify-center gap-4 mb-12">
+                            <button
+                                onClick={() => setActiveTab('PRE')}
+                                className={`px-6 py-3 rounded-full font-zen font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === 'PRE'
+                                    ? 'bg-white text-black shadow-lg scale-105'
+                                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                                    }`}
+                            >
+                                <MessageSquare className="w-4 h-4" />
+                                <span>招待状メッセージ</span>
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('WEDDING')}
+                                className={`px-6 py-3 rounded-full font-zen font-bold transition-all duration-300 flex items-center gap-2 ${activeTab === 'WEDDING'
+                                    ? 'bg-[#F39800] text-white shadow-lg scale-105'
+                                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                                    }`}
+                            >
+                                <MessageSquare className="w-4 h-4" />
+                                <span>式当日</span>
+                            </button>
+                        </div>
+                    </>
+                )}
 
                 <div className="min-h-[300px]">
-                    {activeTab === 'WEDDING' ? (
+                    {isSlideshowMode ? (
+                        <div className="flex flex-col gap-12">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <div className="text-center mb-8">
+                                    <h2 className="text-2xl font-bold font-zen text-white inline-flex items-center gap-2">
+                                        <MessageSquare className="w-6 h-6" />
+                                        招待状メッセージ
+                                    </h2>
+                                </div>
+                                <CommentSection comments={preWeddingComments} />
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                            >
+                                <div className="text-center mb-8 pt-8">
+                                    <h2 className="text-3xl font-bold font-zen text-[#F39800] inline-flex items-center gap-2">
+                                        <MessageSquare className="w-8 h-8" />
+                                        式当日のメッセージ
+                                    </h2>
+                                </div>
+                                <CommentSection comments={weddingDayComments} />
+                            </motion.div>
+                        </div>
+                    ) : activeTab === 'WEDDING' ? (
                         <motion.div
                             key="wedding"
                             initial={{ opacity: 0, y: 20 }}
